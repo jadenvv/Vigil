@@ -79,6 +79,17 @@ RX = {
     "neg_hypo": re.compile(r"\b(?:do not|don't|does not|never|no)\b[^.!?]{0,25}\b(?:publish|show|present|provide|use|offer)|\b(?:upon|on) request\b", re.I),
     "advice_balanced": re.compile(r"including (?:those|ones|picks|recommendations|positions) that (?:lost|declined|fell|underperformed)|full list of (?:our |all )?(?:recommendations|picks)", re.I),
     "disclaimer": re.compile(r"past performance (?:does not|is not|cannot|may not|is no)|involves? risk|possible loss of principal|risk of loss", re.I),
+    # language shown as an example of what not to say, or quoted regulation (Tester B, Check 1:
+    # "verify that it was, in fact, legitimately an advertisement")
+    "example_frame": re.compile(
+        r"\b(?:a|an|another|some|other|many) (?:firm|adviser|advisor|manager|ad|advertisement)s? "
+        r"(?:might|may|could|would|that|who|which) (?:say|claim|promise|write|advertise|tout|call)"
+        r"|\b(?:firms|advisers|advisors|managers|ads) (?:that|who|which) (?:say|claim|promise|advertise|tout)"
+        r"|\b(?:phrases|claims|language|wording|words|statements|promises) (?:like|such as)\b"
+        r"|\bwatch (?:out )?for\b|\bred flags?\b|\b(?:avoid|never|don't|do not) (?:say|saying|use|using)\b"
+        r"|\b(?:the )?(?:SEC|Marketing Rule|Rule 206\(4\)-1|rule) (?:prohibits|bans|forbids|says|states|requires)\b"
+        r"|\bmay not include\b|\bexamples? of (?:misleading|prohibited|non-compliant|problematic)", re.I),
+    "first_person": re.compile(r"\b(?:we|our|us|I|my)\b", re.I),
     # a hand-picked start/window: standard periods elsewhere on the page don't excuse it
     "cherry_window": re.compile(r"\b(?:since|from|off) the [^.,;]{0,25}?\b(?:low|lows|bottom|trough)\b"
                                 r"|\bbest (?:\d+|two|three|four|five|six|seven|eight|nine|ten) (?:years|quarters|months)\b"
@@ -112,6 +123,20 @@ def blanket_testimonial_disclosure(chunk: str) -> bool:
     return False
 
 
+_QUOTED = re.compile(r'"[^"]*"|\u201c[^\u201d]*\u201d')
+
+
+def _quoted_in(sent: str, span: str) -> bool:
+    return any(span in q.group(0) for q in _QUOTED.finditer(sent))
+
+
+def presented_as_example(sent: str, span: str) -> bool:
+    """Example/education framing, and the span is quoted or isn't the firm speaking (we/our)."""
+    if not RX["example_frame"].search(sent):
+        return False
+    return _quoted_in(sent, span) or not RX["first_person"].search(_QUOTED.sub("", span))
+
+
 def suppressed(chunk: str, flag: dict) -> str | None:
     """Return a reason string if the flag should be dropped, else None."""
     cat, span = flag["category"], flag["span"]
@@ -121,6 +146,8 @@ def suppressed(chunk: str, flag: dict) -> str | None:
     near = chunk[max(0, i - 150): i + len(span) + 350] if i >= 0 else chunk
     if RX["disclaimer"].search(sent) and not re.search(r"\bwe guarantee|\bguaranteed (?:returns?|income)", sent, re.I):
         return "inside a standard risk disclaimer"
+    if presented_as_example(sent, span):
+        return "example or quoted rule, not the firm's own claim"
     if cat == "TESTIMONIAL_NO_DISCLOSURE":
         unit = testimonial_unit(chunk, i, i + len(span)) if i >= 0 else span
         if (RX["client_status"].search(unit) and RX["compensation"].search(unit)) or blanket_testimonial_disclosure(chunk):

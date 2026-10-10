@@ -1,5 +1,5 @@
 <!--
-Detection prompt v2 (each testimonial needs its own disclosure; hand-picked windows not excused). Owner: P4. Source of truth: this file (copy back any edit made in Base44).
+Detection prompt v3 (v2: own disclosure per testimonial, hand-picked windows; v3: skip examples and rule text). Owner: P4. Source of truth: this file (copy back any edit made in Base44).
 Two sections separated by the marker lines. engine/detect.py fills {{channel}}, {{hints}}, {{page}}.
 In Base44: SYSTEM goes in the system/instructions slot (or the top of the prompt); USER is the
 per-page message. Response must match engine/prompts/detect.schema.json.
@@ -81,6 +81,9 @@ basis or methodology, or whether the firm paid for it.
 - Standard risk disclaimers ("past performance does not guarantee future results")
 - Fee schedules, event or webinar invites, hiring posts, team bios
 - Generic puffery that makes no testable claim ("we work to find the best fit for you")
+- Language presented as an example of what not to say, quoted or paraphrased regulation, or general
+  education about the rule ("for example, a firm might say 'guaranteed returns'..."). Only flag what
+  the firm itself claims. The firm's own claim on the same page still counts.
 - A testimonial, rating or performance figure whose required context sits right next to it
   (client status and compensation attached to that same quote, rating date and methodology, net
   returns, 1/5/10-year periods). Standard 1/5/10-year periods elsewhere on the page do not excuse
