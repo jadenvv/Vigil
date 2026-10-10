@@ -10,19 +10,21 @@ const LINK = /\[([^\]]*)\]\([^)]*\)/g;
 const BARE_URL = /<?https?:\/\/[^\s)>\]]+>?/g;
 const LIST_MARKER = /^\s*(?:[-*+]|\d+[.)])\s+/;
 
-/** A line that is nothing but links (a nav bar or footer menu), once list markers are ignored. */
-function isLinkOnlyLine(line: string): boolean {
+/**
+ * A nav bar or footer menu line: nothing but links, each with a short, figure-free label.
+ * Blog headlines, press mentions and award badges are often bare links too, and they carry the
+ * claims detect looks for, so a long label or one with a number or #/$/% keeps the line.
+ */
+function isMenuLine(line: string): boolean {
   if (!line.includes("](")) return false;
   const rest = line.replace(LIST_MARKER, "").replace(IMAGE, "").replace(LINK, "").replace(/[\s|·•\-–—/]+/g, "");
-  return rest === "";
+  if (rest !== "") return false;
+  const labels = [...line.matchAll(LINK)].map((m) => m[1].replace(IMAGE, "").trim());
+  return labels.every((label) => label.split(/\s+/).filter(Boolean).length <= 4 && !/[\d#$%]/.test(label));
 }
 
-export function cleanMarkdown(md: string): string {
+function tidy(md: string): string {
   return md
-    .replace(/\r\n?/g, "\n")
-    .split("\n")
-    .filter((line) => !isLinkOnlyLine(line))
-    .join("\n")
     .replace(IMAGE, "")
     .replace(LINK, "$1")
     .replace(BARE_URL, "")
@@ -31,6 +33,13 @@ export function cleanMarkdown(md: string): string {
     .replace(/[ \t]+$/gm, "")
     .replace(/\n{3,}/g, "\n\n")
     .trim();
+}
+
+export function cleanMarkdown(md: string): string {
+  const lines = md.replace(/\r\n?/g, "\n").split("\n");
+  const cleaned = tidy(lines.filter((line) => !isMenuLine(line)).join("\n"));
+  // A page that is all short links would otherwise store nothing: keep its link text instead.
+  return cleaned || tidy(lines.join("\n"));
 }
 
 /** Cuts at the last paragraph (else line) boundary under `max`. Nothing is appended to the text. */
@@ -54,5 +63,12 @@ if (import.meta.main) {
   const long = Array.from({ length: 50 }, (_, i) => `Paragraph ${i} ` + "x".repeat(500)).join("\n\n");
   const capped = capText(long, 5_000);
   eq(capped.length <= 5_000 && long.startsWith(capped) && !capped.endsWith("\n"), true, "cap on a paragraph boundary, prefix of original");
+  // Link-only lines that carry claims must survive (p2-evaluator repro, 2026-10-10).
+  eq(cleanMarkdown("# Insights\n\n- [Our clients never lost money in 2022: here's how](/blog/never-lost)\n- [Guaranteed 8% income for life](/blog/income)\n\nInvesting involves risk."),
+    "# Insights\n\n- Our clients never lost money in 2022: here's how\n- Guaranteed 8% income for life\n\nInvesting involves risk.", "headline links kept");
+  eq(cleanMarkdown("[Named a Top 50 Advisor by Finance Weekly](https://fw.example/top50)"), "Named a Top 50 Advisor by Finance Weekly", "award link kept");
+  eq(cleanMarkdown("* [#1 Advisor](/award)\n* [About](/about)"), "* #1 Advisor", "short label with a figure kept");
+  eq(cleanMarkdown("* [Home](/)\n* [About us](/about) | [Contact](/c)\n\nBody text."), "Body text.", "menu still dropped");
+  eq(cleanMarkdown("* [Home](/)\n* [About](/about)"), "* Home\n* About", "all-menu page falls back to link text");
   console.log("page-text.ts self-check: ok");
 }
