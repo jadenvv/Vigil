@@ -30,6 +30,8 @@ export const COPY = {
   pageTextLabel: "Page text",
   rewriteTitle: "Suggested rewrite",
   manualRewriteTitle: "Rewrite this quote",
+  suggestRewrite: "Suggest a rewrite",
+  suggesting: "Suggesting…",
   yourRewriteLabel: "Your rewrite",
   originalLabel: "Original",
   suggestedLabel: "Suggested",
