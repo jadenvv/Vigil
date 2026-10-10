@@ -76,5 +76,6 @@ When a prompt changes inside Base44, copy it back to `prompts/` so the repo stay
 - `c1fccd0` firm renamed Hartwell → Quarrywick in eval/engine fixtures (Hartwell is a real adviser); keyword scores unchanged.
 - `2948ba6` postprocess: 1/5/10-year periods on the page no longer suppress a cherry-picked-window flag ("since the … low", "best N years"); JS port mirrored. Fixes demo miss #6.
 - `ac7c18d` detect.md v2 + per-quote hints: each testimonial needs its own disclosure; a neighbour's disclosure doesn't cover it. Fixes demo miss #8 (model-side; verify on the live re-run). Parity now covers tester + demo-site cases + the stored testimonials markdown (90 texts, 0 mismatches).
+- `af93aa0` B4 (Tester B): examples of what not to say, quoted/paraphrased rule text and education are not flagged unless the firm itself is speaking. detect.md v3. cases_tester.jsonl now 10 cases (+3). Rules mode: example clean cases 2/2 → 0/2 flagged, own claim still caught.
 - WARNING: this Mac's `.env` has a Groq key, so `--detector engine.detect:detect` is NOT offline. Check `python3 -c "from engine import llm; print(llm.config()['provider'])"` first.
 - Pending: one live run vs `detect-text` after ~4:00 when orchestrator reopens it (one run only, quota is finite), saved as `reports/llm_invokellm_<time>.json` and compared to `baseline_regex_120954.json`.
