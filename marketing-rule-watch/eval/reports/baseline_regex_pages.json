@@ -1,0 +1,373 @@
+{
+  "detector": "baseline_regex",
+  "timestamp": "2026-10-10 13:26:38",
+  "cases_sha": "db65ac10eb",
+  "n_cases": 9,
+  "subsets": {
+    "all": {
+      "n_cases": 9,
+      "n_clean": 2,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "tp": 0,
+      "fp": 4,
+      "fn": 10,
+      "clean_doc_fp_rate": 0.5,
+      "flags_per_clean_doc": 0.5,
+      "grounding_rate": 1.0,
+      "citation_accuracy": null,
+      "per_category": {
+        "BENEFITS_WITHOUT_RISK": {
+          "tp": 0,
+          "fp": 3,
+          "fn": 1,
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0
+        },
+        "GROSS_WITHOUT_NET": {
+          "tp": 0,
+          "fp": 1,
+          "fn": 1,
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0
+        },
+        "HYPOTHETICAL_PERFORMANCE": {
+          "tp": 0,
+          "fp": 0,
+          "fn": 1,
+          "precision": null,
+          "recall": 0.0,
+          "f1": null
+        },
+        "RATING_NO_DISCLOSURE": {
+          "tp": 0,
+          "fp": 0,
+          "fn": 2,
+          "precision": null,
+          "recall": 0.0,
+          "f1": null
+        },
+        "TESTIMONIAL_NO_DISCLOSURE": {
+          "tp": 0,
+          "fp": 0,
+          "fn": 2,
+          "precision": null,
+          "recall": 0.0,
+          "f1": null
+        },
+        "UNBALANCED_SPECIFIC_ADVICE": {
+          "tp": 0,
+          "fp": 0,
+          "fn": 1,
+          "precision": null,
+          "recall": 0.0,
+          "f1": null
+        },
+        "UNFAIR_PERFORMANCE_PRESENTATION": {
+          "tp": 0,
+          "fp": 0,
+          "fn": 1,
+          "precision": null,
+          "recall": 0.0,
+          "f1": null
+        },
+        "UNSUBSTANTIATED_CLAIM": {
+          "tp": 0,
+          "fp": 0,
+          "fn": 1,
+          "precision": null,
+          "recall": 0.0,
+          "f1": null
+        }
+      }
+    },
+    "reviewed": {
+      "n_cases": 0,
+      "n_clean": 0,
+      "precision": null,
+      "recall": null,
+      "f1": null,
+      "tp": 0,
+      "fp": 0,
+      "fn": 0,
+      "clean_doc_fp_rate": null,
+      "flags_per_clean_doc": null,
+      "grounding_rate": null,
+      "citation_accuracy": null,
+      "per_category": {}
+    },
+    "pattern_synthetic": {
+      "n_cases": 9,
+      "n_clean": 2,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "tp": 0,
+      "fp": 4,
+      "fn": 10,
+      "clean_doc_fp_rate": 0.5,
+      "flags_per_clean_doc": 0.5,
+      "grounding_rate": 1.0,
+      "citation_accuracy": null,
+      "per_category": {
+        "BENEFITS_WITHOUT_RISK": {
+          "tp": 0,
+          "fp": 3,
+          "fn": 1,
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0
+        },
+        "GROSS_WITHOUT_NET": {
+          "tp": 0,
+          "fp": 1,
+          "fn": 1,
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0
+        },
+        "HYPOTHETICAL_PERFORMANCE": {
+          "tp": 0,
+          "fp": 0,
+          "fn": 1,
+          "precision": null,
+          "recall": 0.0,
+          "f1": null
+        },
+        "RATING_NO_DISCLOSURE": {
+          "tp": 0,
+          "fp": 0,
+          "fn": 2,
+          "precision": null,
+          "recall": 0.0,
+          "f1": null
+        },
+        "TESTIMONIAL_NO_DISCLOSURE": {
+          "tp": 0,
+          "fp": 0,
+          "fn": 2,
+          "precision": null,
+          "recall": 0.0,
+          "f1": null
+        },
+        "UNBALANCED_SPECIFIC_ADVICE": {
+          "tp": 0,
+          "fp": 0,
+          "fn": 1,
+          "precision": null,
+          "recall": 0.0,
+          "f1": null
+        },
+        "UNFAIR_PERFORMANCE_PRESENTATION": {
+          "tp": 0,
+          "fp": 0,
+          "fn": 1,
+          "precision": null,
+          "recall": 0.0,
+          "f1": null
+        },
+        "UNSUBSTANTIATED_CLAIM": {
+          "tp": 0,
+          "fp": 0,
+          "fn": 1,
+          "precision": null,
+          "recall": 0.0,
+          "f1": null
+        }
+      }
+    }
+  },
+  "pairs": {
+    "pairs": 0,
+    "passed": 0,
+    "pass_rate": null,
+    "detail": {}
+  },
+  "rewrite": {
+    "tried": 0,
+    "passed": 0,
+    "pass_rate": null,
+    "note": "necessary, not sufficient: also have a human rate rewrite quality"
+  },
+  "cases": [
+    {
+      "id": "pg_home",
+      "provenance": "pattern_synthetic",
+      "reviewed": false,
+      "clean": false,
+      "tp": [],
+      "fp": [
+        "BENEFITS_WITHOUT_RISK"
+      ],
+      "fn": [
+        "RATING_NO_DISCLOSURE",
+        "BENEFITS_WITHOUT_RISK"
+      ],
+      "ungrounded": 0,
+      "cite_ok": 0,
+      "pred_cats": [
+        "BENEFITS_WITHOUT_RISK"
+      ],
+      "status": "miss+fp",
+      "flags": [
+        {
+          "category": "BENEFITS_WITHOUT_RISK",
+          "span": "guarantee future results"
+        }
+      ]
+    },
+    {
+      "id": "pg_performance",
+      "provenance": "pattern_synthetic",
+      "reviewed": false,
+      "clean": false,
+      "tp": [],
+      "fp": [],
+      "fn": [
+        "HYPOTHETICAL_PERFORMANCE"
+      ],
+      "ungrounded": 0,
+      "cite_ok": 0,
+      "pred_cats": [],
+      "status": "miss",
+      "flags": []
+    },
+    {
+      "id": "pg_testimonials",
+      "provenance": "pattern_synthetic",
+      "reviewed": false,
+      "clean": false,
+      "tp": [],
+      "fp": [],
+      "fn": [
+        "TESTIMONIAL_NO_DISCLOSURE"
+      ],
+      "ungrounded": 0,
+      "cite_ok": 0,
+      "pred_cats": [],
+      "status": "miss",
+      "flags": []
+    },
+    {
+      "id": "pg_blog_pick",
+      "provenance": "pattern_synthetic",
+      "reviewed": false,
+      "clean": false,
+      "tp": [],
+      "fp": [],
+      "fn": [
+        "UNBALANCED_SPECIFIC_ADVICE"
+      ],
+      "ungrounded": 0,
+      "cite_ok": 0,
+      "pred_cats": [],
+      "status": "miss",
+      "flags": []
+    },
+    {
+      "id": "pg_linkedin_award",
+      "provenance": "pattern_synthetic",
+      "reviewed": false,
+      "clean": false,
+      "tp": [],
+      "fp": [],
+      "fn": [
+        "RATING_NO_DISCLOSURE",
+        "UNFAIR_PERFORMANCE_PRESENTATION"
+      ],
+      "ungrounded": 0,
+      "cite_ok": 0,
+      "pred_cats": [],
+      "status": "miss",
+      "flags": []
+    },
+    {
+      "id": "pg_clean_services",
+      "provenance": "pattern_synthetic",
+      "reviewed": false,
+      "clean": true,
+      "tp": [],
+      "fp": [
+        "BENEFITS_WITHOUT_RISK"
+      ],
+      "fn": [],
+      "ungrounded": 0,
+      "cite_ok": 0,
+      "pred_cats": [
+        "BENEFITS_WITHOUT_RISK"
+      ],
+      "status": "false_positive",
+      "flags": [
+        {
+          "category": "BENEFITS_WITHOUT_RISK",
+          "span": "risk-free"
+        }
+      ]
+    },
+    {
+      "id": "pg_newsletter",
+      "provenance": "pattern_synthetic",
+      "reviewed": false,
+      "clean": false,
+      "tp": [],
+      "fp": [
+        "BENEFITS_WITHOUT_RISK",
+        "GROSS_WITHOUT_NET"
+      ],
+      "fn": [
+        "GROSS_WITHOUT_NET",
+        "UNSUBSTANTIATED_CLAIM"
+      ],
+      "ungrounded": 0,
+      "cite_ok": 0,
+      "pred_cats": [
+        "BENEFITS_WITHOUT_RISK",
+        "GROSS_WITHOUT_NET"
+      ],
+      "status": "miss+fp",
+      "flags": [
+        {
+          "category": "BENEFITS_WITHOUT_RISK",
+          "span": "guarantees you"
+        },
+        {
+          "category": "GROSS_WITHOUT_NET",
+          "span": "1% gross for the quarter, and our AI-powered rebalancing engine guarantees you'll never miss an opportunity"
+        }
+      ]
+    },
+    {
+      "id": "pg_clean_about",
+      "provenance": "pattern_synthetic",
+      "reviewed": false,
+      "clean": true,
+      "tp": [],
+      "fp": [],
+      "fn": [],
+      "ungrounded": 0,
+      "cite_ok": 0,
+      "pred_cats": [],
+      "status": "ok",
+      "flags": []
+    },
+    {
+      "id": "pg_reviews",
+      "provenance": "pattern_synthetic",
+      "reviewed": false,
+      "clean": false,
+      "tp": [],
+      "fp": [],
+      "fn": [
+        "TESTIMONIAL_NO_DISCLOSURE"
+      ],
+      "ungrounded": 0,
+      "cite_ok": 0,
+      "pred_cats": [],
+      "status": "miss",
+      "flags": []
+    }
+  ]
+}
