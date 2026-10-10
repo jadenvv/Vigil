@@ -142,3 +142,53 @@ def test_empty_serp_body_warns_and_returns_nothing(sandbox, monkeypatch, capsys)
 def test_normalize_drops_tracking_params_only():
     assert discover.normalize("https://il.linkedin.com/company/x?originalSubdomain=il") == "https://linkedin.com/company/x"
     assert discover.normalize("https://f.example/a?utm_source=x&page=2&trk=y") == "https://f.example/a?page=2"
+
+
+def test_github_pages_subpath_is_the_site(sandbox, monkeypatch):
+    """The demo lives at user.github.io/repo/: fetch /repo/sitemap.xml (not the 404ing account root),
+    and treat another repo on the same github.io account as a third party."""
+    monkeypatch.setenv("BRIGHTDATA_SERP_ZONE", "serp_zone")
+    root = "https://u.github.io/firm-demo/"
+    fetched = []
+
+    def site(req):
+        fetched.append(req.url.path)
+        if req.url.path == "/firm-demo/":
+            return httpx.Response(200, text='<a href="about.html">A</a> <a href="/other-repo/x.html">X</a>')
+        if req.url.path == "/firm-demo/sitemap.xml":
+            return httpx.Response(200, text=f"<urlset><url><loc>{root}index.html</loc></url>"
+                                            f"<url><loc>{root}blog/post.html</loc></url></urlset>")
+        if req.url.path == "/firm-demo/robots.txt":
+            return httpx.Response(200, text=f"Sitemap: {root}sitemap.xml\nSitemap: {root}more.xml\n")
+        if req.url.path == "/firm-demo/more.xml":
+            return httpx.Response(200, text=f"<urlset><url><loc>{root}fees.html</loc></url></urlset>")
+        return httpx.Response(404)
+
+    def bd(req):
+        return httpx.Response(200, json={"organic": [{"link": "https://u.github.io/advisorquill-demo/firms/f.html"},
+                                                     {"link": f"{root}blog/post.html"}]})
+    rows = discover.discover("Firm", "u.github.io/firm-demo/index.html", httpx.Client(transport=httpx.MockTransport(site)),
+                             httpx.Client(transport=httpx.MockTransport(bd)))
+    by = {r["url"]: r for r in rows}
+    assert "/sitemap.xml" not in fetched and fetched.count("/firm-demo/more.xml") == 1
+    assert {u for u, r in by.items() if r["source"] == "site"} == {
+        f"{root}index.html", f"{root}about.html", f"{root}blog/post.html", f"{root}fees.html"}  # folder form dropped
+    aq = by["https://u.github.io/advisorquill-demo/firms/f.html"]
+    assert aq["source"] == "serp" and aq["channel"] == "review_site"
+    assert "https://u.github.io/other-repo/x.html" not in by
+
+
+def test_personal_social_and_net_worth_spam_dropped():
+    for u in ("https://instagram.com/hartwell", "https://forbes.com/profile/jane-doe",
+              "https://facebook.com/profile.php?id=1", "https://facebook.com/people/Jane/1",
+              "https://facebook.com/hartwell/posts/123", "https://celeb.example/hartwell-net-worth-2026"):
+        assert not discover.keep(discover.normalize(u)), u
+    assert discover.keep(discover.normalize("https://facebook.com/hartwellwealth"))
+
+
+def test_press_and_podcast_queries_and_channels():
+    qs = [q.format(firm="F") for q in discover.SERP_QUERIES]
+    assert any("press release" in q for q in qs) and any("podcast" in q for q in qs)
+    assert discover.guess_channel("https://www.businesswire.com/news/home/1/en/F-announces") == "press"
+    assert discover.guess_channel("https://pod.example/episodes/f-interview") == "other"
+    assert discover.guess_channel("https://podcasts.apple.com/us/podcast/x/id1") == "other"

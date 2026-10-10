@@ -34,8 +34,13 @@ export function guessChannel(url: string): Channel {
   const host = u.host.toLowerCase();
   const path = u.pathname.toLowerCase();
   if (host.includes("linkedin.com")) return "linkedin";
-  if (["yelp.", "google.", "trustpilot.", "glassdoor.", "wiseradvisor", "smartasset"].some((s) => host.includes(s))) {
+  if (["yelp.", "google.", "trustpilot.", "glassdoor.", "wiseradvisor", "smartasset"].some((s) => host.includes(s)) ||
+      (host + path).includes("advisorquill")) { // path too: the AdvisorQuill demo lives on a github.io subpath
     return "review_site";
+  }
+  if ((host + path).includes("podcast") || path.includes("/episode") ||
+      (host === "open.spotify.com" && (path.startsWith("/show/") || path.startsWith("/episode/")))) {
+    return "other"; // podcast / interview appearance; the Page contract has no podcast channel
   }
   if (["prnewswire", "businesswire", "globenewswire"].some((s) => host.includes(s)) ||
       path.includes("/press") || path.includes("/news")) return "press";

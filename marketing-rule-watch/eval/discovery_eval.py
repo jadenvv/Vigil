@@ -13,7 +13,7 @@ Needs httpx (same as crawl/). Scores per scenario:
   third-party recall   relevant off-site pages found / relevant (the hypothesis-1 number)
   labelled off-site    of those found, how many came out with source="serp" (not mistaken for own site)
   off-site precision   relevant / all off-site URLs returned (wrong-firm namesakes count against it)
-  personal leaks       LinkedIn /in/ profiles returned (must be 0)
+  personal leaks       personal profiles returned (must be 0)
   duplicates returned  same page under a second URL (tracking params normalize() should strip)
   channel accuracy     guess_channel() vs the label, on relevant pages found
 """
@@ -69,18 +69,31 @@ def site_handler(site_root: str):
 
 
 def search(index: list[dict], query: str) -> list[dict]:
-    """Tiny Google: quoted phrases and bare words must all appear; site: restricts the host."""
+    """Tiny Google. Every term must match; `A OR B` matches either; site: restricts the host.
+
+    The haystack is title + text + the URL's words, since Google also matches terms in the URL
+    (moneywisepodcast.example/episodes/... matches "podcast"). Added in v2 along with the OR queries:
+    a simulator change so it can read the new queries, not a tweak to the labels.
+    """
     site = re.search(r"site:(\S+)", query)
     q = re.sub(r"site:\S+", "", query)
-    phrases = re.findall(r'"([^"]+)"', q)
-    words = re.sub(r'"[^"]+"', "", q).split()
+    terms = re.findall(r'"[^"]+"|\S+', q)
+    groups, i = [], 0  # each group is a list of alternatives; a term followed by OR joins the next one
+    while i < len(terms):
+        alts = [terms[i].strip('"').lower()]
+        while i + 2 < len(terms) and terms[i + 1] == "OR":
+            alts.append(terms[i + 2].strip('"').lower())
+            i += 2
+        groups.append(alts)
+        i += 1
     hits = []
     for d in index:
-        hay = (d["title"] + " " + d["text"]).lower()
+        url_words = " ".join(re.split(r"[^a-z0-9]+", d["url"].lower()))
+        hay = (d["title"] + " " + d["text"]).lower() + " " + url_words
         host = urlparse(d["url"]).netloc.lower()
         if site and not host.removeprefix("www.").endswith(site.group(1).lower()):
             continue
-        if all(p.lower() in hay for p in phrases) and all(w.lower() in hay for w in words):
+        if all(any(a in hay for a in alts) for alts in groups):
             hits.append(d)
     return hits[:TOP_K]
 

@@ -57,8 +57,11 @@ def guess_channel(url: str) -> str:
     path = urlparse(url).path.lower()
     if "linkedin.com" in host:
         return "linkedin"
-    if any(s in host for s in ("yelp.", "google.", "trustpilot.", "glassdoor.", "wiseradvisor", "smartasset")):
+    if any(s in host for s in ("yelp.", "google.", "trustpilot.", "glassdoor.", "wiseradvisor", "smartasset")) \
+            or "advisorquill" in host + path:  # path too: the AdvisorQuill demo lives on a github.io subpath
         return "review_site"
+    if "podcast" in host + path or "/episode" in path or (host == "open.spotify.com" and path.startswith(("/show/", "/episode/"))):
+        return "other"  # podcast / interview appearance; the Page contract has no podcast channel
     if any(s in host for s in ("prnewswire", "businesswire", "globenewswire")) or "/press" in path or "/news" in path:
         return "press"
     if "/blog" in path or "/insights" in path or "/posts" in path:

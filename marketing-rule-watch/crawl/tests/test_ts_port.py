@@ -15,7 +15,10 @@ pytestmark = pytest.mark.skipif(not shutil.which("node"), reason="node not insta
 
 URLS = ["https://www.linkedin.com/company/x", "https://www.yelp.com/biz/x", "https://www.prnewswire.com/n",
         "https://firm.example/press/a", "https://firm.example/insights/q3", "https://firm.example/about",
-        "https://firm.example/news", "https://firm.example/posts/1"]
+        "https://firm.example/news", "https://firm.example/posts/1",
+        "https://user.github.io/advisorquill-demo/firms/q.html", "https://www.moneywisepodcast.example/episodes/x",
+        "https://podcasts.apple.com/us/podcast/x/id1", "https://open.spotify.com/episode/abc",
+        "https://firm.example/media/episode-12", "https://open.spotify.com/artist/x"]
 TEXTS = ["", "short", SAMPLE, SAMPLE * 4, "x" * 13000, "# A\n\n\n\nB\n   \n# C\n" * 900, "Café — naïve “quotes”\n\n" * 400]
 
 
