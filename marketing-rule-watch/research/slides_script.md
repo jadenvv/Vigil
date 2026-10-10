@@ -15,8 +15,11 @@ Paste the three cards below the line into Gamma → Paste in text → **Preserve
 - The median SEC-registered adviser has **8 employees**. Nobody's job is watching every page.
 - **AI-written content is growing that pile.** Posts drafted in seconds get published faster than anyone can review them, and each one can carry the same one-sentence risk.
 
-> "… you're probably missing such a a global view"
-> — Sense interviewee
+> "I put the name of the firm into a search, um, and said the name of the firm news today."
+> — Sense interviewee, on the search they run by hand **every week** to find what skipped review
+
+> "you're gonna have to have a person or people go through and review them and make judgment calls." … "you're probably missing such a a global view"
+> — a second Sense interviewee, asked how marketing issues slip through
 
 ---
 
@@ -51,7 +54,7 @@ Keyword baseline → Vigil. One run each, on synthetic test cases we wrote; not 
 
 Order: **Slide 1 → Slide 2 → live demo → Slide 3.** Slide 2 sets up the demo, so keep it short and let the app show the details.
 
-**Slide 1 (30 s).** The SEC fines small advisers for single sentences: $75k for "no conflicts of interest" on a website. These firms have about 8 people. One person we interviewed through Sense said that reviewing by hand, you're probably missing a global view. And AI-written posts mean there's more to review every month, published faster than anyone can read them.
+**Slide 1 (30 s).** The SEC fines small advisers for single sentences: $75k for "no conflicts of interest" on a website. These firms have about 8 people. Today the check is manual. One person we interviewed through Sense types the firm's name into a search engine every week. Another said review means a person going through pages and making judgment calls, and that way you're probably missing a global view. And AI-written posts mean there's more to review every month, published faster than anyone can read them.
 
 **Slide 2 (20 s).** Vigil does that search for them, on every page. Four steps: discover, capture, detect, review. Let me show you.
 
