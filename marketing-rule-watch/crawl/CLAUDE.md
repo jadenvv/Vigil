@@ -50,37 +50,37 @@ Crawl from your laptop and give P2 a JSON/CSV of `Page` rows to import. Re-run b
 | P2 | Crawl working inside Base44 | **2:30** |
 | P4 | A few real crawled pages to sanity-check the detector | 2:00 |
 
-## Status and hand-off (updated 1:40 PM)
+## Status and hand-off (updated 2:10 PM)
 
-### Shipped on `main` (tested offline: `python3 -m pytest -q crawl/tests`, 35 pass, no credits spent)
+### Shipped on `main` (`python3 -m pytest -q crawl/tests`: 41 pass offline, no credits)
 | File | What | Live-tested? |
 |---|---|---|
-| `fetch.py` | URL → `Page` JSON (+ PNG screenshot, sha256, UTC `fetched_at`), `chunk()` with char offsets | **No** (blocked, see below) |
-| `discover.py` | firm + domain → ≤25 deduped, channel-labelled URLs (homepage links + sitemap for free, then Bright Data SERP). Drops personal LinkedIn `/in/` profiles. Writes `out/urls.txt` for `fetch.py --urls-file` | Own-site part only |
-| `snapshot.py` | Version history per URL, `difflib` diff on change, `as_of(url, date)` | Yes (no network needed) |
-| `base44/brightdata.ts` | Dependency-free TS port of `fetch.py` for Base44. Parity with Python is tested through Node | No |
-| `base44/scan.entry.ts` | Reference `scan` backend function: admin only, ≤25 URLs, sequential, no retries | No (not deployed) |
+| `fetch.py` | URL → `Page` JSON (+ PNG screenshot, sha256, UTC `fetched_at`), `chunk()` with char offsets | Via its TS port (below) |
+| `discover.py` | firm + domain → ≤25 deduped, channel-labelled URLs: homepage links + sitemap (free), then Bright Data SERP for LinkedIn / reviews / "top advisor". At least a third of the slots go to off-site hits. Drops personal LinkedIn `/in/` profiles and tracking params. Writes `out/urls.txt` for `fetch.py --urls-file` | **Yes**, 2 runs on a public business (SERP shape `organic[].link` confirmed) |
+| `snapshot.py` | Version history per URL, `difflib` diff on change, `as_of(url, date)` | Yes (no network) |
+| `base44/brightdata.ts` | TS port of `fetch.py` for Base44, parity-tested against Python. Markdown and screenshot now fetched **in parallel** | **Yes**: example.com in 12.9 s total (7.4 s markdown, 12.8 s screenshot, 89 KB PNG) vs ~20 s back to back |
+| `base44/scan.entry.ts` | `scan` backend function: admin only, ≤25 URLs, sequential URLs, no retries | **Yes, by P2 inside Base44** (2 pages + screenshots, HTTP 200) |
 
-### Blocker: Bright Data zones
-The token works, but Bright Data reports `zone "web_unlocker1" not found` (same for `serp_api1`), and the token's active-zone list is empty. Either the zones aren't active yet, or the token belongs to a different account. Until this is fixed, **nothing has run live** and the 1:45 Page JSON + screenshot hand-off to P2 slips.
-Needed in `.env` (and later as Base44 secrets): `BRIGHTDATA_TOKEN`, `BRIGHTDATA_ZONE` (Web Unlocker), `BRIGHTDATA_SERP_ZONE` (SERP API, discovery only).
+Zones (both active): Web Unlocker `web_unlocker1`, SERP `serp_api1`. Set in `.env` as `BRIGHTDATA_ZONE` / `BRIGHTDATA_SERP_ZONE`.
+
+### Known live quirks
+- **Speed:** ~13 s per URL with a screenshot (the screenshot is the slow part). The Base44 docs we have don't state a function time limit (**VERIFY**), so keep P2's batches of 5 per `scan` call.
+- **SERP:** one query returned HTTP 200 with an empty body after ~50 s. It's logged as a warning and not retried; that query just contributes no URLs.
+- **Parallel fetch cost:** a screenshot credit is spent even when the markdown fetch for that URL fails.
 
 ### For P1
-- **1:45 hand-off is late** because of the zone blocker above. A new time comes once a live fetch works.
-- Bright Data track claim: today the crawl code is ready for Base44 but **has not run inside Base44**. Don't claim that until P2's `scan` returns Page rows from a live call.
-- Need from you: Devin's demo-site URL as soon as it's live.
+- **Bright Data track:** Bright Data runs **inside Base44** (P2's `scan` run, 2 pages, HTTP 200). Still ask the Bright Data mentor whether that counts, and don't claim more than that.
+- Discovery's off-site search works live, so the "risk lives outside the review workflow" story can be shown with real LinkedIn/review URLs. It's a laptop script today, not in the app.
+- Still need: Devin's demo-site URL. Crawling it is the next P3 step.
 - `.mcp.json` (committed by a teammate) contains the Sense token and a Bright Data token. Rotate both and swap it for `.mcp.json.example`.
 
 ### For P2
-- **Copy, don't rewrite:** `crawl/base44/brightdata.ts` → `base44/app/base44/shared/brightdata.ts`, `crawl/base44/scan.entry.ts` → `base44/app/base44/functions/scan/entry.ts`.
-- `scan` input `{firm_id, urls[], screenshot?=true}` → output `{created, failed: [{url, error}], log[]}`. It writes `Page` rows as `{firm_id, ...Page}` via `asServiceRole`, with `screenshot_ref` set to the `UploadFile` URL (or `""` if the screenshot or upload failed, so show the "screenshot unavailable" placeholder).
-- Secrets: `npx base44 secrets set --env-file ../../.env` sets `BRIGHTDATA_TOKEN` and `BRIGHTDATA_ZONE`.
-- **VERIFY on first deploy:** (1) `Core.UploadFile` accepts a `File` built server-side, (2) `Page` RLS lets the admin/service role create rows.
+- **Re-copy `crawl/base44/brightdata.ts` → `base44/app/base44/shared/brightdata.ts` and redeploy functions** to get the parallel fetch (~35% faster per URL). Same exports, same `scan` input/output; `scan.entry.ts` didn't change.
+- `scan` input `{firm_id, urls[], screenshot?=true}` → output `{created, failed: [{url, error}], log[]}`. `screenshot_ref` is the `UploadFile` URL, or `""` if the screenshot or upload failed (show the "screenshot unavailable" placeholder).
+- Keep `SCAN_BATCH_SIZE = 5` until someone confirms Base44's function time limit.
 - Chunk offsets from `chunk()` are UTF-16 units in TS, so they line up with `markdown.indexOf(span)` in the UI.
-- Snapshots: `snapshot.py` runs on the laptop for now. A `Snapshot` entity only if the timeline stretch goal gets picked up.
-- Plan B (no outbound calls): I run `python3 crawl/fetch.py --urls-file crawl/out/urls.txt --screenshot --out crawl/out/pages.json` and you import that file.
+- Snapshots: `snapshot.py` runs on the laptop. A `Snapshot` entity only if the timeline stretch goal gets picked up.
 
-### Next for P3, in order
-1. Fix zones → live fetch on 2–3 public pages.
-2. Crawl Devin's site → send P2 the Page JSON + one screenshot, and P4 a few real pages.
-3. Pair with P2: set secrets, deploy `scan`, run it on the demo site.
+### Next for P3
+1. Crawl Devin's site when it's live → Page JSON + one screenshot to P2, a few real pages to P4. Then the real scan → detect run replaces the seeded demo data (3:00 goal).
+2. Optional: a `discover` backend function so the app's Setup screen can suggest URLs (Bright Data SERP inside Base44).
