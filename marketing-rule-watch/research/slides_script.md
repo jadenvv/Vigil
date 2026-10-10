@@ -48,10 +48,14 @@ Scan → flag with evidence → suggested rewrite → a person approves, edits o
 **On a real crawl of our fictional demo firm (10 pages, 11 planted issues):**
 Vigil found **9 of 11**, with **0 false alarms** and **0 flags on clean content**. [[update if the final run changed]]
 
-**Why not a keyword list?** That's how compliance teams picture this tool today:
+**People don't know what AI can do.** We described Vigil, an AI tool, to a compliance professional. They assumed it was keyword matching that can't keep up with new wording:
 
+> "I just don't think any... everything can be caught because people continue to use new words that that aren't part of the the typical lexicon"
+>
 > "When you find new things, find new words that mean the same thing, you're just adding to that list of words"
-> — compliance tester
+> — compliance tester, hearing Vigil described
+
+That's a word list, not AI. Even someone whose job is catching misleading marketing didn't know a model can read for meaning.
 
 Vigil reads for meaning. On the demo site, "Our clients have never lost money in a down year." has no trigger word: the keyword list misses it and flags the risk disclaimer ("guarantee future results") instead. Vigil flags the promise and leaves the disclaimer alone.
 
