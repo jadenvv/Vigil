@@ -1,5 +1,5 @@
 // Eval contract: POST {text, channel} -> {flags: [...], mode}. No writes.
-// ADMIN ONLY while the InvokeLLM quota is scarce: anonymous callers could spend it all.
+// ADMIN ONLY while LLM quota is scarce (Groq key or InvokeLLM): anonymous callers could spend it all.
 // Reopen (drop the auth check) only for a planned eval run.
 // Used by: python3 eval/compliance_eval.py --detector https://<domain>/functions/detect-text
 import { createClientFromRequest } from "npm:@base44/sdk";
