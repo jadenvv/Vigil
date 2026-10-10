@@ -38,7 +38,7 @@ from urllib.parse import urlparse
 
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
-from compliance_eval import (DetectorUnavailable, _flags, aggregate, load_cases, load_detector,  # noqa: E402
+from compliance_eval import (DetectorUnavailable, _flags, _ssl_context, aggregate, load_cases, load_detector,  # noqa: E402
                              locate, score_case)
 
 SETS = ["cases.jsonl", "cases_holdout.jsonl", "cases_pages.jsonl", "cases_tester.jsonl", "cases_demo_site.jsonl",
@@ -135,7 +135,7 @@ def html_to_text(html: str) -> str:
 def _get(base: str, path: str) -> str:
     if base.startswith("http"):
         req = urllib.request.Request(base.rstrip("/") + "/" + path.lstrip("/"), headers={"User-Agent": "compliance-eval/1.0"})
-        with urllib.request.urlopen(req, timeout=30) as r:
+        with urllib.request.urlopen(req, timeout=30, context=_ssl_context()) as r:
             return r.read().decode("utf-8", "replace")
     return (Path(base) / path.lstrip("/")).read_text()
 

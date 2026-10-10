@@ -37,7 +37,9 @@ import argparse
 import hashlib
 import importlib
 import json
+import os
 import re
+import ssl
 import sys
 import time
 import urllib.error
@@ -141,6 +143,15 @@ def load_cases(path: Path) -> list[dict]:
 LLM_MODES = {"llm", "llm_groq"}
 
 
+def _ssl_context() -> ssl.SSLContext:
+    """Use certifi's CA bundle when installed: python.org builds on macOS ship without one."""
+    try:
+        import certifi
+        return ssl.create_default_context(cafile=certifi.where())
+    except ImportError:
+        return ssl.create_default_context()
+
+
 class DetectorUnavailable(RuntimeError):
     """The live detector can't answer (quota, HTTP error, non-LLM mode). Aborts the run, no report."""
 
@@ -149,14 +160,18 @@ def load_detector(spec: str):
     if spec == "baseline_regex":
         return baseline_regex, naive_rewrite
     if spec.startswith("http://") or spec.startswith("https://"):
+        # Base44 returns 403 to Python's default urllib User-Agent.
+        headers = {"Content-Type": "application/json", "User-Agent": "compliance-eval/1.0"}
+        # detect-text is admin only: pass an admin's Base44 token via EVAL_DETECTOR_TOKEN (never commit it).
+        if os.environ.get("EVAL_DETECTOR_TOKEN"):
+            headers["Authorization"] = f"Bearer {os.environ['EVAL_DETECTOR_TOKEN']}"
+        ctx = _ssl_context()
+
         def http_detect(text, channel=""):
             req = urllib.request.Request(
-                spec, data=json.dumps({"text": text, "channel": channel}).encode(),
-                # Base44 returns 403 to Python's default urllib User-Agent.
-                headers={"Content-Type": "application/json",
-                         "User-Agent": "compliance-eval/1.0"})
+                spec, data=json.dumps({"text": text, "channel": channel}).encode(), headers=headers)
             try:
-                with urllib.request.urlopen(req, timeout=60) as r:
+                with urllib.request.urlopen(req, timeout=60, context=ctx) as r:
                     body = json.loads(r.read())
             except (urllib.error.URLError, TimeoutError) as e:
                 raise DetectorUnavailable(f"HTTP request failed: {e}") from e
