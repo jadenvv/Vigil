@@ -29,6 +29,7 @@ Paste the three cards below the line into Gamma → Paste in text → **Preserve
 **Discover → Capture → Detect → Review**, inside one Base44 app
 
 - **Discover + capture:** Bright Data search and Web Unlocker find the firm's pages and pages about it, and save each with a screenshot, capture time and hash.
+- **Snapshots:** when a page changes, Vigil keeps a new dated copy and the exact diff, so a firm can show an examiner what any page said on any past date.
 - **Detect:** an LLM reads for meaning across 8 Marketing Rule categories. No quote found word for word on the page, no flag.
 - **Review:** the AI suggests a rewrite. The compliance officer approves, edits or dismisses, and every decision is logged.
 
@@ -47,8 +48,6 @@ On our fictional demo firm: found 9 of 11 planted issues, we fixed the 2 misses,
 
 Rows 2–3 changed after the calls; rows 1 and 4 were already built, and the calls told us to keep them. Keyword baseline → Vigil. One run each, on synthetic test cases we wrote; not reviewed by a compliance professional.
 
-**Next:** dated snapshots of every page, so a firm can show an examiner what its site said on any past date.
-
 ---
 
 ## Run of show (~3 minutes, not for the slides)
@@ -57,7 +56,7 @@ Order: **Slide 1 → Slide 2 → live demo → Slide 3.** Slide 2 sets up the de
 
 **Slide 1 (30 s).** The SEC fines small advisers for single sentences: $75k for "no conflicts of interest" on a website. These firms have about 8 people. Today the check is manual. One person we interviewed through Sense types the firm's name into a search engine every week. Another said review means a person going through pages and making judgment calls, and that way you're probably missing a global view. Compliance software exists, but it mostly reviews what staff submit or archives the firm's own site. Going out and reading what's already public about the firm is still a person with a search box. That's what we replace. And AI-written posts mean there's more to review every month, published faster than anyone can read them.
 
-**Slide 2 (20 s).** Vigil does that search for them, on every page. Four steps: discover, capture, detect, review. Let me show you.
+**Slide 2 (20 s).** Vigil does that search for them, on every page. Four steps: discover, capture, detect, review. And every capture is kept with its date, so when a page changes the firm can show an examiner exactly what it said before. Let me show you.
 
 **Demo (90 s).** Switch to the Base44 app.
 1. **Scan.** Enter the fictional firm, Quarrywick Wealth, and start a scan. Say: "Bright Data finds the firm's own pages and pages about it." If the live scan is slow, open the stored results (demo mode) and say so.
@@ -68,4 +67,4 @@ Order: **Slide 1 → Slide 2 → live demo → Slide 3.** Slide 2 sets up the de
 
 Fallback: a recorded video of the same five steps. Never demo on a real firm.
 
-**Slide 3 (30 s).** Each row is a worry we heard on a call. The biggest was false positives. We'd already built for precision, and the call told us to keep it that way: clean documents wrongly flagged went from 28% with keywords to 0%. A tester assumed AI meant a word list; reading for meaning took F1 from 0.70 to 0.98. These are our own synthetic cases, one run each. Next: dated snapshots, so a firm can prove what its site said on any date.
+**Slide 3 (30 s).** Each row is a worry we heard on a call. The biggest was false positives. We'd already built for precision, and the call told us to keep it that way: clean documents wrongly flagged went from 28% with keywords to 0%. A tester assumed AI meant a word list; reading for meaning took F1 from 0.70 to 0.98. These are our own synthetic cases, one run each.
