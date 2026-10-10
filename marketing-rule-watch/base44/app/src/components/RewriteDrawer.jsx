@@ -1,48 +1,67 @@
-// Phase 5: suggested rewrite with Approve / Edit / Reject, each writing a session-scoped Decision.
-// Hidden behind SHOW_REWRITE until Sense Check 2 is done.
+// Rewrite drawer: Approve / Edit / Dismiss, each writing a session-scoped Decision.
+// Suggestions are fetched only when the reviewer asks: each rewrite call costs LLM quota,
+// and calling on every flag view used up a monthly quota in one afternoon.
 import { useEffect, useState } from "react";
 import { base44 } from "@/api/base44Client";
 import { DecisionBadge } from "@/components/Badges";
 import { COPY, FETCH_REWRITE_SUGGESTIONS } from "@/lib/copy";
 import { recordDecision } from "@/lib/data";
 
+// Per flag id, for this page session, so reopening a flag never calls the LLM again.
+const suggestionCache = new Map();
+
 // rewrite writes nothing; it returns {original_text, suggested_text, flags_total, flags_cleared, placeholders}.
-// 503 = no model key yet, 502 = no usable suggestion, 401 = not allowed. Every failure still allows a manual edit.
+// 503 = no model available, 502 = no usable suggestion, 401 = not allowed.
 async function fetchSuggestion(flagId) {
-  if (!FETCH_REWRITE_SUGGESTIONS) return { status: "manual" };
   try {
     const res = await base44.functions.invoke("rewrite", { flag_id: flagId });
-    return { status: "ready", ...res.data };
+    const result = { status: "ready", ...res.data };
+    suggestionCache.set(flagId, result);
+    return result;
   } catch (error) {
     const httpStatus = error?.response?.status;
     console.warn("Rewrite unavailable:", httpStatus, error?.response?.data?.error ?? error?.message);
-    const message =
-      httpStatus === 503 ? COPY.rewriteUnavailable : httpStatus === 502 ? COPY.rewriteNoSuggestion : COPY.rewriteFailed;
-    // 503 means no model is configured at all: show a manual-only drawer instead of an error on every flag.
-    if (httpStatus === 503) return { status: "manual" };
-    return { status: "unavailable", message };
+    if (httpStatus === 503) {
+      const result = { status: "manual" };
+      suggestionCache.set(flagId, result);
+      return result;
+    }
+    if (httpStatus === 502) {
+      const result = { status: "unavailable", message: COPY.rewriteNoSuggestion };
+      suggestionCache.set(flagId, result);
+      return result;
+    }
+    // Network or unknown errors are not cached, so the reviewer can click Suggest again.
+    return { status: "unavailable", message: COPY.rewriteFailed, canRetry: true };
   }
 }
 
+function initialState(flagId) {
+  if (!FETCH_REWRITE_SUGGESTIONS) return { status: "manual" };
+  return suggestionCache.get(flagId) ?? { status: "idle" };
+}
+
 export default function RewriteDrawer({ flag, decision, onDecided }) {
-  const [suggestion, setSuggestion] = useState({ status: "loading" });
+  const [suggestion, setSuggestion] = useState(() => initialState(flag.id));
   const [editing, setEditing] = useState(false);
-  const [draft, setDraft] = useState("");
+  const [draft, setDraft] = useState(() => initialState(flag.id).suggested_text ?? flag.span);
   const [saving, setSaving] = useState(false);
   const [saveError, setSaveError] = useState(null);
 
   useEffect(() => {
-    let cancelled = false;
-    setSuggestion({ status: "loading" });
-    fetchSuggestion(flag.id).then((result) => {
-      if (cancelled) return;
-      setSuggestion(result);
-      setDraft(result.suggested_text ?? flag.span);
-    });
-    return () => {
-      cancelled = true;
-    };
+    const state = initialState(flag.id);
+    setSuggestion(state);
+    setDraft(state.suggested_text ?? flag.span);
+    setEditing(false);
   }, [flag.id, flag.span]);
+
+  const requestSuggestion = async () => {
+    if (suggestion.status === "loading") return;
+    setSuggestion({ status: "loading" });
+    const result = await fetchSuggestion(flag.id);
+    setSuggestion(result);
+    if (result.suggested_text) setDraft(result.suggested_text);
+  };
 
   const decide = async (action, finalText) => {
     setSaving(true);
@@ -58,46 +77,53 @@ export default function RewriteDrawer({ flag, decision, onDecided }) {
     }
   };
 
+  const { status } = suggestion;
   const suggested = suggestion.suggested_text;
   const placeholders = Array.isArray(suggestion.placeholders) ? suggestion.placeholders : [];
   // Bracketed facts like [X] must be filled in by a person before anything is approved.
   const unfilledInDraft = placeholders.filter((placeholder) => draft.includes(placeholder));
+  const showSecondColumn = editing || status === "loading" || status === "ready" || status === "unavailable";
+  const canSuggest = status === "idle" || (status === "unavailable" && suggestion.canRetry);
   const button = "rounded-md px-3 py-1.5 text-sm disabled:opacity-50";
   return (
     <section aria-label={COPY.rewriteTitle} className="rounded-lg border border-slate-200 bg-white p-4 text-sm">
       <div className="flex items-center gap-2">
-        <h2 className="font-semibold">{suggestion.status === "manual" ? COPY.manualRewriteTitle : COPY.rewriteTitle}</h2>
+        <h2 className="font-semibold">{status === "ready" ? COPY.rewriteTitle : COPY.manualRewriteTitle}</h2>
         <DecisionBadge decision={decision} />
       </div>
-      <div className={`mt-3 grid gap-3 ${suggestion.status === "manual" && !editing ? "" : "sm:grid-cols-2"}`}>
+      <div className={`mt-3 grid gap-3 ${showSecondColumn ? "sm:grid-cols-2" : ""}`}>
         <div>
           <h3 className="text-xs font-semibold uppercase tracking-wide text-slate-500">{COPY.originalLabel}</h3>
           <p className="mt-1 rounded bg-amber-50 p-2">{suggestion.original_text ?? flag.span}</p>
         </div>
-        <div hidden={suggestion.status === "manual" && !editing}>
-          <h3 className="text-xs font-semibold uppercase tracking-wide text-slate-500">
-            {suggestion.status === "manual" ? COPY.yourRewriteLabel : COPY.suggestedLabel}
-          </h3>
-          {suggestion.status === "loading" && <div className="mt-1 h-16 animate-pulse rounded bg-slate-200" />}
-          {suggestion.status === "unavailable" && !editing && (
-            <p className="mt-1 rounded bg-slate-50 p-2 text-slate-500">{suggestion.message}</p>
-          )}
-          {suggestion.status === "ready" && !editing && (
-            <p data-testid="suggested-text" className="mt-1 rounded bg-emerald-50 p-2">
-              {suggested}
-            </p>
-          )}
-          {editing && (
-            <textarea
-              aria-label={COPY.suggestedLabel}
-              value={draft}
-              onChange={(event) => setDraft(event.target.value)}
-              className="mt-1 h-28 w-full rounded border border-slate-300 p-2"
-            />
-          )}
-        </div>
+        {showSecondColumn && (
+          <div>
+            <h3 className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+              {status === "ready" ? COPY.suggestedLabel : COPY.yourRewriteLabel}
+            </h3>
+            {status === "loading" && !editing && (
+              <div aria-busy="true" aria-label="Loading suggestion" className="mt-1 h-16 animate-pulse rounded bg-slate-200" />
+            )}
+            {status === "unavailable" && !editing && (
+              <p className="mt-1 rounded bg-slate-50 p-2 text-slate-500">{suggestion.message}</p>
+            )}
+            {status === "ready" && !editing && (
+              <p data-testid="suggested-text" className="mt-1 rounded bg-emerald-50 p-2">
+                {suggested}
+              </p>
+            )}
+            {editing && (
+              <textarea
+                aria-label={COPY.yourRewriteLabel}
+                value={draft}
+                onChange={(event) => setDraft(event.target.value)}
+                className="mt-1 h-28 w-full rounded border border-slate-300 p-2"
+              />
+            )}
+          </div>
+        )}
       </div>
-      {suggestion.status === "ready" && typeof suggestion.flags_total === "number" && (
+      {status === "ready" && typeof suggestion.flags_total === "number" && (
         <p className="mt-2 text-xs text-slate-500">
           {COPY.flagsCleared(suggestion.flags_cleared ?? 0, suggestion.flags_total)}
         </p>
@@ -110,19 +136,29 @@ export default function RewriteDrawer({ flag, decision, onDecided }) {
       <div className="mt-4 flex flex-wrap gap-2">
         {!editing && (
           <>
-            {suggestion.status !== "manual" && (
-            <button
-              type="button"
-              disabled={saving || suggestion.status !== "ready" || placeholders.length > 0}
-              onClick={() => decide("approve", suggested)}
-              className={`${button} bg-slate-900 text-white hover:bg-slate-800`}
-            >
-              {COPY.approve}
-            </button>
+            {(canSuggest || status === "loading") && (
+              <button
+                type="button"
+                disabled={status === "loading" || saving}
+                onClick={requestSuggestion}
+                className={`${button} bg-slate-900 text-white hover:bg-slate-800`}
+              >
+                {status === "loading" ? COPY.suggesting : COPY.suggestRewrite}
+              </button>
+            )}
+            {status === "ready" && (
+              <button
+                type="button"
+                disabled={saving || placeholders.length > 0}
+                onClick={() => decide("approve", suggested)}
+                className={`${button} bg-slate-900 text-white hover:bg-slate-800`}
+              >
+                {COPY.approve}
+              </button>
             )}
             <button
               type="button"
-              disabled={saving || suggestion.status === "loading"}
+              disabled={saving || status === "loading"}
               onClick={() => setEditing(true)}
               className={`${button} border border-slate-300 hover:bg-slate-50`}
             >
