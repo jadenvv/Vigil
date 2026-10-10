@@ -20,28 +20,26 @@ Optional context line, appended at the end (it is a fact, not an instruction):
 ## Greenlight version (what we actually send for Check 1)
 This frames the call as "should we build this?" Testers hear the description word for word, and instructions get refused, so the framing is stated as a fact about the project, not as a command to the tester.
 
-**Description:**
-> This is an early-stage idea that hasn't been built yet. Our team is deciding whether it's worth building. An AI tool for compliance officers at small investment advisory firms. It scans everything a firm has published online, including its website, blog, social posts and third-party pages. It flags language that may conflict with the SEC Marketing Rule, such as guarantees, testimonials without disclosures, outdated awards, or performance numbers without the required context. Each flag shows the exact quote and where it appeared. It keeps dated snapshots of what each page said, and drafts a compliant rewrite for the compliance officer to approve.
+**Description (succinct, about 65 words; testers hear it word for word):**
+> An early idea we haven't built yet. We're deciding whether to build it. An AI tool for compliance officers at small investment advisory firms. It scans what the firm has published online, including its website, blog, social posts and third-party pages. It flags language that may break the SEC Marketing Rule, showing the exact quote and where it appeared. It keeps dated snapshots of each page and drafts a compliant rewrite for the officer to approve.
 
-**Questions (greenlight first, then H1 and H2):**
-1. If this existed today, would you use it? What would make it a must-have rather than a nice-to-have?
-2. What would stop you from using it?
-3. Walk me through the last time you found something published about your firm that hadn't gone through review. Where was it, and how did you find it?
-4. If an examiner asked what your website said on a specific date last year, how would you show them today?
-5. What's the one thing it would have to do well for you to tell us "build this"?
+**Questions (3, short):**
+1. Would you use this? What would stop you?
+2. When did you last find something published about your firm that skipped review?
+3. How would you show an examiner what your website said on a past date?
 
 **Paste-ready request for Claude Code (once the Sense Check MCP is connected):**
 ```
 Run a sense check on our idea. We want a greenlight on whether to build it.
-Description: <the greenlight description above, verbatim>
+Description: <the description above, verbatim>
 Who it's for: compliance officers at small SEC-registered investment advisory firms.
 Theme: catch what humans miss.
-No link or screenshots yet; this is the idea stage.
-Questions: <the 5 questions above>
+No link or screenshots yet; idea stage.
+Questions: <the 3 questions above>
 Show me the preview. Do not launch until I say "launch".
 ```
 
-**How we read the result.** A greenlight means at least 2 of 3 testers describe a real past incident (Q3) or a real gap in proof (Q4), and nobody names a blocker in Q2 that we can't design around. Log the quotes in `sense_checks.md` verbatim.
+**How we read the result.** A greenlight means at least 2 of 3 testers describe a real past incident (Q2) or a real gap in proof (Q3), and nobody names a blocker in Q1 that we can't design around. Log the quotes in `sense_checks.md` verbatim.
 
 ## Evidence (public sources, checked Oct 10 2026)
 Use these for the pitch and the mentor conversation. Keep firm names out of the product and slides.
