@@ -4,9 +4,11 @@ import { buildMessages, chunks, parseFlags, postprocess, ruleCandidates } from "
 import { DETECT_PROMPT, DETECT_SCHEMA } from "./prompts.ts";
 import { callLLM } from "./llm.ts";
 
+// "llm"   = DETECT_PROMPT through Base44 InvokeLLM (shared/llm.ts).
 // "rules" = P4's keyword fallback: free, deterministic, NOT AI. Don't call it AI in UI or pitch.
-// "llm"   = DETECT_PROMPT through callLLM. Switch once ANTHROPIC_API_KEY is set.
-export const MODE: "llm" | "rules" = "rules";
+// An LLM failure never falls back to rules silently: those chunks yield zero flags and the
+// result reports mode "llm_error", so a partial answer is never passed off as a full one.
+export const MODE: "llm" | "rules" = "llm";
 export const MIN_CONF = 0.5; // from P4's eval
 export const MAX_TEXT = 200_000; // guard for a single page
 
@@ -30,9 +32,15 @@ export interface Flag {
   why: string;
 }
 
+export interface DetectResult {
+  flags: Flag[];
+  mode: "llm" | "rules" | "llm_error";
+}
+
 // deno-lint-ignore no-explicit-any
-export async function detectText(base44: any, text: string, channel = "", mode = MODE): Promise<Flag[]> {
+export async function detectText(base44: any, text: string, channel = "", mode = MODE): Promise<DetectResult> {
   const flags: Flag[] = [];
+  let failedChunks = 0;
   for (const chunk of chunks(text, 6000)) {
     // deno-lint-ignore no-explicit-any
     let cands: any[] = [];
@@ -44,6 +52,7 @@ export async function detectText(base44: any, text: string, channel = "", mode =
         cands = parseFlags(await callLLM(base44, system, user, DETECT_SCHEMA)); // one call, no retry
       } catch (e) {
         console.log(`detect: chunk dropped (${(e as Error).message})`); // malformed or failed -> zero flags
+        failedChunks++;
         cands = [];
       }
     }
@@ -51,5 +60,8 @@ export async function detectText(base44: any, text: string, channel = "", mode =
     if (mode === "rules") for (const f of kept) f.why = PLAIN_WHY[f.category] ?? f.why;
     flags.push(...kept);
   }
-  return flags.filter((f) => text.includes(f.span)); // grounding: span must be an exact page substring
+  return {
+    flags: flags.filter((f) => text.includes(f.span)), // grounding: span must be an exact page substring
+    mode: failedChunks ? "llm_error" : mode,
+  };
 }
