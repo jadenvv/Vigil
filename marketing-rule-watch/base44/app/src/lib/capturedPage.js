@@ -45,9 +45,14 @@ export function prepareCapture(html, pageUrl, span) {
 // The span is grounded in the cleaned markdown, so strip markdown syntax to get the words a reader sees.
 export function visibleWords(span) {
   return span
-    .replace(/!\[[^\]]*\]\([^)]*\)/g, "")
-    .replace(/\[([^\]]*)\]\([^)]*\)/g, "$1")
-    .replace(/[*_`#>|\\]/g, "")
+    .replace(/!\[[^\]]*\]\((?:[^()]|\([^()]*\))*\)/g, "")
+    .replace(/\[([^\]]*)\]\((?:[^()]|\([^()]*\))*\)/g, "$1")
+    // Only markdown syntax: "#2" and "> 10%" inside a sentence are real text. No lookbehind (older Safari).
+    .replace(/^[ \t]*(#{1,6}|>)[ \t]*/gm, "")
+    .replace(/\*\*|__|[*`]/g, "")
+    .replace(/(^|\W)_+/g, "$1")
+    .replace(/_+(?=\W|$)/g, "")
+    .replace(/\\([\\`*_{}[\]()#+\-.!|>])/g, "$1")
     .replace(/\s+/g, " ")
     .trim();
 }
