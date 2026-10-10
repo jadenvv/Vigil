@@ -13,11 +13,12 @@ Paste the three cards below the line into Gamma → Paste in text → **Preserve
 - **$75,000:** one adviser, Sept 2025. Its website said "no conflicts of interest".
 - **9 advisers, $1.24M:** one day in Sept 2024. Claims on websites, third-party sites and social media.
 - The median SEC-registered adviser has **8 employees**. Nobody's job is watching every page.
+- **AI-written content is growing that pile.** Posts drafted in seconds get published faster than anyone can review them, and each one can carry the same one-sentence risk.
 
 > "I put the name of the firm into a search … and said the name of the firm news today."
 > — compliance tester, on how they find content that skipped review
 
-> "it's easy to do shortcuts. And so when that happens, you're probably missing such a a global view"
+> "… you're probably missing such a a global view"
 > — compliance tester
 
 ---
@@ -53,7 +54,7 @@ Keyword baseline → Vigil. One run each, on synthetic test cases we wrote; not 
 
 Order: **Slide 1 → Slide 2 → live demo → Slide 3.** Slide 2 sets up the demo, so keep it short and let the app show the details.
 
-**Slide 1 (30 s).** The SEC fines small advisers for single sentences: $75k for "no conflicts of interest" on a website. These firms have about 8 people. When we asked compliance testers how they catch content that skipped review, one said they search the firm's name. Another said manual review means shortcuts and no global view.
+**Slide 1 (30 s).** The SEC fines small advisers for single sentences: $75k for "no conflicts of interest" on a website. These firms have about 8 people. When we asked compliance testers how they catch content that skipped review, one said they search the firm's name. Another said that reviewing by hand, you're probably missing a global view. And AI-written posts mean there's more to review every month, published faster than anyone can read them.
 
 **Slide 2 (20 s).** Vigil does that search for them, on every page. Four steps: discover, capture, detect, review. Let me show you.
 
