@@ -35,6 +35,13 @@ export const COPY = {
   ruleLabel: "Rule reference",
   backToInbox: "Back to all issues",
   pageTextLabel: "Page text",
+  tabText: "Text",
+  tabCaptured: "Page as captured",
+  capturedCaption: (when: string) => `Captured ${when} · styles load from the live site`,
+  captureMissing: "No captured copy of this page yet. Showing the text instead.",
+  captureTooLarge: "This captured page is too large to show. Showing the text instead.",
+  captureFailed: "The captured page couldn't load. Showing the text instead.",
+  captureSpanMissing: "The flagged words couldn't be found in the captured page. Showing the text instead.",
   rewriteTitle: "Suggested rewrite",
   manualRewriteTitle: "Rewrite this quote",
   suggestRewrite: "Suggest a rewrite",
@@ -56,6 +63,9 @@ export const COPY = {
 };
 
 // Phase 5 rewrite drawer stays off until after Sense Check 2.
+// "Page as captured" tab: off until page-html returns captures for the demo pages.
+export const SHOW_PAGE_VIEW = false;
+
 export const SHOW_REWRITE = true;
 
 // When false, the drawer skips the rewrite call and offers Edit / Dismiss only,
