@@ -53,7 +53,7 @@ Schedule and cut order: `marketing-rule-watch/TIMELINE.md`. Pitch: `marketing-ru
 
 Update this table when a hand-off lands. Status reflects **what is pushed to git**. Work on someone's laptop doesn't count until it's pushed.
 
-Last updated: **2:05 PM**
+Last updated: **2:10 PM**
 
 | Workstream | Status | Evidence in repo |
 |---|---|---|
@@ -64,7 +64,7 @@ Last updated: **2:05 PM**
 | Devin demo site | ⏳ not in repo | `demo-site/` has only `CLAUDE.md` |
 | Crawl (`fetch.py`, screenshots) | 🟢 Bright Data runs **inside Base44**: `scan` fetched 2 test pages + screenshots (all HTTP 200, screenshots stored as public PNGs). Web Unlocker zone works (name not recorded here); SERP zone `serp_api1`. ~10–13 s per URL, so batch ≤5 | `crawl/`, `base44/app/base44/functions/scan` |
 | Detector (`engine/`) | 🔴 **Base44 integration quota exhausted at 1:58 PM: all LLM calls fail until the Builder plan is applied.** Was: live AI detection on Base44 `InvokeLLM` (mode `llm`), no Anthropic. Eval vs live `detect-text` (1:57 PM, 37 synthetic unreviewed cases): **F1 0.95** (P 0.91, R 1.00), clean docs flagged 0%, grounding 100%, pairs 8/8. Rewrite live (200, flags cleared 1/1) | `engine/`, `base44/app/base44/shared` |
-| Base44 app | 🟢 Demo mode live: https://marketing-rule-watch-a0747dd2.base44.app/demo (seeded fictional firm, 11 flags, 8/8 categories, no login, inbox ≈1.2 s, flag ≈2–4 s, 0 console errors). Next: scan/detect functions, then a real crawl replaces the seed. Detection is keyword mode until `.env` is filled | `base44/app/`, `base44/PLAN.md` |
+| Base44 app | 🟢 Demo live and verified twice after the 429 fix (`b912bb1`): 10/10 + 5/5 cold loads, ≈1 s to findings, 0 errors. Manual rewrite drawer (Edit/Dismiss) live. **Deploy freeze until 4:00.** AI features off until the Base44 quota is restored | `base44/app/`, `base44/PLAN.md` |
 | Rewrite, snapshots, Daytona | ⬜ later / stretch | — |
 
 ## 5. Hand-offs (the deadlines that matter)
