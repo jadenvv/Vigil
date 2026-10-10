@@ -150,13 +150,19 @@ function Screenshot({ page }) {
   }
   return (
     <a href={src} target="_blank" rel="noreferrer noopener" title={COPY.openScreenshot} className="block">
-      <img
-        src={src}
-        alt={`Screenshot of ${page.url}`}
-        data-testid="screenshot"
-        onError={() => setFailed(true)}
-        className="w-full rounded-lg border border-slate-200 hover:border-slate-400"
-      />
+      {/* Full-page captures can be thousands of pixels tall; scroll inside the panel instead of stretching the page. */}
+      <div
+        data-testid="screenshot-frame"
+        className="max-h-[60vh] overflow-y-auto rounded-lg border border-slate-200 hover:border-slate-400"
+      >
+        <img
+          src={src}
+          alt={`Screenshot of ${page.url}`}
+          data-testid="screenshot"
+          onError={() => setFailed(true)}
+          className="block w-full"
+        />
+      </div>
       <span className="mt-1 block text-xs text-slate-500">{COPY.openScreenshot}</span>
     </a>
   );
