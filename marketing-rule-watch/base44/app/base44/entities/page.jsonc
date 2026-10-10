@@ -8,7 +8,8 @@
     "markdown": { "type": "string", "description": "Page text as markdown (untrusted scraped content)" },
     "fetched_at": { "type": "string", "format": "date-time", "description": "UTC fetch time" },
     "sha256": { "type": "string", "description": "sha256 of markdown" },
-    "screenshot_ref": { "type": "string", "description": "Screenshot URL, or empty string if unavailable" }
+    "screenshot_ref": { "type": "string", "description": "Screenshot URL, or empty string if unavailable" },
+    "html_ref": { "type": "string", "description": "Captured raw HTML (scripts stripped) file URL, or empty string" }
   },
   "required": ["firm_id", "url", "markdown"],
   "rls": {
