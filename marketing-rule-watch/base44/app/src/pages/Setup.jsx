@@ -230,8 +230,12 @@ function SetupForm() {
     });
 
   // Sequential and no retries: Bright Data and LLM credits are finite.
+  // The demo firm's results are what testers see: never rescan it from here (findOrCreateFirm would
+  // create a duplicate firm and spend crawl credits).
+  const isDemoSite = Boolean(existing?.is_demo);
+
   const handleScan = async () => {
-    if (running || tooMany || !toScan.length) return;
+    if (running || tooMany || !toScan.length || isDemoSite) return;
     setRunning(true);
     setLog([]);
     setOutcome(null);
@@ -364,8 +368,16 @@ function SetupForm() {
           {existing && (
             <div data-testid="existing-firm" className="flex flex-wrap items-center gap-3 rounded-[10px] border border-paper-200 bg-white p-4 text-sm">
               <p className="min-w-0 flex-1 text-night-950">
-                Vigil already has results for <span className="font-medium">{existing.name}</span>. Open them, or scan the
-                pages below again.
+                {isDemoSite ? (
+                  <>
+                    <span className="font-medium">{existing.name}</span> is our demo firm; results are already captured.
+                  </>
+                ) : (
+                  <>
+                    Vigil already has results for <span className="font-medium">{existing.name}</span>. Open them, or scan
+                    the pages below again.
+                  </>
+                )}
               </p>
               <Link to={existing.is_demo ? "/demo" : `/firm/${existing.id}`} className={primary}>
                 Open results
@@ -412,19 +424,23 @@ function SetupForm() {
             />
           </details>
           <div className="flex flex-wrap items-center gap-3">
-            <button type="button" onClick={handleScan} disabled={running || tooMany || !toScan.length} className={primary}>
-              {running
-                ? "Scanning…"
-                : `${existing ? "Scan again:" : "Scan"} ${toScan.length} ${toScan.length === 1 ? "page" : "pages"}`}
-            </button>
+            {!isDemoSite && (
+              <button type="button" onClick={handleScan} disabled={running || tooMany || !toScan.length} className={primary}>
+                {running
+                  ? "Scanning…"
+                  : `${existing ? "Scan again:" : "Scan"} ${toScan.length} ${toScan.length === 1 ? "page" : "pages"}`}
+              </button>
+            )}
             {existing && (
-              <Link to={existing.is_demo ? "/demo" : `/firm/${existing.id}`} className={secondary}>
+              <Link to={existing.is_demo ? "/demo" : `/firm/${existing.id}`} className={isDemoSite ? primary : secondary}>
                 Open results
               </Link>
             )}
-            <span data-testid="selected-count" className={`text-sm ${tooMany ? "text-ember-700" : "text-night-600"}`}>
-              {toScan.length} selected (max {MAX_URLS})
-            </span>
+            {!isDemoSite && (
+              <span data-testid="selected-count" className={`text-sm ${tooMany ? "text-ember-700" : "text-night-600"}`}>
+                {toScan.length} selected (max {MAX_URLS})
+              </span>
+            )}
           </div>
         </section>
       )}
