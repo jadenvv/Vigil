@@ -148,6 +148,13 @@ Each phase ends with its verification step. **A phase isn't done until its check
 ### 3:00–4:00 · Sense Check 2: live bug fixes only
 - **No deploys while a tester is on a call**, unless the demo is broken. Keep a list instead.
 
+### Discovery-first Setup (approved 2:48; built during the freeze, deployed at 4:00)
+- **Why:** the manual 25-URL textarea is unusable. The product's claim is "it finds what you've published", so `/setup` should do the finding.
+- **Backend `discover`** (admin, writes nothing): `{name, domain, include_search=false}` → `{urls:[{url, channel, source: site|search, same_site}], searches_used, log}`. It ports `crawl/discover.py`: homepage links + `sitemap.xml` (free), plus an optional Bright Data SERP (3 queries), max 25, personal LinkedIn `/in/` dropped, no retries.
+- **Frontend:** name + domain → **Find pages** → own-site pages checked, search results **unchecked** with "check these are about your firm" → **Scan N pages** (batches of 5) → detect → inbox.
+- **Real-firm guard:** a search for a fictional name can surface real firms. The search toggle defaults off, and search results start unchecked.
+- **Not doing:** autofill from an SEC firm registry (real-firm risk, unknown API, and our user knows their own firm).
+
 ### Phase 5 · 4:00–5:30 · Top complaint, then rewrite
 - [ ] Fix the #1 complaint P1 sends (within 15 minutes of the check closing).
 - [ ] `rewrite` function + Rewrite drawer + `Decision` writes (P4's `rewrite.md` lands around 5:00; stub it before then).
