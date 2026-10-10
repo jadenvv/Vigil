@@ -74,13 +74,13 @@ export const COPY = {
 
 // Phase 5 rewrite drawer stays off until after Sense Check 2.
 // "Page as captured" tab: off until page-html returns captures for the demo pages.
-export const SHOW_PAGE_VIEW = false;
+export const SHOW_PAGE_VIEW = true;
 
 export const SHOW_REWRITE = true;
 
 // "Re-check now" on flag detail: off until the `recheck` function and the Recheck entity are deployed.
 // Open on the demo firm, to the firm's owner and to admins; capped at one Bright Data fetch per page per 10 min.
-export const SHOW_RECHECK = false;
+export const SHOW_RECHECK = true;
 
 // When false, the drawer skips the rewrite call and offers Edit / Dismiss only,
 // so no failed request ever reaches the console. Turn off again if the Base44 LLM quota runs out.
