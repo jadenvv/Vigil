@@ -142,7 +142,9 @@ def load_detector(spec: str):
         def http_detect(text, channel=""):
             req = urllib.request.Request(
                 spec, data=json.dumps({"text": text, "channel": channel}).encode(),
-                headers={"Content-Type": "application/json"})
+                # Base44 returns 403 to Python's default urllib User-Agent.
+                headers={"Content-Type": "application/json",
+                         "User-Agent": "compliance-eval/1.0"})
             with urllib.request.urlopen(req, timeout=60) as r:
                 return json.loads(r.read())
         return http_detect, None
