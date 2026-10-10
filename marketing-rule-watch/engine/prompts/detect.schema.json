@@ -1,0 +1,24 @@
+{
+  "type": "object",
+  "properties": {
+    "flags": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "category": {
+            "type": "string",
+            "enum": ["UNSUBSTANTIATED_CLAIM", "BENEFITS_WITHOUT_RISK", "UNBALANCED_SPECIFIC_ADVICE",
+                     "UNFAIR_PERFORMANCE_PRESENTATION", "GROSS_WITHOUT_NET", "HYPOTHETICAL_PERFORMANCE",
+                     "TESTIMONIAL_NO_DISCLOSURE", "RATING_NO_DISCLOSURE"]
+          },
+          "span": {"type": "string"},
+          "confidence": {"type": "number"},
+          "why": {"type": "string"}
+        },
+        "required": ["category", "span", "confidence", "why"]
+      }
+    }
+  },
+  "required": ["flags"]
+}
