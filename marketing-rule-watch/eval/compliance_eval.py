@@ -382,6 +382,8 @@ def main() -> None:
     ap.add_argument("--no-save", action="store_true")
     ap.add_argument("-v", "--verbose", action="store_true")
     ap.add_argument("--compare", nargs=2, metavar=("A.json", "B.json"))
+    ap.add_argument("--expect-provider", metavar="NAME",
+                    help="stop (no report) as soon as a case is answered by another provider, e.g. base44")
     a = ap.parse_args()
     if a.compare:
         return do_compare(*a.compare)
@@ -401,6 +403,11 @@ def main() -> None:
         except Exception as e:  # a crashing detector should show up as misses, not abort the run
             print(f"  detector error on {c['id']}: {e}", file=sys.stderr)
             preds, provider = [], "error"
+        # A fallback model mid-run would blend two models' numbers into one score.
+        if a.expect_provider and provider not in (None, "error") and provider.split(":")[0] != a.expect_provider:
+            seen = Counter(r["provider"] for r in recs) + Counter([provider])
+            sys.exit(f"Mixed-provider run: case {len(recs) + 1}/{len(cases)} ({c['id']}) answered by {provider!r}, "
+                     f"expected {a.expect_provider!r}. Seen so far: {dict(seen)}. No report saved.")
         recs.append({**score_case(c, preds), "provider": provider})
     by_id = {r["id"]: r for r in recs}
     providers = sorted({r["provider"] or "local" for r in recs})
