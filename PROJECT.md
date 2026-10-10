@@ -53,7 +53,7 @@ Schedule and cut order: `marketing-rule-watch/TIMELINE.md`. Pitch: `marketing-ru
 
 Update this table when a hand-off lands. Status reflects **what is pushed to git**. Work on someone's laptop doesn't count until it's pushed.
 
-Last updated: **2:13 PM**
+Last updated: **3:04 PM**
 
 | Workstream | Status | Evidence in repo |
 |---|---|---|
@@ -61,7 +61,7 @@ Last updated: **2:13 PM**
 | Eval harness + 37 seeded cases | ✅ done | `eval/compliance_eval.py`, `eval/cases.jsonl` |
 | Keyword baseline measured | ✅ F1 0.70 · clean docs wrongly flagged 28% · pairs 6/8 | `eval/reports/baseline_regex_120954.json` |
 | Sense Check 1 | 🟡 brief written, results not logged yet | `research/check1_brief.md`, `research/sense_checks.md` |
-| Devin demo site | ⏳ not in repo | `demo-site/` has only `CLAUDE.md` |
+| Devin demo site | 🟡 Devin down → Claude agent building the firm site on GitHub Pages (ETA 3:45). **"Hartwell Wealth" is a real adviser → new fictional name.** Devin gets the third-party review site when back (`demo-site/DEVIN_THIRD_PARTY.md`) | `demo-site/` |
 | Crawl (`fetch.py`, screenshots) | 🟢 Bright Data runs **inside Base44**: `scan` fetched 2 test pages + screenshots (all HTTP 200, screenshots stored as public PNGs). Web Unlocker zone works (name not recorded here); SERP zone `serp_api1`. ~10–13 s per URL, so batch ≤5 | `crawl/`, `base44/app/base44/functions/scan` |
 | Detector (`engine/`) | 🟢 Builder plan applied (2:07 PM): Base44 `InvokeLLM` live again (mode `llm`, ≈1.7 s). Eval vs live `detect-text` (1:57 PM, 37 synthetic unreviewed cases): **F1 0.95** (P 0.91, R 1.00), clean docs flagged 0%, grounding 100%, pairs 8/8. `detect-text` is admin-only (reopen per eval run) | `engine/`, `base44/app/base44/shared` |
 | Base44 app | 🟢 **/demo now shows AI-detected findings** (2:12 PM): 12 flags, 8/8 categories, matched all 11 hand-planted issues + 1 extra, 0 on clean content. Rewrite suggestions live. Rate-limit fix verified (`b912bb1`). **Deploy freeze 2:55–4:00** | `base44/app/`, `base44/PLAN.md` |
