@@ -49,9 +49,9 @@ export const COPY = {
 // Phase 5 rewrite drawer stays off until after Sense Check 2.
 export const SHOW_REWRITE = true;
 
-// Off while the Base44 LLM quota is exhausted: the drawer skips the rewrite call and offers Edit / Dismiss only,
-// so no failed request ever reaches the console. Flip back on once the quota is restored.
-export const FETCH_REWRITE_SUGGESTIONS = false;
+// When false, the drawer skips the rewrite call and offers Edit / Dismiss only,
+// so no failed request ever reaches the console. Turn off again if the Base44 LLM quota runs out.
+export const FETCH_REWRITE_SUGGESTIONS = true;
 
 export const CHANNEL_LABELS: Record<string, string> = {
   website: "Website",
