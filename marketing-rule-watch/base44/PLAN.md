@@ -128,6 +128,13 @@ Each phase ends with its verification step. **A phase isn't done until its check
 - **Deliverable 2:45:** live `/demo` link to P1. If late, 3 screenshots instead (per `TIMELINE.md`).
 
 ### Phase 3 · 1:45–2:45 (parallel, backend session) · Real loop
+
+> **Update 1:35:** P3 and P4 shipped Base44-ready code. **Copy it; don't rewrite it.**
+> - `crawl/base44/scan.entry.ts` → `functions/scan/entry.ts`, `crawl/base44/brightdata.ts` → `shared/brightdata.ts`. Output is `{created, failed[], log[]}`.
+> - `engine/port/detect_core.js` → `shared/detect_core.js`; `engine/prompts/detect.md` → `shared/prompts.ts`; `detect.schema.json` as the response schema. Write `detect-core.ts` from the sketch in `engine/port/README.md`. Its parity check against the Python engine shows 0 mismatches.
+> - Model: match `engine/llm.py` (anthropic, `claude-sonnet-5-5`, temperature 0). Until `ANTHROPIC_API_KEY` is set, use `MODE = "rules"`. Never call rules-mode output "AI".
+> - Rewrite is ready too: `engine/prompts/rewrite.md` + `rewrite.schema.json`.
+
 - [ ] 1:45: get P3's `Page` JSON sample + one screenshot. Port `fetch.py` into `scan` with P3.
 - [ ] `shared/chunk.ts`, `shared/detect-core.ts` with a **stub prompt** (the 8 categories + JSON schema) so the pipeline works before P4's prompt lands.
 - [ ] `detect`, `detect-text`. Give P4 the `detect-text` URL.
