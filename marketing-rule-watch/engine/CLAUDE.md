@@ -65,3 +65,9 @@ Edit prompt → `python3 eval/compliance_eval.py --detector engine.detect:detect
 | P1 | `--compare` before/after report | **7:00** |
 
 When a prompt changes inside Base44, copy it back to `prompts/` so the repo stays the source of truth.
+
+## Status (p4-eval, covering for P4, 10-10)
+- `4b26fd2` eval sends `User-Agent: compliance-eval/1.0` on HTTP detector calls (Base44 403s urllib's default). Offline baseline unchanged: F1 0.70, clean flagged 28%, pairs 6/8.
+- `02e3a2a` `prompts/rewrite.md` v2: each edit replaces the **whole sentence** holding the flag (span-only edits came out ungrammatical). Schema unchanged. Engine tests 12/12. Not yet run against a live LLM; p2-backend regenerates `prompts.ts` from it after 4:00.
+- `5e6ac69` `eval/cases_tester.jsonl`: 7 cases from Check 1 quotes (4 issues in non-keyword wording, 3 clean incl. employee venting). `provenance: tester`, `reviewed: false`, text written by p4-eval, not by testers. Kept out of `cases.jsonl` so the 37-case set stays comparable. Keyword baseline: 0/4 caught, 0/3 clean flagged (`reports/baseline_regex_tester.json`).
+- Pending: one live run vs `detect-text` after ~4:00 when orchestrator reopens it (one run only, quota is finite), saved as `reports/llm_invokellm_<time>.json` and compared to `baseline_regex_120954.json`.
