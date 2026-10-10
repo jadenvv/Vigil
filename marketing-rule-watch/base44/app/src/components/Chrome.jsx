@@ -24,7 +24,7 @@ export function Shell({ demo = false, children }) {
       <header className="border-b border-slate-200 bg-white">
         <div className="mx-auto max-w-5xl px-4 py-3 text-sm font-semibold tracking-tight">{COPY.appName}</div>
       </header>
-      <main className="mx-auto w-full max-w-5xl flex-1 px-4 py-6">{children}</main>
+      <main className="mx-auto w-full max-w-5xl flex-1 px-4 pb-24 pt-6">{children}</main>
       <Footer />
     </div>
   );
