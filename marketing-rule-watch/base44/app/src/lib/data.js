@@ -3,6 +3,7 @@
 import { base44 } from "@/api/base44Client";
 import { bySeverityDesc, severityScore } from "@/lib/severity";
 import { getSessionId } from "@/lib/session";
+import { latestPerUrl } from "@/lib/snapshots";
 
 // Base44 answers 429 when several testers load at once. Reads get exactly one delayed second try
 // on 429 only; anything else, or a second 429, surfaces to the error state and its Try again button.
@@ -27,12 +28,14 @@ export async function findDemoFirm() {
 // One Flag request instead of one per page: the per-page fan-out tripped Base44's rate limit.
 // The SDK documents no `$in` filter, so flags are matched to this firm's pages here.
 // Flag rows are few (one demo firm plus test runs), so a single page of 1000 covers them.
+// Each scan stores a new Page row, so only the latest capture of each URL is shown; older ones are history.
 export async function loadInbox(firmId, knownFirm = null) {
-  const [firm, pages, allFlags] = await Promise.all([
+  const [firm, allPages, allFlags] = await Promise.all([
     knownFirm ?? read(() => base44.entities.Firm.get(firmId)),
     read(() => base44.entities.Page.filter({ firm_id: firmId })),
     read(() => base44.entities.Flag.list("-created_date", 1000)),
   ]);
+  const pages = latestPerUrl(allPages);
   const flagsByPage = {};
   for (const flag of allFlags) (flagsByPage[flag.page_id] ??= []).push(flag);
   const groups = pages
@@ -42,6 +45,16 @@ export async function loadInbox(firmId, knownFirm = null) {
   const flagCount = groups.reduce((n, group) => n + group.flags.length, 0);
   for (const { page, flags } of groups) for (const flag of flags) loadedFlags.set(flag.id, { flag, page, firm });
   return { firm, groups, flagCount, pagesScanned: pages.length };
+}
+
+// Every capture of one URL for the history screen, plus its firm. Reads stored rows only, no fetch.
+export async function loadPageHistory(pageId) {
+  const page = await read(() => base44.entities.Page.get(pageId));
+  const [firm, captures] = await Promise.all([
+    read(() => base44.entities.Firm.get(page.firm_id)),
+    read(() => base44.entities.Page.filter({ firm_id: page.firm_id, url: page.url })),
+  ]);
+  return { page, firm, captures: captures.length ? captures : [page] };
 }
 
 export async function loadFlag(flagId) {
