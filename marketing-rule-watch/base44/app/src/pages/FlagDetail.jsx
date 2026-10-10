@@ -2,10 +2,12 @@ import { Fragment, useEffect, useMemo, useRef, useState } from "react";
 import { Link, useParams } from "@/lib/router";
 import { ChannelChip, Confidence, SeverityBadge } from "@/components/Badges";
 import { ErrorBlock, LoadingBlock, Shell } from "@/components/Chrome";
+import { base44 } from "@/api/base44Client";
 import RewriteDrawer from "@/components/RewriteDrawer";
-import { COPY, SHOW_REWRITE, SHOW_RULE_REFS } from "@/lib/copy";
+import { COPY, SHOW_PAGE_VIEW, SHOW_REWRITE, SHOW_RULE_REFS } from "@/lib/copy";
 import { loadFlag, loadSessionDecisions } from "@/lib/data";
 import { quoted, splitOnSpan } from "@/lib/highlight";
+import { HIT_ID, prepareCapture } from "@/lib/capturedPage";
 import { parseMarkdown } from "@/lib/markdown";
 import { categoryLabel } from "@/lib/severity";
 import { pageTitle, useAsync } from "@/lib/useAsync";
@@ -62,6 +64,134 @@ function FlagDetailBody({ flag, page, firm }) {
 }
 
 function PageText({ page, span }) {
+  const [tab, setTab] = useState("text");
+  const [note, setNote] = useState(null);
+
+  useEffect(() => {
+    setTab("text");
+    setNote(null);
+  }, [page.id]);
+
+  const fallBackToText = (message) => {
+    setTab("text");
+    setNote(message);
+  };
+
+  return (
+    <section aria-label={COPY.pageTextLabel} className="rounded-lg border border-slate-200 bg-white">
+      <div className="flex flex-wrap items-center gap-2 border-b border-slate-200 px-4 py-2 text-sm">
+        <span className="font-medium">{pageTitle(page)}</span>
+        <ChannelChip channel={page.channel} />
+        {SHOW_PAGE_VIEW && (
+          <div role="tablist" aria-label={COPY.pageTextLabel} className="ml-auto flex gap-1">
+            {[
+              ["text", COPY.tabText],
+              ["captured", COPY.tabCaptured],
+            ].map(([key, label]) => (
+              <button
+                key={key}
+                type="button"
+                role="tab"
+                aria-selected={tab === key}
+                onClick={() => {
+                  setNote(null);
+                  setTab(key);
+                }}
+                className={`rounded px-2 py-1 text-xs ${tab === key ? "bg-slate-900 text-white" : "text-slate-600 hover:bg-slate-100"}`}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+        )}
+      </div>
+      {note && (
+        <p role="status" data-testid="capture-note" className="border-b border-slate-200 bg-slate-50 px-4 py-2 text-xs text-slate-600">
+          {note}
+        </p>
+      )}
+      {tab === "captured" ? (
+        <CapturedView page={page} span={span} onUnavailable={fallBackToText} />
+      ) : (
+        <TextView page={page} span={span} />
+      )}
+    </section>
+  );
+}
+
+// Per page id for this page session, so switching tabs never refetches.
+const captureCache = new Map();
+
+async function fetchCapture(pageId) {
+  if (captureCache.has(pageId)) return captureCache.get(pageId);
+  let result;
+  try {
+    const res = await base44.functions.invoke("page-html", { page_id: pageId });
+    result = res.data?.html ? { status: "ready", ...res.data } : { status: "unavailable", message: COPY.captureMissing };
+  } catch (error) {
+    const httpStatus = error?.response?.status;
+    console.warn("Captured page unavailable:", httpStatus, error?.response?.data?.error ?? error?.message);
+    const message =
+      httpStatus === 404 ? COPY.captureMissing : httpStatus === 413 ? COPY.captureTooLarge : COPY.captureFailed;
+    result = { status: "unavailable", message };
+  }
+  captureCache.set(pageId, result);
+  return result;
+}
+
+function CapturedView({ page, span, onUnavailable }) {
+  const [capture, setCapture] = useState({ status: "loading" });
+
+  useEffect(() => {
+    let cancelled = false;
+    fetchCapture(page.id).then((result) => {
+      if (cancelled) return;
+      if (result.status !== "ready") onUnavailable(result.message);
+      else setCapture(result);
+    });
+    return () => {
+      cancelled = true;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [page.id]);
+
+  // The span is marked before the page is shown: the sandboxed frame is opaque to us, so it is opened
+  // at "#mrw-hit" and the browser scrolls to the mark itself. A blob URL (unlike srcdoc) can carry that fragment.
+  const prepared = useMemo(
+    () => (capture.status === "ready" ? prepareCapture(capture.html, capture.url || page.url, span) : null),
+    [capture, page.url, span],
+  );
+  const frameUrl = useMemo(
+    () => (prepared?.found ? URL.createObjectURL(new Blob([prepared.html], { type: "text/html" })) : null),
+    [prepared],
+  );
+
+  useEffect(() => {
+    if (prepared && !prepared.found) onUnavailable(COPY.captureSpanMissing);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [prepared]);
+
+  useEffect(() => () => frameUrl && URL.revokeObjectURL(frameUrl), [frameUrl]);
+
+  if (!frameUrl) return <div aria-busy="true" className="m-4 h-64 animate-pulse rounded bg-slate-200" />;
+  return (
+    <div>
+      <iframe
+        title={COPY.tabCaptured}
+        data-testid="capture-frame"
+        sandbox=""
+        referrerPolicy="no-referrer"
+        src={`${frameUrl}#${HIT_ID}`}
+        className="block h-[60vh] w-full bg-white"
+      />
+      <p className="border-t border-slate-200 px-4 py-2 text-xs text-slate-500">
+        {COPY.capturedCaption(formatDate(capture.fetched_at ?? page.fetched_at))}
+      </p>
+    </div>
+  );
+}
+
+function TextView({ page, span }) {
   const markRef = useRef(null);
   const markdown = page.markdown ?? "";
   const model = useMemo(() => parseMarkdown(markdown, span), [markdown, span]);
