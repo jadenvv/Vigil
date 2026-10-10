@@ -77,6 +77,9 @@ export function applyEdits(text: string, edits: Edit[]): { text: string; applied
 }
 
 export interface RewriteResult {
+  mode: "llm";
+  provider: "base44" | "groq"; // who wrote the suggestion
+  model: string;
   original_text: string;
   suggested_text: string;
   suggested_page: string;
@@ -92,7 +95,8 @@ export interface RewriteResult {
 // deno-lint-ignore no-explicit-any
 export async function rewriteFlag(base44: any, page: string, flag: Flag, channel = ""): Promise<RewriteResult> {
   const { system, user } = buildMessages(page, [flag]);
-  const edits = parseEdits(await callLLM(base44, system, user, REWRITE_SCHEMA)); // one call, no retry
+  const { output, provider, model } = await callLLM(base44, system, user, REWRITE_SCHEMA); // one call, no retry
+  const edits = parseEdits(output);
   const { text: newPage, applied } = applyEdits(page, edits);
   if (!applied.length) throw new Error("no edit matched the page text");
 
@@ -106,6 +110,9 @@ export async function rewriteFlag(base44: any, page: string, flag: Flag, channel
 
   const suggested = applied.map((a) => a.replace).join("\n\n");
   return {
+    mode: "llm",
+    provider,
+    model,
     original_text: applied.map((a) => a.find).join("\n\n"),
     suggested_text: suggested,
     suggested_page: newPage,

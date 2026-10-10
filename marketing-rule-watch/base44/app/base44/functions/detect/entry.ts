@@ -17,7 +17,8 @@ export default async function (req: Request): Promise<Response> {
   const markdown = String(page.markdown ?? "");
   if (markdown.length > MAX_TEXT) return Response.json({ error: `page over ${MAX_TEXT} chars` }, { status: 400 });
 
-  const { flags, mode } = await detectText(base44, markdown, page.channel ?? "");
+  const { flags, mode, provider, model } = await detectText(base44, markdown, page.channel ?? "");
+  console.log(`detect page ${page_id}: mode=${mode} provider=${provider} model=${model} flags=${flags.length}`);
   // A failed LLM call must not wipe the page's existing flags and leave it looking clean.
   if (mode === "llm_unavailable") return Response.json({ error: "llm_unavailable", mode }, { status: 503 });
   if (mode === "llm_error") return Response.json({ error: "LLM call failed; flags unchanged", mode }, { status: 502 });
@@ -27,5 +28,5 @@ export default async function (req: Request): Promise<Response> {
   if (flags.length) {
     await base44.asServiceRole.entities.Flag.bulkCreate(flags.map((f) => ({ ...f, page_id, status: "open" })));
   }
-  return Response.json({ created: flags.length, replaced: old.length, mode });
+  return Response.json({ created: flags.length, replaced: old.length, mode, provider, model });
 }

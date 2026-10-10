@@ -23,6 +23,6 @@ export default async function (req: Request): Promise<Response> {
   if (!text) return Response.json({ error: "text required" }, { status: 400 });
   if (text.length > MAX_CHARS) return Response.json({ error: `text over ${MAX_CHARS} chars` }, { status: 400 });
 
-  const { flags, mode } = await detectText(base44, text, channel);
-  return Response.json({ flags, mode });
+  const { flags, mode, provider, model } = await detectText(base44, text, channel);
+  return Response.json({ flags, mode, provider, model });
 }

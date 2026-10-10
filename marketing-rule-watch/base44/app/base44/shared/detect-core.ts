@@ -4,7 +4,8 @@ import { buildMessages, chunks, parseFlags, postprocess, ruleCandidates } from "
 import { DETECT_PROMPT, DETECT_SCHEMA } from "./prompts.ts";
 import { callLLM, LLMUnavailable } from "./llm.ts";
 
-// "llm"   = DETECT_PROMPT through Base44 InvokeLLM, Groq fallback on quota (shared/llm.ts).
+// "llm"   = DETECT_PROMPT through shared/llm.ts: Base44 InvokeLLM, Groq fallback on quota. Which one
+//           answered is in `provider`/`model`; the eval report and the pitch must name it.
 // "rules" = P4's keyword fallback: free, deterministic, NOT AI. Don't call it AI in UI or pitch.
 // An LLM failure never falls back to rules silently: those chunks yield zero flags and the
 // result reports mode "llm_error", so a partial answer is never passed off as a full one.
@@ -36,12 +37,16 @@ export interface Flag {
 export interface DetectResult {
   flags: Flag[];
   mode: "llm" | "rules" | "llm_error" | "llm_unavailable";
+  provider: string; // "base44" | "groq" | "base44+groq" (chunks split across providers) | "rules" | "none"
+  model: string; // e.g. "base44-invokellm", "openai/gpt-oss-120b"; "+"-joined when mixed
 }
 
 // deno-lint-ignore no-explicit-any
 export async function detectText(base44: any, text: string, channel = "", mode = MODE): Promise<DetectResult> {
   const flags: Flag[] = [];
   let failedChunks = 0;
+  const providers = new Set<string>();
+  const models = new Set<string>();
   for (const chunk of chunks(text, 6000)) {
     // deno-lint-ignore no-explicit-any
     let cands: any[] = [];
@@ -50,11 +55,14 @@ export async function detectText(base44: any, text: string, channel = "", mode =
     } else {
       const { system, user } = buildMessages(DETECT_PROMPT, chunk, channel);
       try {
-        cands = parseFlags(await callLLM(base44, system, user, DETECT_SCHEMA)); // one call, no retry
+        const { output, provider, model } = await callLLM(base44, system, user, DETECT_SCHEMA); // one call, no retry
+        providers.add(provider);
+        models.add(model);
+        cands = parseFlags(output);
       } catch (e) {
         if (e instanceof LLMUnavailable) {
           console.log(`detect: LLM unavailable (${e.message})`);
-          return { flags: [], mode: "llm_unavailable" }; // later chunks would be refused too
+          return { flags: [], mode: "llm_unavailable", provider: "none", model: "none" }; // later chunks would be refused too
         }
         console.log(`detect: chunk dropped (${(e as Error).message})`); // malformed or failed -> zero flags
         failedChunks++;
@@ -68,5 +76,7 @@ export async function detectText(base44: any, text: string, channel = "", mode =
   return {
     flags: flags.filter((f) => text.includes(f.span)), // grounding: span must be an exact page substring
     mode: failedChunks ? "llm_error" : mode,
+    provider: mode === "rules" ? "rules" : [...providers].sort().join("+") || "none",
+    model: mode === "rules" ? "rules" : [...models].sort().join("+") || "none",
   };
 }
