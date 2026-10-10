@@ -1,0 +1,460 @@
+{
+  "detector": "https://marketing-rule-watch-a0747dd2.base44.app/functions/detect-text",
+  "timestamp": "2026-10-10 16:04:43",
+  "cases_sha": "7f3b517f2d",
+  "n_cases": 16,
+  "subsets": {
+    "all": {
+      "n_cases": 16,
+      "n_clean": 8,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "tp": 11,
+      "fp": 0,
+      "fn": 0,
+      "clean_doc_fp_rate": 0.0,
+      "flags_per_clean_doc": 0.0,
+      "grounding_rate": 1.0,
+      "citation_accuracy": 1.0,
+      "per_category": {
+        "BENEFITS_WITHOUT_RISK": {
+          "tp": 2,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "GROSS_WITHOUT_NET": {
+          "tp": 1,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "HYPOTHETICAL_PERFORMANCE": {
+          "tp": 1,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "RATING_NO_DISCLOSURE": {
+          "tp": 2,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "TESTIMONIAL_NO_DISCLOSURE": {
+          "tp": 1,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "UNBALANCED_SPECIFIC_ADVICE": {
+          "tp": 1,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "UNFAIR_PERFORMANCE_PRESENTATION": {
+          "tp": 1,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "UNSUBSTANTIATED_CLAIM": {
+          "tp": 2,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        }
+      }
+    },
+    "reviewed": {
+      "n_cases": 0,
+      "n_clean": 0,
+      "precision": null,
+      "recall": null,
+      "f1": null,
+      "tp": 0,
+      "fp": 0,
+      "fn": 0,
+      "clean_doc_fp_rate": null,
+      "flags_per_clean_doc": null,
+      "grounding_rate": null,
+      "citation_accuracy": null,
+      "per_category": {}
+    },
+    "pattern_synthetic": {
+      "n_cases": 0,
+      "n_clean": 0,
+      "precision": null,
+      "recall": null,
+      "f1": null,
+      "tp": 0,
+      "fp": 0,
+      "fn": 0,
+      "clean_doc_fp_rate": null,
+      "flags_per_clean_doc": null,
+      "grounding_rate": null,
+      "citation_accuracy": null,
+      "per_category": {}
+    }
+  },
+  "providers": {
+    "base44:base44-invokellm": 16
+  },
+  "pairs": {
+    "pairs": 0,
+    "passed": 0,
+    "pass_rate": null,
+    "detail": {}
+  },
+  "rewrite": null,
+  "cases": [
+    {
+      "id": "demo_home",
+      "provenance": "demo_site",
+      "reviewed": false,
+      "clean": false,
+      "tp": [
+        "UNSUBSTANTIATED_CLAIM",
+        "RATING_NO_DISCLOSURE"
+      ],
+      "fp": [],
+      "fn": [],
+      "ungrounded": 0,
+      "cite_ok": 2,
+      "pred_cats": [
+        "RATING_NO_DISCLOSURE",
+        "UNSUBSTANTIATED_CLAIM"
+      ],
+      "status": "ok",
+      "flags": [
+        {
+          "category": "UNSUBSTANTIATED_CLAIM",
+          "span": "Quarrywick Wealth is the most trusted retirement firm in the Pacific Northwest."
+        },
+        {
+          "category": "RATING_NO_DISCLOSURE",
+          "span": "Ranked #2 Wealth Manager by Pemberline Advisor Review."
+        }
+      ],
+      "provider": "base44:base44-invokellm"
+    },
+    {
+      "id": "demo_about",
+      "provenance": "demo_site",
+      "reviewed": false,
+      "clean": false,
+      "tp": [
+        "BENEFITS_WITHOUT_RISK"
+      ],
+      "fp": [],
+      "fn": [],
+      "ungrounded": 0,
+      "cite_ok": 1,
+      "pred_cats": [
+        "BENEFITS_WITHOUT_RISK"
+      ],
+      "status": "ok",
+      "flags": [
+        {
+          "category": "BENEFITS_WITHOUT_RISK",
+          "span": "Our clients have never lost money in a down year."
+        }
+      ],
+      "provider": "base44:base44-invokellm"
+    },
+    {
+      "id": "demo_services",
+      "provenance": "demo_site",
+      "reviewed": false,
+      "clean": false,
+      "tp": [
+        "UNSUBSTANTIATED_CLAIM",
+        "BENEFITS_WITHOUT_RISK"
+      ],
+      "fp": [],
+      "fn": [],
+      "ungrounded": 0,
+      "cite_ok": 2,
+      "pred_cats": [
+        "BENEFITS_WITHOUT_RISK",
+        "UNSUBSTANTIATED_CLAIM"
+      ],
+      "status": "ok",
+      "flags": [
+        {
+          "category": "UNSUBSTANTIATED_CLAIM",
+          "span": "Our proprietary process consistently beats the market."
+        },
+        {
+          "category": "BENEFITS_WITHOUT_RISK",
+          "span": "Our Income Shield program provides guaranteed income for life, so market swings never touch your retirement."
+        }
+      ],
+      "provider": "base44:base44-invokellm"
+    },
+    {
+      "id": "demo_performance",
+      "provenance": "demo_site",
+      "reviewed": false,
+      "clean": false,
+      "tp": [
+        "HYPOTHETICAL_PERFORMANCE",
+        "UNFAIR_PERFORMANCE_PRESENTATION"
+      ],
+      "fp": [],
+      "fn": [],
+      "ungrounded": 0,
+      "cite_ok": 2,
+      "pred_cats": [
+        "HYPOTHETICAL_PERFORMANCE",
+        "UNFAIR_PERFORMANCE_PRESENTATION"
+      ],
+      "status": "ok",
+      "flags": [
+        {
+          "category": "UNFAIR_PERFORMANCE_PRESENTATION",
+          "span": "Since the March 2020 market low, our Core Growth portfolios have gained 151%."
+        },
+        {
+          "category": "HYPOTHETICAL_PERFORMANCE",
+          "span": "Our back-tested Tactical Rotation Model would have returned 19% a year from 2004 to 2019."
+        }
+      ],
+      "provider": "base44:base44-invokellm"
+    },
+    {
+      "id": "demo_testimonials",
+      "provenance": "demo_site",
+      "reviewed": false,
+      "clean": false,
+      "tp": [
+        "TESTIMONIAL_NO_DISCLOSURE"
+      ],
+      "fp": [],
+      "fn": [],
+      "ungrounded": 0,
+      "cite_ok": 1,
+      "pred_cats": [
+        "TESTIMONIAL_NO_DISCLOSURE"
+      ],
+      "status": "ok",
+      "flags": [
+        {
+          "category": "TESTIMONIAL_NO_DISCLOSURE",
+          "span": "\"Odile completely turned our retirement around and we doubled our savings in five years.\""
+        }
+      ],
+      "provider": "base44:base44-invokellm"
+    },
+    {
+      "id": "demo_blog_best_pick",
+      "provenance": "demo_site",
+      "reviewed": false,
+      "clean": false,
+      "tp": [
+        "UNBALANCED_SPECIFIC_ADVICE"
+      ],
+      "fp": [],
+      "fn": [],
+      "ungrounded": 0,
+      "cite_ok": 1,
+      "pred_cats": [
+        "UNBALANCED_SPECIFIC_ADVICE"
+      ],
+      "status": "ok",
+      "flags": [
+        {
+          "category": "UNBALANCED_SPECIFIC_ADVICE",
+          "span": "Our 2021 pick, Veltrane Semiconductor, tripled in under two years."
+        }
+      ],
+      "provider": "base44:base44-invokellm"
+    },
+    {
+      "id": "demo_blog_recap",
+      "provenance": "demo_site",
+      "reviewed": false,
+      "clean": false,
+      "tp": [
+        "GROSS_WITHOUT_NET"
+      ],
+      "fp": [],
+      "fn": [],
+      "ungrounded": 0,
+      "cite_ok": 1,
+      "pred_cats": [
+        "GROSS_WITHOUT_NET"
+      ],
+      "status": "ok",
+      "flags": [
+        {
+          "category": "GROSS_WITHOUT_NET",
+          "span": "Our Core Growth strategy returned 17.9% gross of fees in 2025."
+        }
+      ],
+      "provider": "base44:base44-invokellm"
+    },
+    {
+      "id": "demo_blog_recognition",
+      "provenance": "demo_site",
+      "reviewed": false,
+      "clean": false,
+      "tp": [
+        "RATING_NO_DISCLOSURE"
+      ],
+      "fp": [],
+      "fn": [],
+      "ungrounded": 0,
+      "cite_ok": 1,
+      "pred_cats": [
+        "RATING_NO_DISCLOSURE"
+      ],
+      "status": "ok",
+      "flags": [
+        {
+          "category": "RATING_NO_DISCLOSURE",
+          "span": "Quarrywick Wealth was named a Top 40 Advisor by Copperfen Wealth Digest."
+        }
+      ],
+      "provider": "base44:base44-invokellm"
+    },
+    {
+      "id": "demo_fees_clean",
+      "provenance": "demo_site",
+      "reviewed": false,
+      "clean": true,
+      "tp": [],
+      "fp": [],
+      "fn": [],
+      "ungrounded": 0,
+      "cite_ok": 0,
+      "pred_cats": [],
+      "status": "ok",
+      "flags": [],
+      "provider": "base44:base44-invokellm"
+    },
+    {
+      "id": "demo_blog_index_clean",
+      "provenance": "demo_site",
+      "reviewed": false,
+      "clean": true,
+      "tp": [],
+      "fp": [],
+      "fn": [],
+      "ungrounded": 0,
+      "cite_ok": 0,
+      "pred_cats": [],
+      "status": "ok",
+      "flags": [],
+      "provider": "base44:base44-invokellm"
+    },
+    {
+      "id": "demo_clean_footer_disclaimer",
+      "provenance": "demo_site",
+      "reviewed": false,
+      "clean": true,
+      "tp": [],
+      "fp": [],
+      "fn": [],
+      "ungrounded": 0,
+      "cite_ok": 0,
+      "pred_cats": [],
+      "status": "ok",
+      "flags": [],
+      "provider": "base44:base44-invokellm"
+    },
+    {
+      "id": "demo_clean_perf_disclosures",
+      "provenance": "demo_site",
+      "reviewed": false,
+      "clean": true,
+      "tp": [],
+      "fp": [],
+      "fn": [],
+      "ungrounded": 0,
+      "cite_ok": 0,
+      "pred_cats": [],
+      "status": "ok",
+      "flags": [],
+      "provider": "base44:base44-invokellm"
+    },
+    {
+      "id": "demo_clean_net_table",
+      "provenance": "demo_site",
+      "reviewed": false,
+      "clean": true,
+      "tp": [],
+      "fp": [],
+      "fn": [],
+      "ungrounded": 0,
+      "cite_ok": 0,
+      "pred_cats": [],
+      "status": "ok",
+      "flags": [],
+      "provider": "base44:base44-invokellm"
+    },
+    {
+      "id": "demo_clean_disclosed_testimonial",
+      "provenance": "demo_site",
+      "reviewed": false,
+      "clean": true,
+      "tp": [],
+      "fp": [],
+      "fn": [],
+      "ungrounded": 0,
+      "cite_ok": 0,
+      "pred_cats": [],
+      "status": "ok",
+      "flags": [],
+      "provider": "base44:base44-invokellm"
+    },
+    {
+      "id": "demo_clean_income_shield",
+      "provenance": "demo_site",
+      "reviewed": false,
+      "clean": true,
+      "tp": [],
+      "fp": [],
+      "fn": [],
+      "ungrounded": 0,
+      "cite_ok": 0,
+      "pred_cats": [],
+      "status": "ok",
+      "flags": [],
+      "provider": "base44:base44-invokellm"
+    },
+    {
+      "id": "demo_clean_fictional_notice",
+      "provenance": "demo_site",
+      "reviewed": false,
+      "clean": true,
+      "tp": [],
+      "fp": [],
+      "fn": [],
+      "ungrounded": 0,
+      "cite_ok": 0,
+      "pred_cats": [],
+      "status": "ok",
+      "flags": [],
+      "provider": "base44:base44-invokellm"
+    }
+  ]
+}

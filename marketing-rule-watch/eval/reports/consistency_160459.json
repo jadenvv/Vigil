@@ -1,0 +1,105 @@
+{
+  "detector": "https://marketing-rule-watch-a0747dd2.base44.app/functions/detect-text",
+  "timestamp": "2026-10-10 16:04:59",
+  "runs_per_page": 2,
+  "n_pages": 3,
+  "pages_identical": 2,
+  "pages_same_categories": 3,
+  "jaccard_mean": 0.7777777777777777,
+  "pages": [
+    {
+      "id": "demo_home",
+      "identical": false,
+      "jaccard_mean": 0.3333333333333333,
+      "categories_identical": true,
+      "runs": [
+        {
+          "provider": "base44:base44-invokellm",
+          "flags": [
+            [
+              "RATING_NO_DISCLOSURE",
+              "Ranked #2 Wealth Manager by Pemberline Advisor Review."
+            ],
+            [
+              "UNSUBSTANTIATED_CLAIM",
+              "Quarrywick Wealth is the most trusted retirement firm in the Pacific Northwest."
+            ]
+          ]
+        },
+        {
+          "provider": "base44:base44-invokellm",
+          "flags": [
+            [
+              "RATING_NO_DISCLOSURE",
+              "Ranked #2 Wealth Manager by Pemberline Advisor Review."
+            ],
+            [
+              "UNSUBSTANTIATED_CLAIM",
+              "the most trusted retirement firm in the Pacific Northwest"
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "id": "demo_performance",
+      "identical": true,
+      "jaccard_mean": 1.0,
+      "categories_identical": true,
+      "runs": [
+        {
+          "provider": "base44:base44-invokellm",
+          "flags": [
+            [
+              "HYPOTHETICAL_PERFORMANCE",
+              "Our back-tested Tactical Rotation Model would have returned 19% a year from 2004 to 2019."
+            ],
+            [
+              "UNFAIR_PERFORMANCE_PRESENTATION",
+              "Since the March 2020 market low, our Core Growth portfolios have gained 151%."
+            ]
+          ]
+        },
+        {
+          "provider": "base44:base44-invokellm",
+          "flags": [
+            [
+              "HYPOTHETICAL_PERFORMANCE",
+              "Our back-tested Tactical Rotation Model would have returned 19% a year from 2004 to 2019."
+            ],
+            [
+              "UNFAIR_PERFORMANCE_PRESENTATION",
+              "Since the March 2020 market low, our Core Growth portfolios have gained 151%."
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "id": "demo_testimonials",
+      "identical": true,
+      "jaccard_mean": 1.0,
+      "categories_identical": true,
+      "runs": [
+        {
+          "provider": "base44:base44-invokellm",
+          "flags": [
+            [
+              "TESTIMONIAL_NO_DISCLOSURE",
+              "\"Odile completely turned our retirement around and we doubled our savings in five years.\""
+            ]
+          ]
+        },
+        {
+          "provider": "base44:base44-invokellm",
+          "flags": [
+            [
+              "TESTIMONIAL_NO_DISCLOSURE",
+              "\"Odile completely turned our retirement around and we doubled our savings in five years.\""
+            ]
+          ]
+        }
+      ]
+    }
+  ]
+}
