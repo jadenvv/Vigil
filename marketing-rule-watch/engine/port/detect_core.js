@@ -226,17 +226,31 @@ const ATTRIB_AFTER = /^\s*,?\s*(?:says|said|wrote|writes|--|-|—|–)/i;
 const REVIEW = /reposted from|from our (?:yelp|google|facebook)|\breviews? (?:on|from)\b|\b(?:five|5) stars?\b|★/i;
 const ENDORSE = /\b(?:she|he|they) (?:says|said|swears|recommends)\b[^.!?]*/i;
 const HINT_EXTRA = {
-  "quoted text (possible testimonial)": QUOTE,
   "review / star language": REVIEW,
   "third-party endorsement": ENDORSE,
   "net figure present": /\bnet\b/i,
   "disclosure language present": /current client|compensat|methodolog|rating date|not representative|past performance/i,
 };
 
+// Per quote: does it carry its OWN client-status + compensation disclosure? A page-wide
+// "disclosure present" cue made the model treat a neighbour's disclosure as covering every quote.
+function quoteHints(text) {
+  const blanket = blanketTestimonialDisclosure(text);
+  return findAll(QUOTE, text).map((m) => {
+    const unit = testimonialUnit(text, m.start, m.end);
+    const label = RX.client_status.test(unit) && RX.compensation.test(unit)
+      ? "quoted text with its own client/compensation disclosure"
+      : blanket ? "quoted text covered by a page-wide testimonial disclosure"
+      : "TESTIMONIAL_NO_DISCLOSURE? quoted text with NO disclosure of its own";
+    return `${label}: "${m.text.slice(0, 80)}"`;
+  });
+}
+
 export function hints(text, limit = 25) {
   const out = [];
   for (const [cat, rx] of Object.entries(CUES))
     for (const m of findAll(rx, text)) out.push(`${cat}? cue "${m.text}"`);
+  out.push(...quoteHints(text));
   for (const [label, rx] of Object.entries(HINT_EXTRA))
     for (const m of findAll(rx, text)) out.push(`${label}: "${m.text.slice(0, 80)}"`);
   for (const [s, e] of sentences(text))

@@ -1,5 +1,5 @@
 <!--
-Detection prompt v1. Owner: P4. Source of truth: this file (copy back any edit made in Base44).
+Detection prompt v2 (each testimonial needs its own disclosure; hand-picked windows not excused). Owner: P4. Source of truth: this file (copy back any edit made in Base44).
 Two sections separated by the marker lines. engine/detect.py fills {{channel}}, {{hints}}, {{page}}.
 In Base44: SYSTEM goes in the system/instructions slot (or the top of the prompt); USER is the
 per-page message. Response must match engine/prompts/detect.schema.json.
@@ -59,8 +59,12 @@ general audience.
 
 TESTIMONIAL_NO_DISCLOSURE: a client testimonial, review or third-party endorsement that lacks the
 disclosures (whether the person is a client, whether they were paid, conflicts). Reposted reviews
-and influencer endorsements count.
+and influencer endorsements count. Judge EACH testimonial on its own: it needs its OWN client-status
+and compensation disclosure. A disclosure attached to one quote does not cover a different quote on
+the same page, unless one statement explicitly covers all testimonials on the page.
   Flag: '"Best decision I ever made," says Tom R.'
+  Flag the first quote here, not the second: '"They doubled our savings." - Dan R. "Always
+  patient." - Ana L. Ana L. is a current client and was not compensated.'
   Flag: "Shared from Google Reviews: Amazing advisors, 5 stars!"
   Do not flag: '"Very helpful," said Ana L., a current client who was not compensated.'
   Do not flag: "Read what Morningstar's methodology says about fees." (not an endorsement)
@@ -78,7 +82,9 @@ basis or methodology, or whether the firm paid for it.
 - Fee schedules, event or webinar invites, hiring posts, team bios
 - Generic puffery that makes no testable claim ("we work to find the best fit for you")
 - A testimonial, rating or performance figure whose required context sits right next to it
-  (client status and compensation, rating date and methodology, net returns, 1/5/10-year periods)
+  (client status and compensation attached to that same quote, rating date and methodology, net
+  returns, 1/5/10-year periods). Standard 1/5/10-year periods elsewhere on the page do not excuse
+  a result measured from a hand-picked start such as "since the market low".
 
 ## How to answer
 - `span` must be copied EXACTLY, character for character, from the page text: the shortest phrase

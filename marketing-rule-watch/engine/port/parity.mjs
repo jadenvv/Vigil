@@ -7,7 +7,8 @@ import { postprocess, ruleCandidates, hints, buildMessages, parseFlags } from ".
 const texts = [];
 for (const f of ["eval/cases.jsonl", "eval/cases_holdout.jsonl", "eval/cases_pages.jsonl", "eval/cases_tester.jsonl", "eval/cases_demo_site.jsonl"])
   for (const l of readFileSync(f, "utf8").split("\n")) if (l.trim()) texts.push(JSON.parse(l).text);
-texts.push(execFileSync("python3", ["-c", "from engine.test_engine import PAGE; print(PAGE, end='')"]).toString());
+for (const name of ["PAGE", "DEMO_TESTIMONIALS_MD"])
+  texts.push(execFileSync("python3", ["-c", `from engine.test_engine import ${name}; print(${name}, end='')`]).toString());
 
 const js = texts.map((t) => ({ flags: postprocess(t, ruleCandidates(t)), hints: hints(t) }));
 const py = JSON.parse(execFileSync("python3", ["-c", `
