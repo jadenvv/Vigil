@@ -2,8 +2,9 @@ import { useEffect, useRef, useState } from "react";
 import { Link, useParams } from "@/lib/router";
 import { ChannelChip, Confidence, SeverityBadge } from "@/components/Badges";
 import { ErrorBlock, LoadingBlock, Shell } from "@/components/Chrome";
-import { COPY, SHOW_RULE_REFS } from "@/lib/copy";
-import { loadFlag } from "@/lib/data";
+import RewriteDrawer from "@/components/RewriteDrawer";
+import { COPY, SHOW_REWRITE, SHOW_RULE_REFS } from "@/lib/copy";
+import { loadFlag, loadSessionDecisions } from "@/lib/data";
 import { quoted, splitOnSpan } from "@/lib/highlight";
 import { categoryLabel } from "@/lib/severity";
 import { pageTitle, useAsync } from "@/lib/useAsync";
@@ -22,6 +23,15 @@ export default function FlagDetail() {
 
 function FlagDetailBody({ flag, page, firm }) {
   const inboxPath = firm.is_demo ? "/demo" : `/firm/${firm.id}`;
+  const [decision, setDecision] = useState(null);
+
+  useEffect(() => {
+    if (!SHOW_REWRITE) return;
+    loadSessionDecisions()
+      .then((latestByFlag) => setDecision(latestByFlag[flag.id] ?? null))
+      // A missing badge is harmless; the drawer still works without past decisions.
+      .catch((error) => console.warn("Session decisions unavailable:", error?.message ?? error));
+  }, [flag.id]);
   return (
     <>
       <Link to={inboxPath} className="text-sm text-slate-600 hover:text-slate-900">
@@ -35,6 +45,11 @@ function FlagDetailBody({ flag, page, firm }) {
       <div className="mt-6 grid gap-6 lg:grid-cols-5">
         <div className="lg:col-span-3">
           <PageText page={page} span={flag.span} />
+          {SHOW_REWRITE && (
+            <div className="mt-6">
+              <RewriteDrawer flag={flag} decision={decision} onDecided={setDecision} />
+            </div>
+          )}
         </div>
         <aside className="space-y-4 lg:col-span-2">
           <EvidencePanel flag={flag} page={page} />

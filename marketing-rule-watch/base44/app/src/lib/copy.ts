@@ -30,7 +30,11 @@ export const COPY = {
   rewriteTitle: "Suggested rewrite",
   originalLabel: "Original",
   suggestedLabel: "Suggested",
-  rewriteUnavailable: "A suggested rewrite isn't available yet. You can write one with Edit.",
+  rewriteUnavailable: "Suggestions unavailable right now. You can write one with Edit.",
+  rewriteNoSuggestion: "No usable suggestion for this quote. You can write one with Edit.",
+  rewriteFailed: "We couldn't load a suggestion. You can write one with Edit.",
+  placeholdersNote: (placeholders: string[]) =>
+    `Fill in ${placeholders.join(", ")} with real facts before approving. Use Edit.`,
   flagsCleared: (cleared: number, total: number) => `Flags cleared: ${cleared} of ${total}`,
   approve: "Approve",
   edit: "Edit",

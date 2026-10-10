@@ -6,14 +6,18 @@ import { DecisionBadge } from "@/components/Badges";
 import { COPY } from "@/lib/copy";
 import { recordDecision } from "@/lib/data";
 
-// The rewrite function may not be deployed yet; the drawer still lets a reviewer edit by hand.
+// rewrite writes nothing; it returns {original_text, suggested_text, flags_total, flags_cleared, placeholders}.
+// 503 = no model key yet, 502 = no usable suggestion, 401 = not allowed. Every failure still allows a manual edit.
 async function fetchSuggestion(flagId) {
   try {
     const res = await base44.functions.invoke("rewrite", { flag_id: flagId });
     return { status: "ready", ...res.data };
   } catch (error) {
-    console.warn("Rewrite unavailable:", error?.response?.data?.error ?? error?.message);
-    return { status: "unavailable" };
+    const httpStatus = error?.response?.status;
+    console.warn("Rewrite unavailable:", httpStatus, error?.response?.data?.error ?? error?.message);
+    const message =
+      httpStatus === 503 ? COPY.rewriteUnavailable : httpStatus === 502 ? COPY.rewriteNoSuggestion : COPY.rewriteFailed;
+    return { status: "unavailable", message };
   }
 }
 
@@ -52,6 +56,9 @@ export default function RewriteDrawer({ flag, decision, onDecided }) {
   };
 
   const suggested = suggestion.suggested_text;
+  const placeholders = Array.isArray(suggestion.placeholders) ? suggestion.placeholders : [];
+  // Bracketed facts like [X] must be filled in by a person before anything is approved.
+  const unfilledInDraft = placeholders.filter((placeholder) => draft.includes(placeholder));
   const button = "rounded-md px-3 py-1.5 text-sm disabled:opacity-50";
   return (
     <section aria-label={COPY.rewriteTitle} className="rounded-lg border border-slate-200 bg-white p-4 text-sm">
@@ -62,13 +69,13 @@ export default function RewriteDrawer({ flag, decision, onDecided }) {
       <div className="mt-3 grid gap-3 sm:grid-cols-2">
         <div>
           <h3 className="text-xs font-semibold uppercase tracking-wide text-slate-500">{COPY.originalLabel}</h3>
-          <p className="mt-1 rounded bg-amber-50 p-2">{flag.span}</p>
+          <p className="mt-1 rounded bg-amber-50 p-2">{suggestion.original_text ?? flag.span}</p>
         </div>
         <div>
           <h3 className="text-xs font-semibold uppercase tracking-wide text-slate-500">{COPY.suggestedLabel}</h3>
           {suggestion.status === "loading" && <div className="mt-1 h-16 animate-pulse rounded bg-slate-200" />}
           {suggestion.status === "unavailable" && !editing && (
-            <p className="mt-1 rounded bg-slate-50 p-2 text-slate-500">{COPY.rewriteUnavailable}</p>
+            <p className="mt-1 rounded bg-slate-50 p-2 text-slate-500">{suggestion.message}</p>
           )}
           {suggestion.status === "ready" && !editing && (
             <p data-testid="suggested-text" className="mt-1 rounded bg-emerald-50 p-2">
@@ -90,12 +97,17 @@ export default function RewriteDrawer({ flag, decision, onDecided }) {
           {COPY.flagsCleared(suggestion.flags_cleared ?? 0, suggestion.flags_total)}
         </p>
       )}
+      {placeholders.length > 0 && (
+        <p data-testid="placeholders-note" className="mt-2 text-xs text-amber-800">
+          {COPY.placeholdersNote(placeholders)}
+        </p>
+      )}
       <div className="mt-4 flex flex-wrap gap-2">
         {!editing && (
           <>
             <button
               type="button"
-              disabled={saving || suggestion.status !== "ready"}
+              disabled={saving || suggestion.status !== "ready" || placeholders.length > 0}
               onClick={() => decide("approve", suggested)}
               className={`${button} bg-slate-900 text-white hover:bg-slate-800`}
             >
@@ -123,7 +135,7 @@ export default function RewriteDrawer({ flag, decision, onDecided }) {
           <>
             <button
               type="button"
-              disabled={saving || !draft.trim()}
+              disabled={saving || !draft.trim() || unfilledInDraft.length > 0}
               onClick={() => decide("edit", draft.trim())}
               className={`${button} bg-slate-900 text-white hover:bg-slate-800`}
             >
