@@ -28,3 +28,8 @@ Insight: Tester B describes the regulator's side: the advertising department sea
 Change we made: pending
 
 Check 1 closed (status completed): 2 testers completed, 3 failed sends. Final results match the quotes above; nothing new. Changes per item: `feedback_changes.md`.
+
+## Check 2 — launched (test bf380ee1)
+Asked (interview goals; Sense writes the questions): role and firm size / how marketing issues slip through at their firm (human error, stretched officer, content outside review, stale pages) / which customer and which problem they'd pay to fix. Testers were shown public SEC evidence ($75k one-line website fine, Sept 2025; nine advisers $1.24M, Sept 2024; Dec 2025 Risk Alert; median adviser 8 employees) and the live `/demo` link.
+Sense's framing: "Marketing claims that conflict with SEC rules slip past small-firm compliance reviews today, and a miss can cost the firm a fine."
+Results: pending.
