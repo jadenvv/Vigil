@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { Fragment, useEffect, useMemo, useRef, useState } from "react";
 import { Link, useParams } from "@/lib/router";
 import { ChannelChip, Confidence, SeverityBadge } from "@/components/Badges";
 import { ErrorBlock, LoadingBlock, Shell } from "@/components/Chrome";
@@ -6,6 +6,7 @@ import RewriteDrawer from "@/components/RewriteDrawer";
 import { COPY, SHOW_REWRITE, SHOW_RULE_REFS } from "@/lib/copy";
 import { loadFlag, loadSessionDecisions } from "@/lib/data";
 import { quoted, splitOnSpan } from "@/lib/highlight";
+import { parseMarkdown } from "@/lib/markdown";
 import { categoryLabel } from "@/lib/severity";
 import { pageTitle, useAsync } from "@/lib/useAsync";
 
@@ -62,7 +63,11 @@ function FlagDetailBody({ flag, page, firm }) {
 
 function PageText({ page, span }) {
   const markRef = useRef(null);
-  const parts = splitOnSpan(page.markdown ?? "", span);
+  const markdown = page.markdown ?? "";
+  const model = useMemo(() => parseMarkdown(markdown, span), [markdown, span]);
+  // The formatted view is used only when it actually shows the highlighted words; otherwise raw text.
+  const formatted = model.found && model.highlighted > 0;
+  const parts = formatted ? null : splitOnSpan(markdown, span);
 
   useEffect(() => {
     markRef.current?.scrollIntoView({ block: "center" });
@@ -74,26 +79,123 @@ function PageText({ page, span }) {
         <span className="font-medium">{pageTitle(page)}</span>
         <ChannelChip channel={page.channel} />
       </div>
-      {!parts.found && (
+      {!formatted && !parts.found && (
         <div className="border-b border-slate-200 p-4">
           <blockquote className="border-l-2 border-amber-400 pl-3 text-sm">{quoted(span)}</blockquote>
           <p className="mt-2 text-xs text-slate-500">{COPY.quoteNotLocated}</p>
         </div>
       )}
-      <div className="max-h-[60vh] overflow-y-auto whitespace-pre-wrap break-words p-4 font-serif text-[15px] leading-relaxed text-slate-800">
-        {parts.found ? (
-          <>
-            {parts.before}
-            <mark ref={markRef} data-testid="span-highlight" className="rounded bg-amber-200 px-0.5 text-slate-900">
-              {parts.match}
-            </mark>
-            {parts.after}
-          </>
-        ) : (
-          parts.text
-        )}
-      </div>
+      {formatted ? (
+        <div data-testid="page-formatted" className="max-h-[60vh] overflow-y-auto break-words p-4 font-serif text-[15px] leading-relaxed text-slate-800">
+          <MarkdownBlocks blocks={model.blocks} markRef={markRef} />
+        </div>
+      ) : (
+        <div className="max-h-[60vh] overflow-y-auto whitespace-pre-wrap break-words p-4 font-serif text-[15px] leading-relaxed text-slate-800">
+          {parts.found ? (
+            <>
+              {parts.before}
+              <mark ref={markRef} data-testid="span-highlight" className="rounded bg-amber-200 px-0.5 text-slate-900">
+                {parts.match}
+              </mark>
+              {parts.after}
+            </>
+          ) : (
+            parts.text
+          )}
+        </div>
+      )}
     </section>
+  );
+}
+
+const HEADING_CLASSES = {
+  1: "text-xl font-semibold",
+  2: "text-lg font-semibold",
+  3: "text-base font-semibold",
+};
+
+// Renders the parsed page. The first highlighted run gets the ref (for scrolling) and the test id;
+// a span crossing formatting is split into several <mark>s that read as one highlight.
+function MarkdownBlocks({ blocks, markRef }) {
+  let firstMark = true;
+  const renderRuns = (runs) =>
+    runs.map((run, i) => {
+      let node = run.text;
+      if (run.code) node = <code className="rounded bg-slate-100 px-1 font-mono text-[13px]">{node}</code>;
+      if (run.link) node = <span className="underline decoration-slate-400">{node}</span>;
+      if (run.italic) node = <em>{node}</em>;
+      if (run.bold) node = <strong>{node}</strong>;
+      if (run.mark) {
+        const isFirst = firstMark;
+        firstMark = false;
+        node = (
+          <mark
+            ref={isFirst ? markRef : undefined}
+            data-testid={isFirst ? "span-highlight" : "span-highlight-part"}
+            className="bg-amber-200 text-slate-900"
+          >
+            {node}
+          </mark>
+        );
+      }
+      return <Fragment key={i}>{node}</Fragment>;
+    });
+
+  return (
+    <div className="space-y-3">
+      {blocks.map((block, i) => {
+        switch (block.type) {
+          case "h":
+            return (
+              <p key={i} role="heading" aria-level={block.level} className={`font-sans ${HEADING_CLASSES[block.level] ?? "text-sm font-semibold"}`}>
+                {renderRuns(block.runs)}
+              </p>
+            );
+          case "ul":
+          case "ol": {
+            const List = block.type;
+            return (
+              <List key={i} className={`space-y-1 pl-6 ${block.type === "ul" ? "list-disc" : "list-decimal"}`}>
+                {block.items.map((item, k) => (
+                  <li key={k}>{renderRuns(item)}</li>
+                ))}
+              </List>
+            );
+          }
+          case "quote":
+            return (
+              <blockquote key={i} className="border-l-2 border-slate-300 pl-3 text-slate-700">
+                {renderRuns(block.runs)}
+              </blockquote>
+            );
+          case "hr":
+            return <hr key={i} className="border-slate-200" />;
+          case "table":
+            return (
+              <div key={i} className="overflow-x-auto">
+                <table className="w-full border-collapse font-sans text-sm">
+                  <tbody>
+                    {block.rows.map((row, r) => (
+                      <tr key={r} className="border-b border-slate-200">
+                        {row.map((cell, c) => {
+                          const Cell = block.header && r === 0 ? "th" : "td";
+                          return (
+                            <Cell key={c} className={`px-2 py-1 text-left align-top ${Cell === "th" ? "font-semibold" : ""}`}>
+                              {renderRuns(cell)}
+                            </Cell>
+                          );
+                        })}
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            );
+          default:
+            return <p key={i}>{renderRuns(block.runs)}</p>;
+        }
+      })}
+    </div>
   );
 }
 
@@ -153,7 +255,7 @@ function Screenshot({ page }) {
       {/* Full-page captures can be thousands of pixels tall; scroll inside the panel instead of stretching the page. */}
       <div
         data-testid="screenshot-frame"
-        className="max-h-[60vh] overflow-y-auto rounded-lg border border-slate-200 hover:border-slate-400"
+        className="max-h-[60vh] min-h-[120px] overflow-y-auto rounded-lg border border-slate-200 bg-slate-100 hover:border-slate-400"
       >
         <img
           src={src}
