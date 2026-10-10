@@ -53,7 +53,7 @@ Schedule and cut order: `marketing-rule-watch/TIMELINE.md`. Pitch: `marketing-ru
 
 Update this table when a hand-off lands. Status reflects **what is pushed to git**. Work on someone's laptop doesn't count until it's pushed.
 
-Last updated: **1:45 PM**
+Last updated: **1:50 PM**
 
 | Workstream | Status | Evidence in repo |
 |---|---|---|
@@ -64,7 +64,7 @@ Last updated: **1:45 PM**
 | Devin demo site | ⏳ not in repo | `demo-site/` has only `CLAUDE.md` |
 | Crawl (`fetch.py`, screenshots) | 🟡 URL → Page JSON + chunker pushed; not yet run on the demo site or ported into Base44 | `crawl/fetch.py` |
 | Detector (`engine/`) | ⏳ not in repo | `engine/` has only `CLAUDE.md` |
-| Base44 app | 🟡 CLI logged in; app scaffolded; UI + seed pushed (`556f99d`), passes local pre-flight; waiting on entities push, then seed + deploy. `.env` still empty, so detection is keyword mode | `base44/app/`, `base44/PLAN.md` |
+| Base44 app | 🟡 Live at https://marketing-rule-watch-a0747dd2.base44.app (app `6acaa1caee5db1d7a0747dd2`). Entities live, Google login on, public. UI pushed (`556f99d`); seeding + deploying next. Detection is keyword mode until `.env` is filled | `base44/app/`, `base44/PLAN.md` |
 | Rewrite, snapshots, Daytona | ⬜ later / stretch | — |
 
 ## 5. Hand-offs (the deadlines that matter)
@@ -72,7 +72,7 @@ Last updated: **1:45 PM**
 | Time | From → To | What | Status |
 |---|---|---|---|
 | 1:30 | Devin → P3 | Demo firm site at a public URL | ⏳ |
-| 1:30 | P1 → all | Mentor answer: Base44 outbound calls → plan A or B (see §6) | ⏳ |
+| 1:30 | P1 → all | Mentor answer: Base44 outbound calls → plan A or B (see §6) | ✅ Plan A, proven by P2 at 1:45 |
 | 1:45 | P3 → P2 | Bright Data request code + sample `Page` JSON + one screenshot | ⏳ |
 | 2:30 | P4 → P2 | `engine/prompts/detect.md` + grounding logic, beats baseline | ⏳ |
 | **2:45** | **P2 → P1** | **Live link with demo mode** | ⏳ |
@@ -85,7 +85,7 @@ Last updated: **1:45 PM**
 
 | Question | What the Base44 docs say (vendored skills, 1:08 PM) | Still needs |
 |---|---|---|
-| Can Base44 backend functions make outbound HTTPS calls? | **Yes on paper.** Functions are Deno handlers that call `fetch()` and read keys with `secrets.get()` from `base44:runtime`. | P1/mentor confirm on our plan by 1:30. P2 proves it with a one-line `fetch` function by 1:30. |
+| Can Base44 backend functions make outbound HTTPS calls? | ✅ **Yes: Plan A.** A deployed `ping-out` function got HTTP responses from api.brightdata.com and api.anthropic.com (1:45 PM). | Tell P1 / team. |
 | Is there a built-in LLM? | **Yes.** `base44.integrations.Core.InvokeLLM({prompt, response_json_schema})` returns structured JSON with no API key. | Confirm it's on our plan, and whether its model is close enough to P4's eval model (see `base44/PLAN.md` §4). |
 | Can P4's eval hit the live detector? | **Yes on paper.** Functions are reachable at `POST https://<app-domain>/functions/<name>`. | P2 ships `detect-text`; confirm it's callable without login. |
 | Does Bright Data called from inside Base44 count for the track? | — | P1 asks the Bright Data mentor (2–3 PM). |
