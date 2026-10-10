@@ -94,6 +94,19 @@ const RX = {
   neg_hypo: /\b(?:do not|don't|does not|never|no)\b[^.!?]{0,25}\b(?:publish|show|present|provide|use|offer)|\b(?:upon|on) request\b/i,
   advice_balanced: /including (?:those|ones|picks|recommendations|positions) that (?:lost|declined|fell|underperformed)|full list of (?:our |all )?(?:recommendations|picks)/i,
   disclaimer: /past performance (?:does not|is not|cannot|may not|is no)|involves? risk|possible loss of principal|risk of loss/i,
+  // language shown as an example of what not to say, or quoted regulation (Tester B, Check 1:
+  // "verify that it was, in fact, legitimately an advertisement")
+  example_frame: new RegExp(
+    String.raw`\b(?:a|an|another|some|other|many) (?:firm|adviser|advisor|manager|ad|advertisement)s? ` +
+    String.raw`(?:might|may|could|would|that|who|which) (?:say|claim|promise|write|advertise|tout|call)` +
+    String.raw`|\b(?:firms|advisers|advisors|managers|ads) (?:that|who|which) (?:say|claim|promise|advertise|tout)` +
+    String.raw`|\b(?:phrases|claims|language|wording|words|statements|promises) (?:like|such as)\b` +
+    String.raw`|\bwatch (?:out )?for\b|\bred flags?\b|\b(?:avoid|never|don't|do not) (?:say|saying|use|using)\b` +
+    String.raw`|\b(?:the )?(?:SEC|Marketing Rule|Rule 206\(4\)-1|rule) (?:prohibits|bans|forbids|says|states|requires)\b` +
+    String.raw`|\bmay not include\b|\bexamples? of (?:misleading|prohibited|non-compliant|problematic)`, "i"),
+  first_person: /\b(?:we|our|us|I|my)\b/i,
+  // a hand-picked start/window: standard periods elsewhere on the page don't excuse it
+  cherry_window: /\b(?:since|from|off) the [^.,;]{0,25}?\b(?:low|lows|bottom|trough)\b|\bbest (?:\d+|two|three|four|five|six|seven|eight|nine|ten) (?:years|quarters|months)\b|\bbest (?:year|quarter|month|day|trade)s?\b/i,
 };
 
 function periods1510(chunk) {
@@ -119,6 +132,15 @@ function blanketTestimonialDisclosure(chunk) {
     .some((m) => RX.client_status.test(m.text) && RX.compensation.test(m.text));
 }
 
+const QUOTED = /"[^"]*"|\u201c[^\u201d]*\u201d/;
+const quotedIn = (sent, span) => findAll(QUOTED, sent).some((q) => q.text.includes(span));
+
+// Example/education framing, and the span is quoted or isn't the firm speaking (we/our).
+export function presentedAsExample(sent, span) {
+  if (!RX.example_frame.test(sent)) return false;
+  return quotedIn(sent, span) || !RX.first_person.test(span.replace(new RegExp(QUOTED.source, "g"), ""));
+}
+
 export function suppressed(chunk, flag) {
   const { category: cat, span } = flag;
   const i = chunk.indexOf(span);
@@ -127,6 +149,7 @@ export function suppressed(chunk, flag) {
   const near = i >= 0 ? chunk.slice(Math.max(0, i - 150), i + span.length + 350) : chunk;
   if (RX.disclaimer.test(sent) && !/\bwe guarantee|\bguaranteed (?:returns?|income)/i.test(sent))
     return "inside a standard risk disclaimer";
+  if (presentedAsExample(sent, span)) return "example or quoted rule, not the firm's own claim";
   if (cat === "TESTIMONIAL_NO_DISCLOSURE") {
     const unit = i >= 0 ? testimonialUnit(chunk, i, i + span.length) : span;
     if ((RX.client_status.test(unit) && RX.compensation.test(unit)) || blanketTestimonialDisclosure(chunk))
@@ -135,7 +158,8 @@ export function suppressed(chunk, flag) {
   if (cat === "RATING_NO_DISCLOSURE" && RX.rating_method.test(near) && (RX.rating_date.test(near) || RX.rating_paid.test(near)))
     return "rating methodology and date/payment disclosed";
   if (cat === "GROSS_WITHOUT_NET" && RX.net.test(near)) return "net performance shown";
-  if (cat === "UNFAIR_PERFORMANCE_PRESENTATION" && periods1510(near)) return "1/5/10-year periods shown";
+  if (cat === "UNFAIR_PERFORMANCE_PRESENTATION" && periods1510(near) && !RX.cherry_window.test(sent))
+    return "1/5/10-year periods shown";
   if (cat === "BENEFITS_WITHOUT_RISK" && RX.neg_guarantee.test(sent) && !/\bwe guarantee/i.test(sent))
     return "negated guarantee (disclaimer)";
   if (cat === "HYPOTHETICAL_PERFORMANCE" && RX.neg_hypo.test(sent)) return "hypothetical not presented / only on request";
@@ -223,17 +247,31 @@ const ATTRIB_AFTER = /^\s*,?\s*(?:says|said|wrote|writes|--|-|—|–)/i;
 const REVIEW = /reposted from|from our (?:yelp|google|facebook)|\breviews? (?:on|from)\b|\b(?:five|5) stars?\b|★/i;
 const ENDORSE = /\b(?:she|he|they) (?:says|said|swears|recommends)\b[^.!?]*/i;
 const HINT_EXTRA = {
-  "quoted text (possible testimonial)": QUOTE,
   "review / star language": REVIEW,
   "third-party endorsement": ENDORSE,
   "net figure present": /\bnet\b/i,
   "disclosure language present": /current client|compensat|methodolog|rating date|not representative|past performance/i,
 };
 
+// Per quote: does it carry its OWN client-status + compensation disclosure? A page-wide
+// "disclosure present" cue made the model treat a neighbour's disclosure as covering every quote.
+function quoteHints(text) {
+  const blanket = blanketTestimonialDisclosure(text);
+  return findAll(QUOTE, text).map((m) => {
+    const unit = testimonialUnit(text, m.start, m.end);
+    const label = RX.client_status.test(unit) && RX.compensation.test(unit)
+      ? "quoted text with its own client/compensation disclosure"
+      : blanket ? "quoted text covered by a page-wide testimonial disclosure"
+      : "TESTIMONIAL_NO_DISCLOSURE? quoted text with NO disclosure of its own";
+    return `${label}: "${m.text.slice(0, 80)}"`;
+  });
+}
+
 export function hints(text, limit = 25) {
   const out = [];
   for (const [cat, rx] of Object.entries(CUES))
     for (const m of findAll(rx, text)) out.push(`${cat}? cue "${m.text}"`);
+  out.push(...quoteHints(text));
   for (const [label, rx] of Object.entries(HINT_EXTRA))
     for (const m of findAll(rx, text)) out.push(`${label}: "${m.text.slice(0, 80)}"`);
   for (const [s, e] of sentences(text))

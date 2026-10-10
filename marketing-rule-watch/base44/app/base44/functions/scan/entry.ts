@@ -1,6 +1,6 @@
 // Reference `scan` backend function for Base44. P2: copy to base44/app/base44/functions/scan/entry.ts
 // and brightdata.ts to base44/app/base44/shared/brightdata.ts.
-// Input  {firm_id: string, urls: string[], screenshot?: boolean}
+// Input  {firm_id: string, urls: string[], screenshot?: boolean, capture_html?: boolean}
 // Output {created: number, failed: [{url, error}], log: string[]}
 // P2 change: markdown is cleaned and capped (shared/page-text.ts) before storing, because Page.markdown
 // is limited to ~20k chars; sha256 is of the STORED text so flag spans stay exact substrings of it.
@@ -10,6 +10,7 @@ import { createClientFromRequest } from "npm:@base44/sdk";
 import { secrets } from "base44:runtime";
 import { fetchPage, MAX_URLS, sha256Hex } from "../../shared/brightdata.ts";
 import { capText, cleanMarkdown } from "../../shared/page-text.ts";
+import { fetchRawHtml, stripActiveContent } from "../../shared/page-html.ts";
 
 export default async function (req: Request): Promise<Response> {
   const base44 = createClientFromRequest(req);
@@ -18,7 +19,7 @@ export default async function (req: Request): Promise<Response> {
     return Response.json({ error: "Scanning is admin only" }, { status: 401 }); // credits are finite
   }
 
-  const { firm_id, urls, screenshot = true } = await req.json();
+  const { firm_id, urls, screenshot = true, capture_html = true } = await req.json();
   const list = [...new Set((urls ?? []).map((u: string) => String(u).trim()).filter(Boolean))] as string[];
   if (!firm_id || list.length === 0) return Response.json({ error: "firm_id and urls[] required" }, { status: 400 });
   if (list.length > MAX_URLS) return Response.json({ error: `max ${MAX_URLS} URLs per scan` }, { status: 400 });
@@ -32,7 +33,11 @@ export default async function (req: Request): Promise<Response> {
   const log: string[] = [];
   for (const url of list) { // sequential, no retries
     try {
-      const r = await fetchPage(url, { token, zone, screenshot });
+      // raw HTML runs alongside markdown + screenshot; a failed capture never fails the page
+      const [r, rawHtml] = await Promise.all([
+        fetchPage(url, { token, zone, screenshot }),
+        capture_html ? fetchRawHtml(url, token, zone, log) : Promise.resolve(null),
+      ]);
       log.push(...r.log);
       const raw = r.page.markdown.length;
       const cleaned = cleanMarkdown(r.page.markdown);
@@ -50,8 +55,17 @@ export default async function (req: Request): Promise<Response> {
           log.push(`upload failed for ${url}: ${(e as Error).message}`);
         }
       }
+      let html_ref = "";
+      if (rawHtml) {
+        try {
+          const file = new File([stripActiveContent(rawHtml)], `${r.page.sha256.slice(0, 16)}.html`, { type: "text/html" });
+          html_ref = (await base44.asServiceRole.integrations.Core.UploadFile({ file })).file_url;
+        } catch (e) {
+          log.push(`html upload failed for ${url}: ${(e as Error).message}`);
+        }
+      }
       try {
-        await base44.asServiceRole.entities.Page.create({ firm_id, ...r.page });
+        await base44.asServiceRole.entities.Page.create({ firm_id, ...r.page, html_ref });
       } catch (e) {
         // deno-lint-ignore no-explicit-any
         const msg = (e as any)?.response?.data?.message ?? (e as Error).message;
