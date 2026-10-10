@@ -203,12 +203,9 @@ function TextView({ page, span }) {
     markRef.current?.scrollIntoView({ block: "center" });
   }, [page.id, span]);
 
+  // PageText draws the card and the title bar; this is only the body.
   return (
-    <section aria-label={COPY.pageTextLabel} className="rounded-lg border border-paper-200 bg-white">
-      <div className="flex flex-wrap items-center gap-2 border-b border-paper-200 px-4 py-2 text-sm">
-        <span className="font-medium">{pageTitle(page)}</span>
-        <ChannelChip channel={page.channel} />
-      </div>
+    <>
       {!formatted && !parts.found && (
         <div className="border-b border-paper-200 p-4">
           <blockquote className="rounded-r-md border-l-[3px] border-lamp-500 bg-lamp-100 px-3 py-2 font-mono text-sm">{quoted(span)}</blockquote>
@@ -234,7 +231,7 @@ function TextView({ page, span }) {
           )}
         </div>
       )}
-    </section>
+    </>
   );
 }
 
