@@ -1,0 +1,65 @@
+{
+  "version": 1,
+  "skills": {
+    "base44-cli": {
+      "source": "base44/skills",
+      "sourceType": "github",
+      "skillPath": "skills/base44-cli/SKILL.md",
+      "computedHash": "38abcd02310fccff5842995decb20122318717a1d9567a4e6d27aa089b0dea3d"
+    },
+    "base44-remote-dev": {
+      "source": "base44/skills",
+      "sourceType": "github",
+      "skillPath": "skills/base44-remote-dev/SKILL.md",
+      "computedHash": "71cc706f59499d1fd5faed8418c1a3f1957c95b9361ee32b4cf7a099dc23718e"
+    },
+    "base44-sdk": {
+      "source": "base44/skills",
+      "sourceType": "github",
+      "skillPath": "skills/base44-sdk/SKILL.md",
+      "computedHash": "d0a569bb153b81311b20c0d8cdb30fe8c000e83471eec1ebb60128b410b6b7e5"
+    },
+    "base44-troubleshooter": {
+      "source": "base44/skills",
+      "sourceType": "github",
+      "skillPath": "skills/base44-troubleshooter/SKILL.md",
+      "computedHash": "8330fa7749b8749242b6671aa47c75e70fa0a4aad4b8707d2b5a4223964e5130"
+    },
+    "clerk-setup": {
+      "source": "clerk/skills",
+      "sourceType": "github",
+      "skillPath": "skills/clerk-setup/SKILL.md",
+      "computedHash": "7efff51d6d348bea4722eaecb477c5e81268e148fc6ae6f439e3a1426dc847f7"
+    },
+    "daytona": {
+      "source": "daytona/skills",
+      "sourceType": "github",
+      "skillPath": "skills/daytona/SKILL.md",
+      "computedHash": "d8dd2ff2edb38d2db403b9d342449753be6815e4d99f39a043634f997abdeb98"
+    },
+    "fish-audio-api": {
+      "source": "fishaudio/docs",
+      "sourceType": "github",
+      "skillPath": ".mintlify/skills/fish-audio-api/SKILL.md",
+      "computedHash": "8d67fde267fc8e0c8e64b440d36767d24c3f631a0e66ba422a4361de74475b92"
+    },
+    "mongodb-mcp-setup": {
+      "source": "mongodb/agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/mongodb-mcp-setup/SKILL.md",
+      "computedHash": "0c843ccedfd6265cc0ac09fde85690480ed52372c676c8d362d327e3a494be2e"
+    },
+    "scrape": {
+      "source": "brightdata/skills",
+      "sourceType": "github",
+      "skillPath": "skills/scrape/SKILL.md",
+      "computedHash": "265712feebdd22275af2a22e98a6636ea496464a8d3e0db081a439966db3067b"
+    },
+    "search": {
+      "source": "brightdata/skills",
+      "sourceType": "github",
+      "skillPath": "skills/search/SKILL.md",
+      "computedHash": "4d1592e91da2f71b22ea814f39d9de05776309cd88d0b8f7c1ae2122efdf85da"
+    }
+  }
+}
