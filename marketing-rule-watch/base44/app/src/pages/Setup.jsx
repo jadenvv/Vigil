@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { base44 } from "@/api/base44Client";
 import { ChannelChip } from "@/components/Badges";
 import { EmptyBlock, ErrorBlock, LoadingBlock, Shell } from "@/components/Chrome";
+import { COPY } from "@/lib/copy";
 import { Link } from "@/lib/router";
 
 const MAX_URLS = 25;
@@ -235,6 +236,9 @@ function SetupForm() {
     <div className="max-w-2xl space-y-6">
       <form onSubmit={handleFind} className="space-y-4">
         <h1 className="text-2xl font-semibold tracking-tight">Scan a firm</h1>
+        <p data-testid="scope-note" className="text-sm text-slate-500">
+          {COPY.scopeNote}
+        </p>
         <label className="block text-sm">
           Firm name
           <input className={input} value={form.name} onChange={update("name")} required disabled={running} />

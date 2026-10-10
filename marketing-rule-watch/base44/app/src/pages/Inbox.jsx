@@ -56,6 +56,9 @@ function InboxBody({ firm, groups, flagCount, pagesScanned, decisions }) {
         <p className="mt-1 text-slate-600" data-testid="issue-count">
           {COPY.issueCountAcross(flagCount, groups.length, pagesScanned)}
         </p>
+        <p data-testid="scope-note" className="mt-1 text-sm text-slate-500">
+          {COPY.scopeNote}
+        </p>
       </div>
       {groups.length === 0 ? (
         <EmptyBlock title={COPY.emptyInbox} detail={COPY.emptyInboxDetail} />

@@ -11,6 +11,8 @@ export const COPY = {
   issueCount: (n: number) => `${n} potential ${n === 1 ? "issue" : "issues"} for review`,
   issueCountAcross: (n: number, flaggedPages: number, pagesChecked: number) =>
     `${n} potential ${n === 1 ? "issue" : "issues"} for review on ${flaggedPages} of ${pagesChecked} ${pagesChecked === 1 ? "page" : "pages"} checked`,
+  // Check 1, Tester A: unreviewed content is often employees venting; say what we do and don't check.
+  scopeNote: "We check content your firm and its advisers publish or adopt. We don't flag personal posts or complaints.",
   emptyInbox: "No potential issues found",
   emptyInboxDetail: "Nothing on these pages matched a Marketing Rule pattern. A person should still review new content.",
   loadError: "We couldn't load this. Check your connection and try again.",
