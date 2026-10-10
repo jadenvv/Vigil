@@ -26,3 +26,5 @@ Tester B: "I think AI is a very valuable tool as long as we have appropriate che
 
 Insight: Tester B describes the regulator's side: the advertising department searches for firms' misleading ads, then asks for information, may send examiners, orders corrections or fines. That supports the risk (regulators do look at public ads) but not H1 from a firm's own experience. They want the captured ad plus a way to re-find it live, and false positives are what would make them stop trusting the tool. No answer on H2.
 Change we made: pending
+
+Check 1 closed (status completed): 2 testers completed, 3 failed sends. Final results match the quotes above; nothing new. Changes per item: `feedback_changes.md`.
