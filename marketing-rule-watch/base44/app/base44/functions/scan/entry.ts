@@ -4,6 +4,7 @@
 // Output {created: number, failed: [{url, error}], log: string[]}
 // P2 change: markdown is cleaned and capped (shared/page-text.ts) before storing, because Page.markdown
 // is limited to ~20k chars; sha256 is of the STORED text so flag spans stay exact substrings of it.
+// capture_html (default off: it adds a third Bright Data call per page) also stores the raw HTML as html_ref.
 // Secrets: BRIGHTDATA_TOKEN, BRIGHTDATA_ZONE (npx base44 secrets set --env-file ../../.env).
 // VERIFY before demo: (1) UploadFile accepts a File built server-side, (2) Page RLS lets admin create.
 import { createClientFromRequest } from "npm:@base44/sdk";
@@ -19,7 +20,7 @@ export default async function (req: Request): Promise<Response> {
     return Response.json({ error: "Scanning is admin only" }, { status: 401 }); // credits are finite
   }
 
-  const { firm_id, urls, screenshot = true, capture_html = true } = await req.json();
+  const { firm_id, urls, screenshot = true, capture_html = false } = await req.json();
   const list = [...new Set((urls ?? []).map((u: string) => String(u).trim()).filter(Boolean))] as string[];
   if (!firm_id || list.length === 0) return Response.json({ error: "firm_id and urls[] required" }, { status: 400 });
   if (list.length > MAX_URLS) return Response.json({ error: `max ${MAX_URLS} URLs per scan` }, { status: 400 });
