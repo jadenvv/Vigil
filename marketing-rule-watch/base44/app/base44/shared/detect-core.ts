@@ -2,12 +2,13 @@
 // (do not edit it here); this file only wires the prompt, the LLM call and page-level grounding.
 import { buildMessages, chunks, parseFlags, postprocess, ruleCandidates } from "./detect_core.js";
 import { DETECT_PROMPT, DETECT_SCHEMA } from "./prompts.ts";
-import { callLLM } from "./llm.ts";
+import { callLLM, LLMUnavailable } from "./llm.ts";
 
 // "llm"   = DETECT_PROMPT through Base44 InvokeLLM (shared/llm.ts).
 // "rules" = P4's keyword fallback: free, deterministic, NOT AI. Don't call it AI in UI or pitch.
 // An LLM failure never falls back to rules silently: those chunks yield zero flags and the
 // result reports mode "llm_error", so a partial answer is never passed off as a full one.
+// "llm_unavailable" = InvokeLLM refused (quota/plan): no chunk was analyzed, so no flags at all.
 export const MODE: "llm" | "rules" = "llm";
 export const MIN_CONF = 0.5; // from P4's eval
 export const MAX_TEXT = 200_000; // guard for a single page
@@ -34,7 +35,7 @@ export interface Flag {
 
 export interface DetectResult {
   flags: Flag[];
-  mode: "llm" | "rules" | "llm_error";
+  mode: "llm" | "rules" | "llm_error" | "llm_unavailable";
 }
 
 // deno-lint-ignore no-explicit-any
@@ -51,6 +52,10 @@ export async function detectText(base44: any, text: string, channel = "", mode =
       try {
         cands = parseFlags(await callLLM(base44, system, user, DETECT_SCHEMA)); // one call, no retry
       } catch (e) {
+        if (e instanceof LLMUnavailable) {
+          console.log(`detect: LLM unavailable (${e.message})`);
+          return { flags: [], mode: "llm_unavailable" }; // later chunks would be refused too
+        }
         console.log(`detect: chunk dropped (${(e as Error).message})`); // malformed or failed -> zero flags
         failedChunks++;
         cands = [];

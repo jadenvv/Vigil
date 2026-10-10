@@ -19,6 +19,7 @@ export default async function (req: Request): Promise<Response> {
 
   const { flags, mode } = await detectText(base44, markdown, page.channel ?? "");
   // A failed LLM call must not wipe the page's existing flags and leave it looking clean.
+  if (mode === "llm_unavailable") return Response.json({ error: "llm_unavailable", mode }, { status: 503 });
   if (mode === "llm_error") return Response.json({ error: "LLM call failed; flags unchanged", mode }, { status: 502 });
 
   const old = await base44.asServiceRole.entities.Flag.filter({ page_id });

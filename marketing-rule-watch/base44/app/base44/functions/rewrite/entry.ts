@@ -2,6 +2,7 @@
 // Anonymous on the demo firm (testers use the drawer), admin only elsewhere. Writes nothing:
 // the drawer records the human's choice as a Decision.
 import { createClientFromRequest } from "npm:@base44/sdk";
+import { LLMUnavailable } from "../../shared/llm.ts";
 import { rewriteFlag } from "../../shared/rewrite-core.ts";
 
 export default async function (req: Request): Promise<Response> {
@@ -25,6 +26,8 @@ export default async function (req: Request): Promise<Response> {
     const result = await rewriteFlag(base44, String(page.markdown ?? ""), flag, page.channel ?? "");
     return Response.json(result);
   } catch (e) {
+    // 503 = the model never ran (quota/plan): the drawer switches to manual edit mode.
+    if (e instanceof LLMUnavailable) return Response.json({ error: "llm_unavailable" }, { status: 503 });
     console.log(`rewrite failed for flag ${flag_id}: ${(e as Error).message}`);
     return Response.json({ error: "No suggestion this time. Edit the text by hand." }, { status: 502 });
   }

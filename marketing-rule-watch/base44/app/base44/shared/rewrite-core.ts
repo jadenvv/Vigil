@@ -110,7 +110,7 @@ export async function rewriteFlag(base44: any, page: string, flag: Flag, channel
     suggested_text: suggested,
     suggested_page: newPage,
     flags_total: 1,
-    flags_cleared: stillFlagged || again.mode === "llm_error" ? 0 : 1, // unverified counts as not cleared
+    flags_cleared: stillFlagged || again.mode !== "llm" ? 0 : 1, // unverified counts as not cleared
     placeholders: [...new Set(suggested.match(PLACEHOLDER) ?? [])],
   };
 }
