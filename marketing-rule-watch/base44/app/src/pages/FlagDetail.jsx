@@ -37,13 +37,13 @@ function FlagDetailBody({ flag, page, firm }) {
   }, [flag.id]);
   return (
     <>
-      <Link to={inboxPath} className="text-sm text-slate-600 hover:text-slate-900">
+      <Link to={inboxPath} className="text-sm text-night-600 hover:text-night-950">
         ← {COPY.backToInbox}
       </Link>
       <div className="mt-3 flex flex-wrap items-center gap-2">
         <SeverityBadge category={flag.category} />
         <h1 className="text-xl font-semibold tracking-tight">{categoryLabel(flag.category)}</h1>
-        <span className="text-sm text-slate-500">· {COPY.issueCount(1)}</span>
+        <span className="text-sm text-night-600">· {COPY.issueCount(1)}</span>
       </div>
       <div className="mt-6 grid gap-6 lg:grid-cols-5">
         <div className="lg:col-span-3">
@@ -78,8 +78,8 @@ function PageText({ page, span }) {
   };
 
   return (
-    <section aria-label={COPY.pageTextLabel} className="rounded-lg border border-slate-200 bg-white">
-      <div className="flex flex-wrap items-center gap-2 border-b border-slate-200 px-4 py-2 text-sm">
+    <section aria-label={COPY.pageTextLabel} className="rounded-lg border border-paper-200 bg-white">
+      <div className="flex flex-wrap items-center gap-2 border-b border-paper-200 px-4 py-2 text-sm">
         <span className="font-medium">{pageTitle(page)}</span>
         <ChannelChip channel={page.channel} />
         {SHOW_PAGE_VIEW && (
@@ -97,7 +97,7 @@ function PageText({ page, span }) {
                   setNote(null);
                   setTab(key);
                 }}
-                className={`rounded px-2 py-1 text-xs ${tab === key ? "bg-slate-900 text-white" : "text-slate-600 hover:bg-slate-100"}`}
+                className={`rounded px-2 py-1 text-xs ${tab === key ? "bg-night-950 text-paper-50" : "text-night-600 hover:bg-paper-100"}`}
               >
                 {label}
               </button>
@@ -106,7 +106,7 @@ function PageText({ page, span }) {
         )}
       </div>
       {note && (
-        <p role="status" data-testid="capture-note" className="border-b border-slate-200 bg-slate-50 px-4 py-2 text-xs text-slate-600">
+        <p role="status" data-testid="capture-note" className="border-b border-paper-200 bg-paper-50 px-4 py-2 text-xs text-night-600">
           {note}
         </p>
       )}
@@ -173,7 +173,7 @@ function CapturedView({ page, span, onUnavailable }) {
 
   useEffect(() => () => frameUrl && URL.revokeObjectURL(frameUrl), [frameUrl]);
 
-  if (!frameUrl) return <div aria-busy="true" className="m-4 h-64 animate-pulse rounded bg-slate-200" />;
+  if (!frameUrl) return <div aria-busy="true" className="m-4 h-64 animate-pulse rounded bg-paper-200" />;
   return (
     <div>
       <iframe
@@ -184,7 +184,7 @@ function CapturedView({ page, span, onUnavailable }) {
         src={`${frameUrl}#${HIT_ID}`}
         className="block h-[60vh] w-full bg-white"
       />
-      <p className="border-t border-slate-200 px-4 py-2 text-xs text-slate-500">
+      <p className="border-t border-paper-200 px-4 py-2 text-xs text-night-600">
         {COPY.capturedCaption(formatDate(capture.fetched_at ?? page.fetched_at))}
       </p>
     </div>
@@ -204,27 +204,27 @@ function TextView({ page, span }) {
   }, [page.id, span]);
 
   return (
-    <section aria-label={COPY.pageTextLabel} className="rounded-lg border border-slate-200 bg-white">
-      <div className="flex flex-wrap items-center gap-2 border-b border-slate-200 px-4 py-2 text-sm">
+    <section aria-label={COPY.pageTextLabel} className="rounded-lg border border-paper-200 bg-white">
+      <div className="flex flex-wrap items-center gap-2 border-b border-paper-200 px-4 py-2 text-sm">
         <span className="font-medium">{pageTitle(page)}</span>
         <ChannelChip channel={page.channel} />
       </div>
       {!formatted && !parts.found && (
-        <div className="border-b border-slate-200 p-4">
-          <blockquote className="border-l-2 border-amber-400 pl-3 text-sm">{quoted(span)}</blockquote>
-          <p className="mt-2 text-xs text-slate-500">{COPY.quoteNotLocated}</p>
+        <div className="border-b border-paper-200 p-4">
+          <blockquote className="rounded-r-md border-l-[3px] border-lamp-500 bg-lamp-100 px-3 py-2 font-mono text-sm">{quoted(span)}</blockquote>
+          <p className="mt-2 text-xs text-night-600">{COPY.quoteNotLocated}</p>
         </div>
       )}
       {formatted ? (
-        <div data-testid="page-formatted" className="max-h-[60vh] overflow-y-auto break-words p-4 font-serif text-[15px] leading-relaxed text-slate-800">
+        <div data-testid="page-formatted" className="max-h-[60vh] overflow-y-auto break-words p-4 font-serif text-[15px] leading-relaxed text-night-800">
           <MarkdownBlocks blocks={model.blocks} markRef={markRef} />
         </div>
       ) : (
-        <div className="max-h-[60vh] overflow-y-auto whitespace-pre-wrap break-words p-4 font-serif text-[15px] leading-relaxed text-slate-800">
+        <div className="max-h-[60vh] overflow-y-auto whitespace-pre-wrap break-words p-4 font-serif text-[15px] leading-relaxed text-night-800">
           {parts.found ? (
             <>
               {parts.before}
-              <mark ref={markRef} data-testid="span-highlight" className="rounded bg-amber-200 px-0.5 text-slate-900">
+              <mark ref={markRef} data-testid="span-highlight" className="rounded bg-lamp-100 shadow-[inset_0_-2px_0_#F5A524] px-0.5 text-night-950">
                 {parts.match}
               </mark>
               {parts.after}
@@ -251,8 +251,8 @@ function MarkdownBlocks({ blocks, markRef }) {
   const renderRuns = (runs) =>
     runs.map((run, i) => {
       let node = run.text;
-      if (run.code) node = <code className="rounded bg-slate-100 px-1 font-mono text-[13px]">{node}</code>;
-      if (run.link) node = <span className="underline decoration-slate-400">{node}</span>;
+      if (run.code) node = <code className="rounded bg-paper-100 px-1 font-mono text-[13px]">{node}</code>;
+      if (run.link) node = <span className="underline decoration-night-300">{node}</span>;
       if (run.italic) node = <em>{node}</em>;
       if (run.bold) node = <strong>{node}</strong>;
       if (run.mark) {
@@ -262,7 +262,7 @@ function MarkdownBlocks({ blocks, markRef }) {
           <mark
             ref={isFirst ? markRef : undefined}
             data-testid={isFirst ? "span-highlight" : "span-highlight-part"}
-            className="bg-amber-200 text-slate-900"
+            className="bg-lamp-100 shadow-[inset_0_-2px_0_#F5A524] text-night-950"
           >
             {node}
           </mark>
@@ -294,19 +294,19 @@ function MarkdownBlocks({ blocks, markRef }) {
           }
           case "quote":
             return (
-              <blockquote key={i} className="border-l-2 border-slate-300 pl-3 text-slate-700">
+              <blockquote key={i} className="border-l-2 border-night-200 pl-3 text-night-700">
                 {renderRuns(block.runs)}
               </blockquote>
             );
           case "hr":
-            return <hr key={i} className="border-slate-200" />;
+            return <hr key={i} className="border-paper-200" />;
           case "table":
             return (
               <div key={i} className="overflow-x-auto">
                 <table className="w-full border-collapse font-sans text-sm">
                   <tbody>
                     {block.rows.map((row, r) => (
-                      <tr key={r} className="border-b border-slate-200">
+                      <tr key={r} className="border-b border-paper-200">
                         {row.map((cell, c) => {
                           const Cell = block.header && r === 0 ? "th" : "td";
                           return (
@@ -331,24 +331,24 @@ function MarkdownBlocks({ blocks, markRef }) {
 
 function EvidencePanel({ flag, page }) {
   return (
-    <section className="space-y-3 rounded-lg border border-slate-200 bg-white p-4 text-sm">
+    <section className="space-y-3 rounded-lg border border-paper-200 bg-white p-4 text-sm">
       <div>
-        <h2 className="text-xs font-semibold uppercase tracking-wide text-slate-500">{COPY.quoteLabel}</h2>
-        <blockquote className="mt-1 border-l-2 border-amber-400 pl-3">{quoted(flag.span)}</blockquote>
+        <h2 className="text-xs font-semibold uppercase tracking-wide text-night-600">{COPY.quoteLabel}</h2>
+        <blockquote className="mt-1 rounded-r-md border-l-[3px] border-lamp-500 bg-lamp-100 px-3 py-2 font-mono">{quoted(flag.span)}</blockquote>
       </div>
       {flag.why && (
         <div>
-          <h2 className="text-xs font-semibold uppercase tracking-wide text-slate-500">{COPY.whyLabel}</h2>
+          <h2 className="text-xs font-semibold uppercase tracking-wide text-night-600">{COPY.whyLabel}</h2>
           <p className="mt-1">{flag.why}</p>
         </div>
       )}
       <Confidence value={flag.confidence} />
       {SHOW_RULE_REFS && flag.rule && (
         <p>
-          <span className="text-slate-500">{COPY.ruleLabel}: </span>Rule {flag.rule}
+          <span className="text-night-600">{COPY.ruleLabel}: </span>Rule {flag.rule}
         </p>
       )}
-      <dl className="grid grid-cols-[auto,1fr] gap-x-3 gap-y-1 text-xs text-slate-600">
+      <dl className="grid grid-cols-[auto,1fr] gap-x-3 gap-y-1 text-xs text-night-600">
         <dt>{COPY.sourceLabel}</dt>
         <dd className="break-all">
           <a href={page.url} target="_blank" rel="noreferrer noopener" className="underline">
@@ -374,7 +374,7 @@ function Screenshot({ page }) {
     return (
       <div
         data-testid="screenshot-placeholder"
-        className="flex aspect-[4/3] items-center justify-center rounded-lg border border-dashed border-slate-300 bg-slate-100 text-sm text-slate-500"
+        className="flex aspect-[4/3] items-center justify-center rounded-lg border border-dashed border-night-200 bg-paper-100 text-sm text-night-600"
       >
         {COPY.screenshotUnavailable}
       </div>
@@ -385,7 +385,7 @@ function Screenshot({ page }) {
       {/* Full-page captures can be thousands of pixels tall; scroll inside the panel instead of stretching the page. */}
       <div
         data-testid="screenshot-frame"
-        className="max-h-[60vh] min-h-[120px] overflow-y-auto rounded-lg border border-slate-200 bg-slate-100 hover:border-slate-400"
+        className="max-h-[60vh] min-h-[120px] overflow-y-auto rounded-lg border border-paper-200 bg-paper-100 hover:border-night-300"
       >
         <img
           src={src}
@@ -395,7 +395,7 @@ function Screenshot({ page }) {
           className="block w-full"
         />
       </div>
-      <span className="mt-1 block text-xs text-slate-500">{COPY.openScreenshot}</span>
+      <span className="mt-1 block text-xs text-night-600">{COPY.openScreenshot}</span>
     </a>
   );
 }

@@ -38,13 +38,13 @@ export default function Setup() {
               <button
                 type="button"
                 onClick={() => base44.auth.loginWithProvider("google", window.location.href)}
-                className="mt-2 rounded-md bg-slate-900 px-4 py-2 text-white hover:bg-slate-800"
+                className="mt-2 rounded-md bg-night-950 px-4 py-2 text-white hover:bg-night-800"
               >
                 Sign in with Google
               </button>
             }
           />
-          <p className="mt-3 text-center text-xs text-slate-500">
+          <p className="mt-3 text-center text-xs text-night-600">
             For the team only. If sign-in fails, Google login isn't enabled in the app's auth settings yet.
           </p>
         </>
@@ -230,13 +230,13 @@ function SetupForm() {
     }
   };
 
-  const input = "mt-1 w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm";
-  const primary = "rounded-md bg-slate-900 px-4 py-2 text-sm text-white hover:bg-slate-800 disabled:opacity-50";
+  const input = "mt-1 w-full rounded-md border border-night-200 bg-white px-3 py-2 text-sm";
+  const primary = "rounded-md bg-night-950 px-4 py-2 text-sm text-white hover:bg-night-800 disabled:opacity-50";
   return (
     <div className="max-w-2xl space-y-6">
       <form onSubmit={handleFind} className="space-y-4">
         <h1 className="text-2xl font-semibold tracking-tight">Scan a firm</h1>
-        <p data-testid="scope-note" className="text-sm text-slate-500">
+        <p data-testid="scope-note" className="text-sm text-night-600">
           {COPY.scopeNote}
         </p>
         <label className="block text-sm">
@@ -254,13 +254,13 @@ function SetupForm() {
             disabled={running}
           />
           {form.site.trim() && display && display !== form.site.trim() && (
-            <span data-testid="domain-hint" className="mt-1 block text-xs text-slate-500">
+            <span data-testid="domain-hint" className="mt-1 block text-xs text-night-600">
               Will check {display}
             </span>
           )}
         </label>
         <details className="text-sm">
-          <summary className="cursor-pointer text-slate-600">Advisor names (optional)</summary>
+          <summary className="cursor-pointer text-night-600">Advisor names (optional)</summary>
           <input
             className={input}
             value={form.advisors}
@@ -280,7 +280,7 @@ function SetupForm() {
 
       {discovery.status === "loading" && (
         <div className="space-y-3">
-          <p role="status" className="text-sm text-slate-600">
+          <p role="status" className="text-sm text-night-600">
             {form.includeSearch
               ? "Finding pages and searching the web. This takes about 40 seconds."
               : "Finding pages on the site…"}
@@ -295,7 +295,7 @@ function SetupForm() {
       {discovery.status === "ready" && (
         <section className="space-y-4" aria-label="Pages to check">
           {discovery.unreachable && (
-            <p role="status" data-testid="unreachable" className="rounded-md bg-amber-50 p-3 text-sm text-amber-900">
+            <p role="status" data-testid="unreachable" className="rounded-md bg-lamp-100 p-3 text-sm text-lamp-700">
               We couldn't reach {display}, so only its start page is listed. Check the website, or add URLs manually.
             </p>
           )}
@@ -323,7 +323,7 @@ function SetupForm() {
             </>
           )}
           <details className="text-sm" open={found.length === 0}>
-            <summary className="cursor-pointer text-slate-600">Add a URL manually</summary>
+            <summary className="cursor-pointer text-night-600">Add a URL manually</summary>
             <textarea
               aria-label="URLs to add, one per line"
               className={`${input} h-28 font-mono`}
@@ -337,7 +337,7 @@ function SetupForm() {
             <button type="button" onClick={handleScan} disabled={running || tooMany || !toScan.length} className={primary}>
               {running ? "Scanning…" : `Scan ${toScan.length} ${toScan.length === 1 ? "page" : "pages"}`}
             </button>
-            <span data-testid="selected-count" className={`text-sm ${tooMany ? "text-red-700" : "text-slate-600"}`}>
+            <span data-testid="selected-count" className={`text-sm ${tooMany ? "text-ember-700" : "text-night-600"}`}>
               {toScan.length} selected (max {MAX_URLS})
             </span>
           </div>
@@ -345,14 +345,14 @@ function SetupForm() {
       )}
 
       {log.length > 0 && (
-        <ol aria-live="polite" className="space-y-1 rounded-lg border border-slate-200 bg-white p-4 font-mono text-xs">
+        <ol aria-live="polite" className="space-y-1 rounded-lg border border-paper-200 bg-white p-4 font-mono text-xs">
           {log.map((line, i) => (
             <li key={i}>{line}</li>
           ))}
         </ol>
       )}
       {outcome?.created === 0 && (
-        <div role="alert" data-testid="no-pages" className="rounded-lg border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900">
+        <div role="alert" data-testid="no-pages" className="rounded-lg border border-lamp-300 bg-lamp-100 p-4 text-sm text-lamp-700">
           <p className="font-medium">No pages could be stored</p>
           <ul className="mt-2 space-y-1 text-xs">
             {outcome.failed.map((failure) => (
@@ -387,7 +387,7 @@ function UrlLabel({ item }) {
   return (
     <span className="break-all">
       <span className="font-semibold">{host}</span>
-      <span className="text-slate-500">{rest === "/" ? "" : rest}</span>
+      <span className="text-night-600">{rest === "/" ? "" : rest}</span>
     </span>
   );
 }
@@ -396,11 +396,11 @@ function UrlGroup({ title, note, items, selected, onToggle, onSetAll, disabled }
   if (!items.length) return null;
   const count = items.filter((item) => selected.has(item.url)).length;
   return (
-    <fieldset className="rounded-lg border border-slate-200 bg-white p-4">
+    <fieldset className="rounded-lg border border-paper-200 bg-white p-4">
       <legend className="px-1 text-sm font-medium">
-        {title} <span className="font-normal text-slate-500">({count} of {items.length})</span>
+        {title} <span className="font-normal text-night-600">({count} of {items.length})</span>
       </legend>
-      {note && <p className="mb-2 text-xs text-amber-800">{note}</p>}
+      {note && <p className="mb-2 text-xs text-lamp-700">{note}</p>}
       <div className="mb-2 flex gap-3 text-xs">
         <button type="button" className="underline" onClick={() => onSetAll(true)} disabled={disabled}>
           Select all

@@ -86,29 +86,29 @@ export default function RewriteDrawer({ flag, decision, onDecided }) {
   const canSuggest = status === "idle" || (status === "unavailable" && suggestion.canRetry);
   const button = "rounded-md px-3 py-1.5 text-sm disabled:opacity-50";
   return (
-    <section aria-label={COPY.rewriteTitle} className="rounded-lg border border-slate-200 bg-white p-4 text-sm">
+    <section aria-label={COPY.rewriteTitle} className="rounded-lg border border-paper-200 bg-white p-4 text-sm">
       <div className="flex items-center gap-2">
         <h2 className="font-semibold">{status === "ready" ? COPY.rewriteTitle : COPY.manualRewriteTitle}</h2>
         <DecisionBadge decision={decision} />
       </div>
       <div className={`mt-3 grid gap-3 ${showSecondColumn ? "sm:grid-cols-2" : ""}`}>
         <div>
-          <h3 className="text-xs font-semibold uppercase tracking-wide text-slate-500">{COPY.originalLabel}</h3>
-          <p className="mt-1 rounded bg-amber-50 p-2">{suggestion.original_text ?? flag.span}</p>
+          <h3 className="text-xs font-semibold uppercase tracking-wide text-night-600">{COPY.originalLabel}</h3>
+          <p className="mt-1 rounded-r-md border-l-[3px] border-lamp-500 bg-lamp-100 px-3 py-2 font-mono">{suggestion.original_text ?? flag.span}</p>
         </div>
         {showSecondColumn && (
           <div>
-            <h3 className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+            <h3 className="text-xs font-semibold uppercase tracking-wide text-night-600">
               {status === "ready" ? COPY.suggestedLabel : COPY.yourRewriteLabel}
             </h3>
             {status === "loading" && !editing && (
-              <div aria-busy="true" aria-label="Loading suggestion" className="mt-1 h-16 animate-pulse rounded bg-slate-200" />
+              <div aria-busy="true" aria-label="Loading suggestion" className="mt-1 h-16 animate-pulse rounded bg-paper-200" />
             )}
             {status === "unavailable" && !editing && (
-              <p className="mt-1 rounded bg-slate-50 p-2 text-slate-500">{suggestion.message}</p>
+              <p className="mt-1 rounded bg-paper-50 p-2 text-night-600">{suggestion.message}</p>
             )}
             {status === "ready" && !editing && (
-              <p data-testid="suggested-text" className="mt-1 rounded bg-emerald-50 p-2">
+              <p data-testid="suggested-text" className="mt-1 rounded bg-sage-100 p-2">
                 {suggested}
               </p>
             )}
@@ -117,19 +117,19 @@ export default function RewriteDrawer({ flag, decision, onDecided }) {
                 aria-label={COPY.yourRewriteLabel}
                 value={draft}
                 onChange={(event) => setDraft(event.target.value)}
-                className="mt-1 h-28 w-full rounded border border-slate-300 p-2"
+                className="mt-1 h-28 w-full rounded border border-night-200 p-2"
               />
             )}
           </div>
         )}
       </div>
       {status === "ready" && typeof suggestion.flags_total === "number" && (
-        <p className="mt-2 text-xs text-slate-500">
+        <p className="mt-2 text-xs text-night-600">
           {COPY.flagsCleared(suggestion.flags_cleared ?? 0, suggestion.flags_total)}
         </p>
       )}
       {placeholders.length > 0 && (
-        <p data-testid="placeholders-note" className="mt-2 text-xs text-amber-800">
+        <p data-testid="placeholders-note" className="mt-2 text-xs text-lamp-700">
           {COPY.placeholdersNote(placeholders)}
         </p>
       )}
@@ -141,7 +141,7 @@ export default function RewriteDrawer({ flag, decision, onDecided }) {
                 type="button"
                 disabled={status === "loading" || saving}
                 onClick={requestSuggestion}
-                className={`${button} bg-slate-900 text-white hover:bg-slate-800`}
+                className={`${button} bg-night-950 text-paper-50 hover:bg-night-800`}
               >
                 {status === "loading" ? COPY.suggesting : COPY.suggestRewrite}
               </button>
@@ -151,7 +151,7 @@ export default function RewriteDrawer({ flag, decision, onDecided }) {
                 type="button"
                 disabled={saving || placeholders.length > 0}
                 onClick={() => decide("approve", suggested)}
-                className={`${button} bg-slate-900 text-white hover:bg-slate-800`}
+                className={`${button} bg-night-950 text-paper-50 hover:bg-night-800`}
               >
                 {COPY.approve}
               </button>
@@ -160,7 +160,7 @@ export default function RewriteDrawer({ flag, decision, onDecided }) {
               type="button"
               disabled={saving || status === "loading"}
               onClick={() => setEditing(true)}
-              className={`${button} border border-slate-300 hover:bg-slate-50`}
+              className={`${button} border border-night-200 hover:bg-paper-50`}
             >
               {COPY.edit}
             </button>
@@ -168,7 +168,7 @@ export default function RewriteDrawer({ flag, decision, onDecided }) {
               type="button"
               disabled={saving}
               onClick={() => decide("reject", "")}
-              className={`${button} border border-slate-300 hover:bg-slate-50`}
+              className={`${button} border border-night-200 hover:bg-paper-50`}
             >
               {COPY.reject}
             </button>
@@ -180,7 +180,7 @@ export default function RewriteDrawer({ flag, decision, onDecided }) {
               type="button"
               disabled={saving || !draft.trim() || unfilledInDraft.length > 0}
               onClick={() => decide("edit", draft.trim())}
-              className={`${button} bg-slate-900 text-white hover:bg-slate-800`}
+              className={`${button} bg-night-950 text-paper-50 hover:bg-night-800`}
             >
               {COPY.saveEdit}
             </button>
@@ -188,7 +188,7 @@ export default function RewriteDrawer({ flag, decision, onDecided }) {
               type="button"
               disabled={saving}
               onClick={() => setEditing(false)}
-              className={`${button} border border-slate-300 hover:bg-slate-50`}
+              className={`${button} border border-night-200 hover:bg-paper-50`}
             >
               {COPY.cancel}
             </button>
@@ -196,7 +196,7 @@ export default function RewriteDrawer({ flag, decision, onDecided }) {
         )}
       </div>
       {saveError && (
-        <p role="alert" className="mt-2 text-xs text-red-700">
+        <p role="alert" className="mt-2 text-xs text-ember-700">
           {saveError}
         </p>
       )}

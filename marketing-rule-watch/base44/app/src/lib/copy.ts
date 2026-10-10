@@ -5,7 +5,7 @@
 export const SHOW_RULE_REFS = false;
 
 export const COPY = {
-  appName: "Marketing Rule Watch",
+  appName: "Vigil",
   footer: "Not legal advice. All flags require human review.",
   demoBanner: "Fictional firm for a hackathon demo",
   issueCount: (n: number) => `${n} potential ${n === 1 ? "issue" : "issues"} for review`,

@@ -35,7 +35,7 @@ export function prepareCapture(html, pageUrl, span) {
   head.prepend(csp);
   const style = doc.createElement("style");
   style.textContent =
-    "mark[data-mrw-highlight]{background:#fde68a !important;color:#0f172a !important;outline:3px solid #f59e0b;outline-offset:1px;}#mrw-hit{scroll-margin-top:30vh;}";
+    "mark[data-mrw-highlight]{background:#FFF1D6 !important;color:#0B1120 !important;outline:3px solid #F5A524;outline-offset:1px;}#mrw-hit{scroll-margin-top:30vh;}";
   head.append(style);
   const first = markSpanInDocument(doc, span);
   if (first) first.id = HIT_ID;
