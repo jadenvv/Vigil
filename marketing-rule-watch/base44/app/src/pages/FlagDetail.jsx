@@ -193,6 +193,7 @@ function CapturedView({ page, span, onUnavailable }) {
 
 function TextView({ page, span }) {
   const markRef = useRef(null);
+  const boxRef = useRef(null);
   const markdown = page.markdown ?? "";
   const model = useMemo(() => parseMarkdown(markdown, span), [markdown, span]);
   // The formatted view is used only when it actually shows the highlighted words; otherwise raw text.
@@ -200,7 +201,13 @@ function TextView({ page, span }) {
   const parts = formatted ? null : splitOnSpan(markdown, span);
 
   useEffect(() => {
-    markRef.current?.scrollIntoView({ block: "center" });
+    // Scroll only the text box, never the window: scrollIntoView also moved the page, which hid the
+    // title and parked the drawer buttons under Base44's fixed badge on phones.
+    const mark = markRef.current;
+    const box = boxRef.current;
+    if (!mark || !box) return;
+    const offset = mark.getBoundingClientRect().top - box.getBoundingClientRect().top;
+    box.scrollTop += offset - (box.clientHeight - mark.offsetHeight) / 2;
   }, [page.id, span]);
 
   // PageText draws the card and the title bar; this is only the body.
@@ -213,11 +220,11 @@ function TextView({ page, span }) {
         </div>
       )}
       {formatted ? (
-        <div data-testid="page-formatted" className="max-h-[60vh] overflow-y-auto break-words p-4 font-serif text-[15px] leading-relaxed text-night-800">
+        <div ref={boxRef} data-testid="page-formatted" className="max-h-[60vh] overflow-y-auto break-words p-4 font-serif text-[15px] leading-relaxed text-night-800">
           <MarkdownBlocks blocks={model.blocks} markRef={markRef} />
         </div>
       ) : (
-        <div className="max-h-[60vh] overflow-y-auto whitespace-pre-wrap break-words p-4 font-serif text-[15px] leading-relaxed text-night-800">
+        <div ref={boxRef} className="max-h-[60vh] overflow-y-auto whitespace-pre-wrap break-words p-4 font-serif text-[15px] leading-relaxed text-night-800">
           {parts.found ? (
             <>
               {parts.before}
