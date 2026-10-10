@@ -1,10 +1,10 @@
 """Provider-agnostic LLM call, stdlib only (no SDK installs needed).
 
 Configure in .env (repo root) or the environment:
-  LLM_PROVIDER = anthropic | openai | none      (openai = any OpenAI-compatible chat API)
+  LLM_PROVIDER = groq | anthropic | openai | none   (openai = any OpenAI-compatible chat API)
   LLM_MODEL    = model id for that provider
-  LLM_API_KEY  = key (falls back to ANTHROPIC_API_KEY / OPENAI_API_KEY)
-  LLM_BASE_URL = optional, for OpenAI-compatible hosts (default https://api.openai.com/v1)
+  LLM_API_KEY  = key (falls back to GROQ_API_KEY / ANTHROPIC_API_KEY / OPENAI_API_KEY)
+  LLM_BASE_URL = optional override (defaults: groq https://api.groq.com/openai/v1, openai https://api.openai.com/v1)
 
 One request per call. No retry loops: credits are finite.
 """
@@ -39,20 +39,24 @@ def config() -> dict:
     provider = os.environ.get("LLM_PROVIDER", "").strip().lower()
     key = os.environ.get("LLM_API_KEY", "")
     if not provider:
-        if os.environ.get("ANTHROPIC_API_KEY"):
+        if os.environ.get("GROQ_API_KEY"):
+            provider = "groq"
+        elif os.environ.get("ANTHROPIC_API_KEY"):
             provider = "anthropic"
         elif os.environ.get("OPENAI_API_KEY"):
             provider = "openai"
         else:
             provider = "none"
     if not key:
-        key = os.environ.get("ANTHROPIC_API_KEY" if provider == "anthropic" else "OPENAI_API_KEY", "")
-    default_model = {"anthropic": "claude-sonnet-5-5", "openai": "gpt-4o-mini"}.get(provider, "")
+        key = os.environ.get({"groq": "GROQ_API_KEY", "anthropic": "ANTHROPIC_API_KEY"}.get(provider, "OPENAI_API_KEY"), "")
+    default_model = {"groq": "openai/gpt-oss-120b", "anthropic": "claude-sonnet-5-5",
+                     "openai": "gpt-4o-mini"}.get(provider, "")
+    default_base = "https://api.groq.com/openai/v1" if provider == "groq" else "https://api.openai.com/v1"
     return {
         "provider": provider if key or provider == "none" else "none",
         "model": os.environ.get("LLM_MODEL", default_model),
         "key": key,
-        "base_url": os.environ.get("LLM_BASE_URL", "https://api.openai.com/v1").rstrip("/"),
+        "base_url": os.environ.get("LLM_BASE_URL", default_base).rstrip("/"),
     }
 
 
@@ -62,7 +66,8 @@ def available() -> bool:
 
 def _post(url: str, headers: dict, body: dict, timeout: int = 90) -> dict:
     req = urllib.request.Request(url, data=json.dumps(body).encode(),
-                                 headers={"Content-Type": "application/json", **headers})
+                                 headers={"Content-Type": "application/json",
+                                          "User-Agent": "marketing-rule-watch/1.0", **headers})
     with urllib.request.urlopen(req, timeout=timeout) as r:
         return json.loads(r.read())
 
@@ -76,7 +81,7 @@ def complete(system: str, user: str, max_tokens: int = 2000) -> str:
                     {"model": cfg["model"], "max_tokens": max_tokens, "temperature": 0,
                      "system": system, "messages": [{"role": "user", "content": user}]})
         return "".join(b.get("text", "") for b in out.get("content", []) if b.get("type") == "text")
-    if cfg["provider"] == "openai":
+    if cfg["provider"] in ("openai", "groq"):
         out = _post(f"{cfg['base_url']}/chat/completions",
                     {"Authorization": f"Bearer {cfg['key']}"},
                     {"model": cfg["model"], "max_tokens": max_tokens, "temperature": 0,
