@@ -9,6 +9,7 @@ from unittest import mock
 from engine import detect as D
 from engine import llm
 from engine.postprocess import ground
+from engine.taxonomy import TAXONOMY
 
 PAGE = """Quarrywick Wealth | About us
 
@@ -171,3 +172,26 @@ class Rewrite(unittest.TestCase):
         from engine.rewrite import has_placeholders
         self.assertTrue(has_placeholders("x ([NET]% net of fees)"))
         self.assertFalse(has_placeholders("see [Schedule a call](/contact)"))
+
+
+class Naive(unittest.TestCase):
+    """The comparison baseline: one call, model output returned as-is (no grounding or threshold)."""
+
+    def test_one_call_whole_page_flags_kept_as_is(self):
+        from engine import naive
+        text = "We guarantee returns.\n\n" + "Plain filler sentence. " * 600
+        reply = json.dumps({"flags": [
+            {"category": "UNSUBSTANTIATED_CLAIM", "span": "We guarantee returns.", "confidence": 0.3},
+            {"category": "BENEFITS_WITHOUT_RISK", "span": "not on the page", "confidence": 0.9}]})
+        with mock.patch.object(llm, "complete", return_value=reply) as m:
+            flags = naive.detect(text)
+        self.assertEqual(m.call_count, 1)
+        self.assertIn(text, m.call_args[0][1])
+        self.assertEqual(len(flags), 2)  # low confidence and ungrounded both kept
+        self.assertEqual(flags[0]["rule"], TAXONOMY["UNSUBSTANTIATED_CLAIM"]["rule"])
+
+    def test_empty_text_makes_no_call(self):
+        from engine import naive
+        with mock.patch.object(llm, "complete") as m:
+            self.assertEqual(naive.detect("   "), [])
+        m.assert_not_called()

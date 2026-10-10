@@ -10,6 +10,9 @@ Eval suite: the checks compliance_eval.py doesn't do. Reuses its detector loadin
   rewrite      Rewrite quality beyond "flags gone": no new flags, untouched sentences preserved, no invented
                numbers, length bound, open placeholders.
   calibration  Precision by confidence bucket, to choose a threshold.
+  versus       Two detectors side by side on the same cases (default B: engine.naive:detect, one bare LLM
+               call per page with no examples, hints, delimiters, grounding or threshold). Shows what the
+               pipeline adds over a plain wrapper on the same model. --cases for one file, else every set.
 
 USAGE (from marketing-rule-watch/)
   python3 eval/suite.py sets --detector baseline_regex
@@ -18,9 +21,11 @@ USAGE (from marketing-rule-watch/)
   python3 eval/suite.py consistency --detector engine.detect:detect --repeat 3 --cases eval/cases_hard.jsonl
   python3 eval/suite.py rewrite --detector baseline_regex
   python3 eval/suite.py calibration --detector baseline_regex
+  python3 eval/suite.py versus --detector engine.detect:detect --against engine.naive:detect -v
 
 LLM COST: consistency makes cases x repeat calls; rewrite makes 2 detect + 1 rewrite calls per flagged case;
-site makes one call per page. engine.detect:detect calls Groq when .env has a key. For an offline run set
+site makes one call per page; versus makes
+(chunks + 1) calls per case. engine.detect:detect calls Groq when .env has a key. For an offline run set
 DETECT_MODE=rules LLM_PROVIDER=none.
 """
 from __future__ import annotations
@@ -310,11 +315,78 @@ def cmd_calibration(a, detect, rewrite):
     return {"buckets": out}
 
 
+# ----------------------------------------------------------------------------
+# versus: our pipeline vs a naive LLM wrapper, same cases, same model
+# ----------------------------------------------------------------------------
+class _CallCounter:
+    """Counts engine.llm.complete calls (both engine detectors call it through the module attribute)."""
+
+    def __init__(self):
+        self.n = 0
+        try:
+            from engine import llm
+        except ImportError:
+            self.llm = None
+            return
+        self.llm, self.orig = llm, llm.complete
+
+        def counted(*args, **kw):
+            self.n += 1
+            return self.orig(*args, **kw)
+        llm.complete = counted
+
+    def take(self):
+        n, self.n = self.n, 0
+        return n
+
+
+def cmd_versus(a, detect, rewrite):
+    other, _ = load_detector(a.against)
+    calls = _CallCounter()
+    paths = [Path(a.cases)] if a.cases else [HERE / n for n in SETS if (HERE / n).exists()]
+    print(f"\nVersus  A = {a.detector}   B = {a.against}")
+    print(f"{'set':24} {'n':>3} | {'P':>5} {'R':>5} {'F1':>5} {'cleanFP':>7} {'grnd':>5} {'calls':>5} |"
+          f" {'P':>5} {'R':>5} {'F1':>5} {'cleanFP':>7} {'grnd':>5} {'calls':>5} | {'dF1':>5}")
+    out = {}
+    for path in paths:
+        cases = load_cases(path)
+        if a.limit:
+            cases = cases[:a.limit]
+        ra, rb, diffs, ca, cb = [], [], [], 0, 0
+        for c in cases:
+            pa = _run(detect, c["text"], c.get("channel", ""))
+            ca += calls.take()
+            pb = _run(other, c["text"], c.get("channel", ""))
+            cb += calls.take()
+            sa, sb = score_case(c, pa), score_case(c, pb)
+            ra.append(sa)
+            rb.append(sb)
+            if sa["status"] != sb["status"] or len(sa["tp"]) != len(sb["tp"]):
+                diffs.append({"id": c["id"], "A": sa["status"], "B": sb["status"], "A_tp": len(sa["tp"]),
+                              "B_tp": len(sb["tp"]), "A_fp": len(sa["fp"]), "B_fp": len(sb["fp"]),
+                              "B_ungrounded": sb["ungrounded"]})
+        ga, gb = aggregate(ra), aggregate(rb)
+        d = None if ga["f1"] is None or gb["f1"] is None else ga["f1"] - gb["f1"]
+        print(f"{path.name[:24]:24} {len(cases):3} | {_f(ga['precision'])} {_f(ga['recall'])} {_f(ga['f1'])} "
+              f"{_f(ga['clean_doc_fp_rate'], True):>7} {_f(ga['grounding_rate'], True):>5} {ca:5} | "
+              f"{_f(gb['precision'])} {_f(gb['recall'])} {_f(gb['f1'])} {_f(gb['clean_doc_fp_rate'], True):>7} "
+              f"{_f(gb['grounding_rate'], True):>5} {cb:5} | {'  -  ' if d is None else f'{d:+5.2f}'}")
+        out[path.name] = {"A": ga, "B": gb, "A_llm_calls": ca, "B_llm_calls": cb, "disagreements": diffs}
+        if a.verbose:
+            for x in diffs:
+                print(f"    {x['id']:36} A={x['A']:14} B={x['B']:14} tp {x['A_tp']}/{x['B_tp']} "
+                      f"fp {x['A_fp']}/{x['B_fp']}")
+    print("  calls = engine.llm.complete calls (0 for an HTTP or regex detector). "
+          "Same model on both sides only if both run locally.")
+    return {"against": a.against, "sets": out}
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("cmd", choices=["sets", "site", "consistency", "rewrite", "calibration"])
+    ap.add_argument("cmd", choices=["sets", "site", "consistency", "rewrite", "calibration", "versus"])
     ap.add_argument("--detector", default="baseline_regex")
-    ap.add_argument("--cases", default=str(HERE / "cases.jsonl"))
+    ap.add_argument("--cases", default=None, help="case file (default eval/cases.jsonl; versus: every set)")
+    ap.add_argument("--against", default="engine.naive:detect", help="versus: the detector to compare with")
     ap.add_argument("--base", default=LIVE_SITE, help="site root URL or local folder (site)")
     ap.add_argument("--repeat", type=int, default=3)
     ap.add_argument("--limit", type=int, default=0, help="only the first N cases (saves LLM quota)")
@@ -324,6 +396,8 @@ def main():
     a = ap.parse_args()
     if a.repeat > 10:
         ap.error("--repeat is capped at 10 (LLM quota)")
+    if a.cases is None and a.cmd != "versus":
+        a.cases = str(HERE / "cases.jsonl")
     detect, rewrite = load_detector(a.detector)
     rep = globals()[f"cmd_{a.cmd}"](a, detect, rewrite)
     rep = {"cmd": a.cmd, "detector": a.detector, "timestamp": time.strftime("%Y-%m-%d %H:%M:%S"), **rep}
