@@ -35,13 +35,13 @@ function ExamBody({ firm, groups, pagesScanned }) {
   return (
     <article className="space-y-6">
       <div className="flex flex-wrap items-start justify-between gap-3 print:hidden">
-        <Link to={inboxPath} className="text-sm text-slate-600 hover:text-slate-900">
+        <Link to={inboxPath} className="text-sm text-night-600 hover:text-night-950">
           ← {COPY.backToInbox}
         </Link>
         <button
           type="button"
           onClick={() => window.print()}
-          className="rounded-md bg-slate-900 px-4 py-2 text-sm text-white hover:bg-slate-800"
+          className="rounded-md bg-night-950 px-4 py-2 text-sm text-white hover:bg-night-800"
         >
           {COPY.examPrint}
         </button>
@@ -50,10 +50,10 @@ function ExamBody({ firm, groups, pagesScanned }) {
         <h1 className="text-2xl font-semibold tracking-tight">
           {COPY.examTitle}: {firm.name}
         </h1>
-        <p className="mt-1 text-slate-600" data-testid="exam-count">
+        <p className="mt-1 text-night-600" data-testid="exam-count">
           {COPY.issueCountAcross(rows.length, groups.length, pagesScanned)}
         </p>
-        <p className="mt-1 text-sm text-slate-500">
+        <p className="mt-1 text-sm text-night-600">
           {COPY.examPrepared} {formatDate(new Date().toISOString())}. {COPY.scopeNote}
         </p>
       </header>
@@ -65,16 +65,16 @@ function ExamBody({ firm, groups, pagesScanned }) {
             <li
               key={flag.id}
               data-testid="exam-item"
-              className="break-inside-avoid rounded-lg border border-slate-200 bg-white p-4 print:border-slate-400"
+              className="break-inside-avoid rounded-lg border border-paper-200 bg-white p-4 print:border-night-300"
             >
               <div className="flex flex-wrap items-center gap-2">
-                <span className="text-sm text-slate-500">{i + 1}.</span>
+                <span className="text-sm text-night-600">{i + 1}.</span>
                 <SeverityBadge category={flag.category} />
                 <span className="font-medium">{categoryLabel(flag.category)}</span>
               </div>
-              <blockquote className="mt-2 border-l-2 border-amber-400 pl-3">{quoted(flag.span)}</blockquote>
-              {flag.why && <p className="mt-2 text-sm text-slate-700">{flag.why}</p>}
-              <dl className="mt-2 grid grid-cols-[auto,1fr] gap-x-3 gap-y-1 text-xs text-slate-600">
+              <blockquote className="mt-2 rounded-r-md border-l-[3px] border-lamp-500 bg-lamp-100 px-3 py-2 font-mono">{quoted(flag.span)}</blockquote>
+              {flag.why && <p className="mt-2 text-sm text-night-700">{flag.why}</p>}
+              <dl className="mt-2 grid grid-cols-[auto,1fr] gap-x-3 gap-y-1 text-xs text-night-600">
                 <dt>{COPY.examPage}</dt>
                 <dd>{pageTitle(page)}</dd>
                 <dt>{COPY.sourceLabel}</dt>

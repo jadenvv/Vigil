@@ -53,10 +53,10 @@ function InboxBody({ firm, groups, flagCount, pagesScanned, decisions }) {
     <>
       <div className="mb-6">
         <h1 className="text-2xl font-semibold tracking-tight">{firm.name}</h1>
-        <p className="mt-1 text-slate-600" data-testid="issue-count">
+        <p className="mt-1 text-night-600" data-testid="issue-count">
           {COPY.issueCountAcross(flagCount, groups.length, pagesScanned)}
         </p>
-        <p data-testid="scope-note" className="mt-1 text-sm text-slate-500">
+        <p data-testid="scope-note" className="mt-1 text-sm text-night-600">
           {COPY.scopeNote}
         </p>
         <Link to={`/firm/${firm.id}/exam`} data-testid="exam-link" className="mt-2 inline-block text-sm underline">
@@ -72,9 +72,9 @@ function InboxBody({ firm, groups, flagCount, pagesScanned, decisions }) {
               <div className="mb-2 flex flex-wrap items-center gap-2">
                 <h2 className="font-medium">{pageTitle(page)}</h2>
                 <ChannelChip channel={page.channel} />
-                <span className="text-xs text-slate-500">{COPY.issueCount(flags.length)}</span>
+                <span className="text-xs text-night-600">{COPY.issueCount(flags.length)}</span>
               </div>
-              <p className="mb-3 break-all text-xs text-slate-500">{page.url}</p>
+              <p className="mb-3 break-all text-xs text-night-600">{page.url}</p>
               <ul className="space-y-2">
                 {flags.map((flag) => (
                   <li key={flag.id}>
@@ -95,7 +95,7 @@ function FlagCard({ flag, decision }) {
     <Link
       to={`/flag/${flag.id}`}
       data-testid="flag-card"
-      className="block rounded-lg border border-slate-200 bg-white p-4 shadow-sm transition hover:border-slate-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-slate-500"
+      className="block rounded-lg border border-paper-200 bg-white p-4 transition hover:border-night-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-lamp-500"
     >
       <div className="flex flex-wrap items-center gap-2">
         <SeverityBadge category={flag.category} />
@@ -105,7 +105,7 @@ function FlagCard({ flag, decision }) {
           <Confidence value={flag.confidence} />
         </span>
       </div>
-      <blockquote className="mt-2 border-l-2 border-amber-400 pl-3 text-sm text-slate-700">
+      <blockquote className="mt-2 rounded-r-md border-l-[3px] border-lamp-500 bg-lamp-100 px-3 py-2 font-mono text-sm text-night-700">
         {quoted(truncate(flag.span))}
       </blockquote>
     </Link>
