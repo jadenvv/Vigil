@@ -12,6 +12,7 @@ from __future__ import annotations
 
 import json
 import os
+import ssl
 import urllib.request
 from pathlib import Path
 
@@ -64,11 +65,20 @@ def available() -> bool:
     return config()["provider"] != "none"
 
 
+def _ssl_context() -> ssl.SSLContext:
+    """Use certifi's CA bundle when installed: python.org builds on macOS ship without one."""
+    try:
+        import certifi
+        return ssl.create_default_context(cafile=certifi.where())
+    except ImportError:
+        return ssl.create_default_context()
+
+
 def _post(url: str, headers: dict, body: dict, timeout: int = 90) -> dict:
     req = urllib.request.Request(url, data=json.dumps(body).encode(),
                                  headers={"Content-Type": "application/json",
                                           "User-Agent": "marketing-rule-watch/1.0", **headers})
-    with urllib.request.urlopen(req, timeout=timeout) as r:
+    with urllib.request.urlopen(req, timeout=timeout, context=_ssl_context()) as r:
         return json.loads(r.read())
 
 

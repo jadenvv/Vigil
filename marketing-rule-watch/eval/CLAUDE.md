@@ -16,6 +16,7 @@ Read the root `CLAUDE.md` first. This folder **measures** the detector; it doesn
 python3 eval/compliance_eval.py --detector baseline_regex -v                 # baseline
 python3 eval/compliance_eval.py --detector engine.detect:detect -v           # local detector
 python3 eval/compliance_eval.py --detector https://<base44-endpoint>/detect  # live app, if exposed
+EVAL_DETECTOR_TOKEN=<admin token> python3 eval/compliance_eval.py --detector https://marketing-rule-watch-a0747dd2.base44.app/functions/detect-text  # live model; detect-text is admin only (401 without the token)
 python3 eval/compliance_eval.py --compare eval/reports/A.json eval/reports/B.json
 ```
 
@@ -28,6 +29,7 @@ python3 eval/suite.py consistency --detector engine.detect:detect --repeat 3   #
 python3 eval/suite.py rewrite     --detector engine.detect:detect    # flags cleared, no new flags, untouched sentences kept, no invented numbers
 python3 eval/suite.py calibration --detector engine.detect:detect    # precision per confidence bucket
 ```
+HTTPS calls (LLM, live endpoint, demo site) use certifi's CA bundle when it's installed; python.org Python on macOS has none and fails with `CERTIFICATE_VERIFY_FAILED`.
 Reports go to `reports/<cmd>_<detector>_<HHMMSS>.json` (`--no-save` to skip). For a live-endpoint consistency check on chosen pages, `consistency.py --ids ... --runs N` does the same job with tighter cost control.
 
 Offline rules-mode numbers (`reports/suite_rules_offline_*.json`): demo_site F1 0.74 · hard F1 0.50, recall 0.36 · scope clean-FP 44% · site end-to-end F1 0.74, 0 clean pages flagged, 11/11 planted spans survive extraction · deterministic 16/16 · rewrite checks pass 19/19 (cases), 6/6 (demo_site). **LLM mode not yet measured on the new sets.**
