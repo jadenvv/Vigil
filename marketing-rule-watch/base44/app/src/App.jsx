@@ -1,13 +1,14 @@
 import { EmptyBlock, Shell } from "@/components/Chrome";
 import { COPY } from "@/lib/copy";
-import { Redirect, Router } from "@/lib/router";
+import { Router } from "@/lib/router";
 import Exam from "@/pages/Exam";
 import FlagDetail from "@/pages/FlagDetail";
+import Home from "@/pages/Home";
 import { DemoInbox, FirmInbox } from "@/pages/Inbox";
 import Setup from "@/pages/Setup";
 
 const routes = [
-  { path: "/", element: <Redirect to="/demo" /> },
+  { path: "/", element: <Home /> },
   { path: "/demo", element: <DemoInbox /> },
   { path: "/firm/:id", element: <FirmInbox /> },
   { path: "/firm/:id/exam", element: <Exam /> },

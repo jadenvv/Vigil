@@ -111,8 +111,37 @@ async function findOrCreateFirm({ name, domain, advisorNames }) {
   return { firm, reused: false };
 }
 
+// Any firm already stored under this site key, demo firm included, so the team can open its results
+// instead of crawling again. Prefers the demo firm: its results are the reviewed ones.
+async function findExistingFirm(matchKey) {
+  if (!matchKey) return null;
+  const [plain, withWww] = await Promise.all([
+    base44.entities.Firm.filter({ domain: matchKey }),
+    base44.entities.Firm.filter({ domain: `www.${matchKey}` }),
+  ]);
+  const firms = [...plain, ...withWww];
+  return firms.find((firm) => firm.is_demo) ?? firms[0] ?? null;
+}
+
+// "quarrywick.example" -> "Quarrywick"; "host.io/acme-wealth" -> "Acme Wealth". Only a starting point to edit.
+function guessFirmName({ host, siteUrl }) {
+  const path = new URL(siteUrl).pathname.split("/").filter(Boolean).pop();
+  const base = path ?? host.replace(/^www\./, "").split(".")[0];
+  return base.replace(/[-_]+/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
+}
+
+// The home page's Scan box arrives as /setup?site=<what the visitor typed>.
+function siteFromQuery() {
+  try {
+    return new URLSearchParams(window.location.search).get("site")?.trim() ?? "";
+  } catch {
+    return "";
+  }
+}
+
 function SetupForm() {
-  const [form, setForm] = useState({ name: "", site: "", advisors: "", includeSearch: false });
+  const [form, setForm] = useState(() => ({ name: "", site: siteFromQuery(), advisors: "", includeSearch: false }));
+  const [existing, setExisting] = useState(null);
   const [discovery, setDiscovery] = useState({ status: "idle" });
   const [selected, setSelected] = useState(() => new Set());
   const [manualText, setManualText] = useState("");
@@ -132,30 +161,59 @@ function SetupForm() {
   const tooMany = toScan.length > MAX_URLS;
   const { siteUrl, host, display, matchKey } = normalizeSite(form.site);
 
-  const handleFind = async (event) => {
-    event?.preventDefault();
-    if (!form.name.trim() || !siteUrl || discovery.status === "loading") return;
-    setForm((f) => ({ ...f, site: display }));
+  const runDiscovery = async ({ name, site, includeSearch }) => {
+    const target = normalizeSite(site);
+    if (!name.trim() || !target.siteUrl || discovery.status === "loading") return;
+    setForm((f) => ({ ...f, name, site: target.display }));
     setDiscovery({ status: "loading" });
+    setExisting(null);
     setOutcome(null);
     setLog([]);
     try {
-      const res = await base44.functions.invoke("discover", {
-        name: form.name.trim(),
-        domain: host,
-        site: siteUrl,
-        include_search: form.includeSearch,
-      });
+      const [res, firm] = await Promise.all([
+        base44.functions.invoke("discover", {
+          name: name.trim(),
+          domain: target.host,
+          site: target.siteUrl,
+          include_search: includeSearch,
+        }),
+        findExistingFirm(target.matchKey).catch(() => null),
+      ]);
+      setExisting(firm);
       const urls = Array.isArray(res.data?.urls) ? res.data.urls : [];
       // Own-site pages start checked (up to the scan limit); pages found elsewhere start unchecked
       // because search can return other firms with similar names.
       setSelected(new Set(urls.filter((item) => item.source === "site").slice(0, MAX_URLS).map((item) => item.url)));
       const log = Array.isArray(res.data?.log) ? res.data.log : [];
-      setDiscovery({ status: "ready", urls, unreachable: homepageFailed(log, siteUrl), searchesUsed: res.data?.searches_used ?? 0 });
+      setDiscovery({ status: "ready", urls, unreachable: homepageFailed(log, target.siteUrl), searchesUsed: res.data?.searches_used ?? 0 });
     } catch (error) {
       setDiscovery({ status: "error", message: errorText(error) });
     }
   };
+
+  const handleFind = (event) => {
+    event?.preventDefault();
+    runDiscovery(form);
+  };
+
+  // Arriving from the home page: fill in the firm (the stored name if we know the site) and find pages
+  // straight away. Discovery only reads the site; nothing is crawled or stored until Scan.
+  useEffect(() => {
+    const site = siteFromQuery();
+    const target = normalizeSite(site);
+    if (!target.siteUrl) return;
+    let cancelled = false;
+    findExistingFirm(target.matchKey)
+      .catch(() => null)
+      .then((firm) => {
+        if (cancelled) return;
+        runDiscovery({ name: firm?.name ?? guessFirmName(target), site, includeSearch: false });
+      });
+    return () => {
+      cancelled = true;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const setGroup = (items, checked) =>
     setSelected((current) => {
@@ -294,6 +352,17 @@ function SetupForm() {
 
       {discovery.status === "ready" && (
         <section className="space-y-4" aria-label="Pages to check">
+          {existing && (
+            <div data-testid="existing-firm" className="flex flex-wrap items-center gap-3 rounded-[10px] border border-paper-200 bg-white p-4 text-sm">
+              <p className="min-w-0 flex-1 text-night-950">
+                Vigil already has results for <span className="font-medium">{existing.name}</span>. Open them, or scan the
+                pages below again.
+              </p>
+              <Link to={existing.is_demo ? "/demo" : `/firm/${existing.id}`} className={primary}>
+                Open results
+              </Link>
+            </div>
+          )}
           {discovery.unreachable && (
             <p role="status" data-testid="unreachable" className="rounded-md bg-lamp-100 p-3 text-sm text-lamp-700">
               We couldn't reach {display}, so only its start page is listed. Check the website, or add URLs manually.
@@ -335,7 +404,9 @@ function SetupForm() {
           </details>
           <div className="flex flex-wrap items-center gap-3">
             <button type="button" onClick={handleScan} disabled={running || tooMany || !toScan.length} className={primary}>
-              {running ? "Scanning…" : `Scan ${toScan.length} ${toScan.length === 1 ? "page" : "pages"}`}
+              {running
+                ? "Scanning…"
+                : `${existing ? "Scan again:" : "Scan"} ${toScan.length} ${toScan.length === 1 ? "page" : "pages"}`}
             </button>
             <span data-testid="selected-count" className={`text-sm ${tooMany ? "text-ember-700" : "text-night-600"}`}>
               {toScan.length} selected (max {MAX_URLS})
