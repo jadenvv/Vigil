@@ -1,0 +1,54 @@
+/* Vigil design tokens. Source of truth: brand/BRAND.md. */
+/* 1) Raw palette. Use these names in custom CSS. */
+:root {
+  --vigil-night-950: #0B1120;
+  --vigil-night-900: #131B2E;
+  --vigil-night-800: #1A2338;
+  --vigil-night-700: #2A3550;
+  --vigil-night-600: #4A5570;
+  --vigil-night-400: #6E7A96;
+  --vigil-night-300: #8B95AE;
+  --vigil-night-200: #C9CFDC;
+  --vigil-paper-50: #FAF8F4;
+  --vigil-paper-100: #F3EFE7;
+  --vigil-paper-200: #E6E0D4;
+  --vigil-lamp-100: #FFF1D6;
+  --vigil-lamp-300: #FFCF6E;
+  --vigil-lamp-500: #F5A524;
+  --vigil-lamp-700: #9A5B00;
+  --vigil-ember-100: #FBE3DE;
+  --vigil-ember-600: #B8382A;
+  --vigil-ember-700: #962C20;
+  --vigil-dusk-100: #E3EAF5;
+  --vigil-dusk-500: #5878AD;
+  --vigil-dusk-700: #34558A;
+  --vigil-sage-100: #DDF0E6;
+  --vigil-sage-500: #3B9A6F;
+  --vigil-sage-700: #22674A;
+}
+
+/* 2) shadcn/ui variables (HSL, no hsl() wrapper). Paste over the :root block in base44/app/src/index.css. */
+@layer base {
+  :root {
+    --background: 40 37% 97%; /* #FAF8F4 */
+    --foreground: 223 49% 8%; /* #0B1120 */
+    --card: 0 0% 100%; /* #FFFFFF */
+    --card-foreground: 223 49% 8%; /* #0B1120 */
+    --popover: 0 0% 100%; /* #FFFFFF */
+    --popover-foreground: 223 49% 8%; /* #0B1120 */
+    --primary: 223 49% 8%; /* #0B1120 */
+    --primary-foreground: 40 37% 97%; /* #FAF8F4 */
+    --secondary: 40 33% 93%; /* #F3EFE7 */
+    --secondary-foreground: 223 49% 8%; /* #0B1120 */
+    --muted: 40 33% 93%; /* #F3EFE7 */
+    --muted-foreground: 223 20% 36%; /* #4A5570 */
+    --accent: 40 100% 92%; /* #FFF1D6 */
+    --accent-foreground: 35 100% 30%; /* #9A5B00 */
+    --destructive: 6 63% 44%; /* #B8382A */
+    --destructive-foreground: 0 0% 100%; /* #FFFFFF */
+    --border: 40 26% 87%; /* #E6E0D4 */
+    --input: 40 26% 87%; /* #E6E0D4 */
+    --ring: 37 91% 55%; /* #F5A524 */
+    --radius: 0.625rem;
+  }
+}
