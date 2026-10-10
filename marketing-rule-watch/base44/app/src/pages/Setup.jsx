@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { base44 } from "@/api/base44Client";
 import { ChannelChip } from "@/components/Badges";
 import { EmptyBlock, ErrorBlock, LoadingBlock, Shell } from "@/components/Chrome";
-import { COPY } from "@/lib/copy";
+import { COPY, SHOW_PAGE_VIEW } from "@/lib/copy";
 import { UrlText } from "@/components/UrlText";
 import { Link } from "@/lib/router";
 
@@ -251,7 +251,14 @@ function SetupForm() {
         const batch = toScan.slice(start, start + SCAN_BATCH_SIZE);
         append(`Scanning ${start + 1}-${start + batch.length} of ${toScan.length}…`);
         try {
-          const scan = (await base44.functions.invoke("scan", { firm_id: firm.id, urls: batch })).data;
+          const scan = (
+            await base44.functions.invoke("scan", {
+              firm_id: firm.id,
+              urls: batch,
+              // Raw HTML for the "Page as captured" tab costs one more Bright Data call per page.
+              capture_html: SHOW_PAGE_VIEW,
+            })
+          ).data;
           created += scan.created ?? 0;
           failed.push(...(scan.failed ?? []));
         } catch (error) {
