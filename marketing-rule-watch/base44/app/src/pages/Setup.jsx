@@ -5,6 +5,7 @@ import { base44 } from "@/api/base44Client";
 import { ChannelChip } from "@/components/Badges";
 import { EmptyBlock, ErrorBlock, LoadingBlock, Shell } from "@/components/Chrome";
 import { COPY } from "@/lib/copy";
+import { UrlText } from "@/components/UrlText";
 import { Link } from "@/lib/router";
 
 const MAX_URLS = 25;
@@ -290,6 +291,7 @@ function SetupForm() {
 
   const input = "mt-1 w-full rounded-md border border-night-200 bg-white px-3 py-2 text-sm";
   const primary = "rounded-md bg-night-950 px-4 py-2 text-sm text-white hover:bg-night-800 disabled:opacity-50";
+  const secondary = "rounded-md border border-night-950 px-4 py-2 text-sm text-night-950 hover:bg-paper-100";
   return (
     <div className="max-w-2xl space-y-6">
       <form onSubmit={handleFind} className="space-y-4">
@@ -408,6 +410,11 @@ function SetupForm() {
                 ? "Scanning…"
                 : `${existing ? "Scan again:" : "Scan"} ${toScan.length} ${toScan.length === 1 ? "page" : "pages"}`}
             </button>
+            {existing && (
+              <Link to={existing.is_demo ? "/demo" : `/firm/${existing.id}`} className={secondary}>
+                Open results
+              </Link>
+            )}
             <span data-testid="selected-count" className={`text-sm ${tooMany ? "text-ember-700" : "text-night-600"}`}>
               {toScan.length} selected (max {MAX_URLS})
             </span>
@@ -445,7 +452,7 @@ function SetupForm() {
 
 // Search results are noisy (look-alike firms, personal profiles), so their host is shown first and bold.
 function UrlLabel({ item }) {
-  if (item.source === "site") return <span className="break-all">{item.url}</span>;
+  if (item.source === "site") return <UrlText url={item.url} />;
   let host = item.url;
   let rest = "";
   try {
@@ -456,9 +463,9 @@ function UrlLabel({ item }) {
     // Not a parseable URL: show it whole.
   }
   return (
-    <span className="break-all">
-      <span className="font-semibold">{host}</span>
-      <span className="text-night-600">{rest === "/" ? "" : rest}</span>
+    <span>
+      <span className="font-semibold [overflow-wrap:anywhere]">{host}</span>
+      <span className="text-night-600">{rest === "/" ? "" : <UrlText url={rest} stripScheme={false} />}</span>
     </span>
   );
 }
@@ -491,9 +498,13 @@ function UrlGroup({ title, note, items, selected, onToggle, onSetAll, disabled }
                 onChange={() => onToggle(item.url)}
                 disabled={disabled}
               />
-              <span className="flex flex-wrap items-center gap-2">
-                <ChannelChip channel={item.channel} />
-                <UrlLabel item={item} />
+              <span className="flex min-w-0 items-start gap-2">
+                <span className="shrink-0">
+                  <ChannelChip channel={item.channel} />
+                </span>
+                <span className="min-w-0 pt-0.5">
+                  <UrlLabel item={item} />
+                </span>
               </span>
             </label>
           </li>
