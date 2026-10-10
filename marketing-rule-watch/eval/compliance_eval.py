@@ -42,7 +42,7 @@ import sys
 import time
 import urllib.error
 import urllib.request
-from collections import defaultdict
+from collections import Counter, defaultdict
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
@@ -136,6 +136,11 @@ def load_cases(path: Path) -> list[dict]:
     return cases
 
 
+# Modes from detect-text whose flags came from an LLM. Anything else ("rules", "llm_error",
+# "llm_unavailable", or a mode we don't know yet) stops the run.
+LLM_MODES = {"llm", "llm_groq"}
+
+
 class DetectorUnavailable(RuntimeError):
     """The live detector can't answer (quota, HTTP error, non-LLM mode). Aborts the run, no report."""
 
@@ -158,14 +163,22 @@ def load_detector(spec: str):
             # A refused or failed LLM call comes back 200 with zero flags. Scoring that would
             # report fake clean-doc wins and misses, so stop the run instead.
             mode = body.get("mode", "llm") if isinstance(body, dict) else "llm"
-            if mode != "llm":
-                raise DetectorUnavailable(f"endpoint answered mode={mode!r}, not 'llm'")
+            if mode not in LLM_MODES:
+                raise DetectorUnavailable(f"endpoint answered mode={mode!r}, not one of {sorted(LLM_MODES)}")
             return body
         return http_detect, None
     mod_name, _, fn_name = spec.partition(":")
     sys.path.insert(0, str(Path.cwd()))
     mod = importlib.import_module(mod_name)
     return getattr(mod, fn_name or "detect"), getattr(mod, "rewrite", None)
+
+
+def _provider(raw) -> str | None:
+    """Who answered, from the endpoint's provider/model fields or its mode. None for local detectors."""
+    if not isinstance(raw, dict):
+        return None
+    who = raw.get("provider") or raw.get("mode")
+    return f"{who}:{raw['model']}" if who and raw.get("model") else who
 
 
 def _flags(raw) -> list[dict]:
@@ -314,7 +327,10 @@ def _f(x, pct=False):
 
 def print_report(rep: dict, verbose: bool) -> None:
     print(f"\nDetector: {rep['detector']}   cases: {rep['n_cases']}   ({rep['timestamp']})")
-    for name in ("all", "reviewed", "pattern_synthetic"):
+    if rep.get("providers"):
+        print("Answered by: " + ", ".join(f"{k} x{v}" for k, v in rep["providers"].items()))
+    extra = [k for k in rep["subsets"] if k.startswith("provider=")]
+    for name in ("all", "reviewed", "pattern_synthetic", *extra):
         m = rep["subsets"].get(name)
         if not m or not m["n_cases"]:
             print(f"\n[{name}] 0 cases" + ("  <- label real cases (reviewed=true) to make this meaningful" if name == "reviewed" else ""))
@@ -336,7 +352,8 @@ def print_report(rep: dict, verbose: bool) -> None:
         print("\nCases that are not ok:")
         for r in rep["cases"]:
             if r["status"] != "ok":
-                print(f"  {r['id']:28s} {r['status']:15s} missed={r['fn']} extra={r['fp']}")
+                print(f"  {r['id']:28s} {r['status']:15s} missed={r['fn']} extra={r['fp']}"
+                      + (f"  [{r['provider']}]" if r.get("provider") else ""))
 
 
 def do_compare(a_path: str, b_path: str) -> None:
@@ -377,14 +394,16 @@ def main() -> None:
     recs = []
     for c in cases:
         try:
-            preds = _flags(detect(c["text"], c.get("channel", "")))
+            raw = detect(c["text"], c.get("channel", ""))
+            preds, provider = _flags(raw), _provider(raw)
         except DetectorUnavailable as e:
             sys.exit(f"Stopped at case {len(recs) + 1}/{len(cases)} ({c['id']}): {e}. No report saved.")
         except Exception as e:  # a crashing detector should show up as misses, not abort the run
             print(f"  detector error on {c['id']}: {e}", file=sys.stderr)
-            preds = []
-        recs.append(score_case(c, preds))
+            preds, provider = [], "error"
+        recs.append({**score_case(c, preds), "provider": provider})
     by_id = {r["id"]: r for r in recs}
+    providers = sorted({r["provider"] or "local" for r in recs})
     rep = {
         "detector": a.detector,
         "timestamp": time.strftime("%Y-%m-%d %H:%M:%S"),
@@ -395,10 +414,14 @@ def main() -> None:
             "reviewed": aggregate([r for r in recs if r["reviewed"]]),
             "pattern_synthetic": aggregate([r for r in recs if r["provenance"] == "pattern_synthetic"]),
         },
+        "providers": dict(sorted(Counter(r["provider"] or "local" for r in recs).items())),
         "pairs": pair_scores(cases, by_id),
         "rewrite": rewrite_check(cases, by_id, detect, rewrite),
         "cases": recs,
     }
+    if len(providers) > 1:  # a mix: never let one model's numbers pass as another's
+        for pv in providers:
+            rep["subsets"][f"provider={pv}"] = aggregate([r for r in recs if (r["provider"] or "local") == pv])
     print_report(rep, a.verbose)
     if not a.no_save:
         out = Path(a.out)
