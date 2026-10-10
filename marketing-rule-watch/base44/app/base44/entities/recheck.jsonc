@@ -1,0 +1,21 @@
+{
+  "name": "Recheck",
+  "type": "object",
+  "properties": {
+    "flag_id": { "type": "string", "description": "Flag whose quote was looked for" },
+    "page_id": { "type": "string", "description": "Page that was fetched again (the credit cap is per page)" },
+    "checked_at": { "type": "string", "format": "date-time", "description": "UTC time of the live fetch" },
+    "quote_present": { "type": "boolean", "description": "Flagged quote found in the live page text" },
+    "unchanged": { "type": "boolean", "description": "Live text hashes the same as the capture" },
+    "live_sha256": { "type": "string", "description": "sha256 of the live text, cleaned and capped like scan" },
+    "stored_sha256": { "type": "string", "description": "sha256 of the captured Page text" },
+    "error": { "type": "string", "description": "Short fetch error, or empty string when the fetch worked" }
+  },
+  "required": ["flag_id", "page_id", "checked_at"],
+  "rls": {
+    "read": true,
+    "create": { "user_condition": { "role": "admin" } },
+    "update": { "user_condition": { "role": "admin" } },
+    "delete": { "user_condition": { "role": "admin" } }
+  }
+}

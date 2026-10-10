@@ -379,7 +379,8 @@ function EvidencePanel({ flag, page }) {
   );
 }
 
-// One live fetch per click (backend: functions/recheck, admin only, no retry). Nothing is stored.
+// Backend: functions/recheck. Open on the demo firm, to the firm's owner and to admins; at most one live
+// fetch per page per 10 min (a newer check comes back with cached: true). No retry.
 function Recheck({ flagId }) {
   const [state, setState] = useState({ status: "idle" });
   const run = async () => {
@@ -388,7 +389,8 @@ function Recheck({ flagId }) {
       const res = await base44.functions.invoke("recheck", { flag_id: flagId });
       setState({ status: "done", result: res.data });
     } catch (e) {
-      setState({ status: e?.response?.status === 401 ? "admin" : "error" });
+      const httpStatus = e?.response?.status ?? e?.status;
+      setState({ status: httpStatus === 401 || httpStatus === 403 ? "denied" : "error" });
     }
   };
   const r = state.result;
@@ -404,10 +406,13 @@ function Recheck({ flagId }) {
       </button>
       {state.status === "done" && r && !r.error && (
         <p role="status" className="text-night-700">
-          {COPY.recheckQuote(r.quote_present)} {COPY.recheckText(r.unchanged)} ({formatDate(r.checked_at)})
+          {COPY.recheckQuote(r.quote_present)} {COPY.recheckText(r.unchanged)}{" "}
+          {r.cached
+            ? `${COPY.recheckCheckedAgo(Math.max(0, Math.floor((Date.now() - Date.parse(r.checked_at)) / 60000)))} ${COPY.recheckCacheNote}`
+            : `(${formatDate(r.checked_at)})`}
         </p>
       )}
-      {state.status === "admin" && <p role="status" className="text-night-600">{COPY.recheckAdminOnly}</p>}
+      {state.status === "denied" && <p role="status" className="text-night-600">{COPY.recheckNotAllowed}</p>}
       {(state.status === "error" || (state.status === "done" && (!r || r.error))) && (
         <p role="status" className="text-night-600">{COPY.recheckFailed}</p>
       )}
