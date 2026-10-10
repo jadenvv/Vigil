@@ -1,9 +1,10 @@
-// One LLM call, no retries. Primary: Groq's OpenAI-compatible API (same provider and model as the
-// local engine, engine/llm.py), key from the GROQ_API_KEY Base44 secret
-// (npx base44 secrets set GROQ_API_KEY=...). Optional secret LLM_MODEL overrides the model.
-// Fallback when GROQ_API_KEY is unset: Base44's built-in InvokeLLM (sponsor-covered, monthly quota),
-// which must go through asServiceRole in a backend function and takes one prompt, so system and
+// One LLM call per request, no retries. Primary: Base44's built-in InvokeLLM (sponsor-covered, monthly
+// quota), which must go through asServiceRole in a backend function and takes one prompt, so system and
 // user are joined there (engine/port/README.md).
+// Fallback, only when InvokeLLM refuses for quota: Groq's OpenAI-compatible API (same provider and model
+// as the local engine, engine/llm.py), key from the GROQ_API_KEY Base44 secret
+// (npx base44 secrets set GROQ_API_KEY=...). Optional secret LLM_MODEL overrides the model.
+// No GROQ_API_KEY set: the quota refusal surfaces as LLMUnavailable, as before.
 import { secrets } from "base44:runtime";
 
 /** The provider refused (quota/rate/auth): the model never ran, so nothing about the text is known. */
@@ -26,8 +27,14 @@ function secret(name: string): string {
 /** Returns the parsed JSON object the model produces for `schema`. Throws on any failure. */
 // deno-lint-ignore no-explicit-any
 export async function callLLM(base44: any, system: string, user: string, schema: object): Promise<unknown> {
-  const key = secret("GROQ_API_KEY");
-  return key ? callGroq(key, system, user) : callInvokeLLM(base44, system, user, schema);
+  try {
+    return await callInvokeLLM(base44, system, user, schema);
+  } catch (e) {
+    const key = secret("GROQ_API_KEY");
+    if (!(e instanceof LLMUnavailable) || !key) throw e;
+    console.log(`llm: InvokeLLM unavailable (${e.message}); falling back to Groq`);
+    return callGroq(key, system, user);
+  }
 }
 
 async function callGroq(key: string, system: string, user: string): Promise<unknown> {
