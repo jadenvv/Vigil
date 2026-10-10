@@ -21,7 +21,7 @@ export function DemoInbox() {
   const result = useAsync(async () => {
     const firm = await findDemoFirm();
     if (!firm) return { missingDemoFirm: true };
-    const [inbox, decisions] = await Promise.all([loadInbox(firm.id), loadDecisionsQuietly()]);
+    const [inbox, decisions] = await Promise.all([loadInbox(firm.id, firm), loadDecisionsQuietly()]);
     return { ...inbox, decisions };
   }, []);
   return <InboxView result={result} demo />;
@@ -48,13 +48,13 @@ function InboxView({ result, demo }) {
   );
 }
 
-function InboxBody({ firm, groups, flagCount, decisions }) {
+function InboxBody({ firm, groups, flagCount, pagesScanned, decisions }) {
   return (
     <>
       <div className="mb-6">
         <h1 className="text-2xl font-semibold tracking-tight">{firm.name}</h1>
         <p className="mt-1 text-slate-600" data-testid="issue-count">
-          {COPY.issueCountAcross(flagCount, groups.length)}
+          {COPY.issueCountAcross(flagCount, groups.length, pagesScanned)}
         </p>
       </div>
       {groups.length === 0 ? (

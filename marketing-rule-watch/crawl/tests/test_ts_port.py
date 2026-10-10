@@ -49,4 +49,12 @@ def test_fetch_page_contract(ts):
     assert f["screenshot_len"] == 10 and f["log_lines"] == 2
     assert f["sent"][0] == {"zone": "z", "url": "https://firm.example/blog/x", "format": "raw", "data_format": "markdown"}
     assert "HTTP 502" in f["err"]
-    assert sum(1 for s in f["sent"] if s["url"].endswith("/fail")) == 1  # no retry
+    fails = [s for s in f["sent"] if s["url"].endswith("/fail")]
+    assert sum(1 for s in fails if s["data_format"] == "markdown") == 2  # one per call above, no retry
+
+
+def test_markdown_and_screenshot_run_in_parallel(ts):
+    p = ts["parallel"]
+    assert p["has_shot"]
+    assert p["elapsed_ms"] < 550, p  # two 300 ms calls overlap instead of taking 600+ ms
+    assert "HTTP 502" in p["err_with_shot"]

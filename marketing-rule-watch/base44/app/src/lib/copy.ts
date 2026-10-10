@@ -9,8 +9,8 @@ export const COPY = {
   footer: "Not legal advice. All flags require human review.",
   demoBanner: "Fictional firm for a hackathon demo",
   issueCount: (n: number) => `${n} potential ${n === 1 ? "issue" : "issues"} for review`,
-  issueCountAcross: (n: number, pages: number) =>
-    `${n} potential ${n === 1 ? "issue" : "issues"} for review across ${pages} ${pages === 1 ? "page" : "pages"}`,
+  issueCountAcross: (n: number, flaggedPages: number, pagesChecked: number) =>
+    `${n} potential ${n === 1 ? "issue" : "issues"} for review on ${flaggedPages} of ${pagesChecked} ${pagesChecked === 1 ? "page" : "pages"} checked`,
   emptyInbox: "No potential issues found",
   emptyInboxDetail: "Nothing on these pages matched a Marketing Rule pattern. A person should still review new content.",
   loadError: "We couldn't load this. Check your connection and try again.",
@@ -47,11 +47,11 @@ export const COPY = {
 };
 
 // Phase 5 rewrite drawer stays off until after Sense Check 2.
-export const SHOW_REWRITE = false;
+export const SHOW_REWRITE = true;
 
-// Off while the Base44 LLM quota is exhausted: the drawer skips the rewrite call and offers Edit / Dismiss only,
-// so no failed request ever reaches the console. Flip back on once the quota is restored.
-export const FETCH_REWRITE_SUGGESTIONS = false;
+// When false, the drawer skips the rewrite call and offers Edit / Dismiss only,
+// so no failed request ever reaches the console. Turn off again if the Base44 LLM quota runs out.
+export const FETCH_REWRITE_SUGGESTIONS = true;
 
 export const CHANNEL_LABELS: Record<string, string> = {
   website: "Website",

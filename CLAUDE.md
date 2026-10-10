@@ -28,7 +28,7 @@ The **product runs entirely inside Base44** (screens, scan button, Bright Data a
 
 **Open question, owned by Person 1 and due 1:30:** can Base44 backend functions make outbound HTTPS calls (Bright Data, an LLM API)? **VERIFY.** Plan B if not is in `base44/CLAUDE.md`.
 
-**Crawl status (P3):** code for fetch, discovery, snapshots and the Base44 `scan` port is on `main`, but nothing has run live yet (Bright Data zone blocker). P1 and P2 hand-off notes: `crawl/CLAUDE.md` → "Status and hand-off".
+**Crawl status (P3):** Bright Data runs inside Base44 (`scan`, tested live by P2). Fetch, discovery (live SERP tested), snapshots and the Base44 port are on `main`. P1 and P2 hand-off notes: `crawl/CLAUDE.md` → "Status and hand-off".
 
 ## Who works where
 
