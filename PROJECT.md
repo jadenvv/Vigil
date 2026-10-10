@@ -70,6 +70,11 @@ Last updated: **3:20 PM**
 ### Demo flow (decided 3:55 PM)
 Home `/` (Vigil, before/after of a real flag) → type the demo firm URL → `/setup?site=` → live Bright Data discovery → **Open results** (existing firm, no re-crawl) → inbox → flag detail (quote highlighted + screenshot) → rewrite → approve → "Before your exam" print view. `/demo` stays as the no-sign-in fallback. Home page: p2-frontend (impeccable, committed by 5:00); discover latency check: p2-backend; checks: p2-debugger-eval.
 
+### Known limitations (say these if asked)
+- **Bright Data markdown drops the page tail:** the last N characters of a page are lost, where N = the number of extra UTF-8 bytes on it (·, ®, curly quotes). On the demo pages only the end of the footer disclaimer is lost. Confirmed 2026-10-10 against the raw response (chunked, no Content-Length); raw HTML captures are complete. Not fixed today: fixing it would make re-check report "changed" on every demo page until a re-scan.
+- **Discover:** site-only for signed-in users (SSRF-guarded, ccf85e1); web search admin-only and off in the demo (5 SERP calls, up to 45 s each). Residual risk: DNS rebinding between check and fetch.
+- **Re-check cap is soft:** simultaneous scripted calls can each spend a credit.
+
 ## 5. Hand-offs (the deadlines that matter)
 
 | Time | From → To | What | Status |
