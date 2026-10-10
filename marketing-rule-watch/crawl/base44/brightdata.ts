@@ -78,9 +78,21 @@ export async function fetchPage(
 ): Promise<FetchResult> {
   const fetchFn = opts.fetchFn ?? fetch;
   const log: string[] = [];
-  const md = await unlock(fetchFn, opts.token, opts.zone, url, "markdown", log);
+  // Markdown and screenshot run in parallel (~10-13 s -> ~6 s per URL inside Base44). Cost: a
+  // screenshot credit is spent even when the markdown fetch fails. Still one attempt each, no retries.
+  const mdCall = unlock(fetchFn, opts.token, opts.zone, url, "markdown", log);
+  const shot = opts.screenshot
+    ? unlock(fetchFn, opts.token, opts.zone, url, "screenshot", log).catch(() => null)
+    : Promise.resolve(null);
+  const md = await mdCall.catch(async (e) => {
+    await shot;
+    throw e;
+  });
   const markdown = new TextDecoder().decode(md.bytes);
-  if (md.status !== 200) throw new Error(`${url}: HTTP ${md.status}: ${markdown.slice(0, 200)}`);
+  if (md.status !== 200) {
+    await shot;
+    throw new Error(`${url}: HTTP ${md.status}: ${markdown.slice(0, 200)}`);
+  }
   const page: Page = {
     url,
     channel: opts.channel || guessChannel(url),
@@ -89,15 +101,9 @@ export async function fetchPage(
     sha256: await sha256Hex(markdown),
     screenshot_ref: "",
   };
-  let screenshot: Uint8Array | null = null;
-  if (opts.screenshot) {
-    try {
-      const s = await unlock(fetchFn, opts.token, opts.zone, url, "screenshot", log);
-      if (s.status === 200 && PNG_MAGIC.every((b, i) => s.bytes[i] === b)) screenshot = s.bytes;
-    } catch {
-      // screenshot is evidence, not a blocker: page still returns, UI shows "screenshot unavailable"
-    }
-  }
+  // screenshot is evidence, not a blocker: on failure the page still returns, UI shows "screenshot unavailable"
+  const s = await shot;
+  const screenshot = s && s.status === 200 && PNG_MAGIC.every((b, i) => s.bytes[i] === b) ? s.bytes : null;
   return { page, screenshot, log };
 }
 
