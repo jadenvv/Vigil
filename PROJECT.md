@@ -67,6 +67,9 @@ Last updated: **3:20 PM**
 | Base44 app | 🟢 **/demo = real crawl of Quarrywick** (3:18 PM): Bright Data fetched 10 pages + 10 screenshots inside Base44; Base44 InvokeLLM found **9/11 planted issues, 0 false alarms, 0 flags on clean content**. Misses (P4 fixing): cherry-picked start date suppressed by a rule; one undisclosed testimonial. Real-firm "Hartwell" retired · **4:00 bundle** (3:25): functions = prompts v3 + detect_core (2948ba6, ac7c18d, af93aa0 B4) → preview ≥9/11 & 0 FP before apply; frontend = /setup discovery + firm key, screenshot cap, formatted evidence view (fcec734), A1 scope copy, A4 exam print view. Known bug E: Page.markdown loses last N chars on pages with non-ASCII (disclaimer only, p2-backend after deploy) | `base44/app/`, `base44/PLAN.md` |
 | Rewrite, snapshots, Daytona | ⬜ later / stretch | — |
 
+### Demo flow (decided 3:55 PM)
+Home `/` (Vigil, before/after of a real flag) → type the demo firm URL → `/setup?site=` → live Bright Data discovery → **Open results** (existing firm, no re-crawl) → inbox → flag detail (quote highlighted + screenshot) → rewrite → approve → "Before your exam" print view. `/demo` stays as the no-sign-in fallback. Home page: p2-frontend (impeccable, committed by 5:00); discover latency check: p2-backend; checks: p2-debugger-eval.
+
 ## 5. Hand-offs (the deadlines that matter)
 
 | Time | From → To | What | Status |
