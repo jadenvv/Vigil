@@ -53,7 +53,7 @@ Schedule and cut order: `marketing-rule-watch/TIMELINE.md`. Pitch: `marketing-ru
 
 Update this table when a hand-off lands. Status reflects **what is pushed to git**. Work on someone's laptop doesn't count until it's pushed.
 
-Last updated: **1:30 PM**
+Last updated: **1:45 PM**
 
 | Workstream | Status | Evidence in repo |
 |---|---|---|
@@ -64,7 +64,7 @@ Last updated: **1:30 PM**
 | Devin demo site | ⏳ not in repo | `demo-site/` has only `CLAUDE.md` |
 | Crawl (`fetch.py`, screenshots) | 🟡 URL → Page JSON + chunker pushed; not yet run on the demo site or ported into Base44 | `crawl/fetch.py` |
 | Detector (`engine/`) | ⏳ not in repo | `engine/` has only `CLAUDE.md` |
-| Base44 app | 🔴 blocked: Base44 login + `.env` missing; p2-backend and p2-frontend sessions assigned | `base44/PLAN.md` |
+| Base44 app | 🟡 CLI logged in; app scaffolded; UI + seed pushed (`556f99d`), passes local pre-flight; waiting on entities push, then seed + deploy. `.env` still empty, so detection is keyword mode | `base44/app/`, `base44/PLAN.md` |
 | Rewrite, snapshots, Daytona | ⬜ later / stretch | — |
 
 ## 5. Hand-offs (the deadlines that matter)
