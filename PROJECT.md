@@ -53,7 +53,7 @@ Schedule and cut order: `marketing-rule-watch/TIMELINE.md`. Pitch: `marketing-ru
 
 Update this table when a hand-off lands. Status reflects **what is pushed to git**. Work on someone's laptop doesn't count until it's pushed.
 
-Last updated: **2:10 PM**
+Last updated: **2:13 PM**
 
 | Workstream | Status | Evidence in repo |
 |---|---|---|
@@ -63,8 +63,8 @@ Last updated: **2:10 PM**
 | Sense Check 1 | 🟡 brief written, results not logged yet | `research/check1_brief.md`, `research/sense_checks.md` |
 | Devin demo site | ⏳ not in repo | `demo-site/` has only `CLAUDE.md` |
 | Crawl (`fetch.py`, screenshots) | 🟢 Bright Data runs **inside Base44**: `scan` fetched 2 test pages + screenshots (all HTTP 200, screenshots stored as public PNGs). Web Unlocker zone works (name not recorded here); SERP zone `serp_api1`. ~10–13 s per URL, so batch ≤5 | `crawl/`, `base44/app/base44/functions/scan` |
-| Detector (`engine/`) | 🔴 **Base44 integration quota exhausted at 1:58 PM: all LLM calls fail until the Builder plan is applied.** Was: live AI detection on Base44 `InvokeLLM` (mode `llm`), no Anthropic. Eval vs live `detect-text` (1:57 PM, 37 synthetic unreviewed cases): **F1 0.95** (P 0.91, R 1.00), clean docs flagged 0%, grounding 100%, pairs 8/8. Rewrite live (200, flags cleared 1/1) | `engine/`, `base44/app/base44/shared` |
-| Base44 app | 🟢 Demo live and verified twice after the 429 fix (`b912bb1`): 10/10 + 5/5 cold loads, ≈1 s to findings, 0 errors. Manual rewrite drawer (Edit/Dismiss) live. **Deploy freeze until 4:00.** AI features off until the Base44 quota is restored | `base44/app/`, `base44/PLAN.md` |
+| Detector (`engine/`) | 🟢 Builder plan applied (2:07 PM): Base44 `InvokeLLM` live again (mode `llm`, ≈1.7 s). Eval vs live `detect-text` (1:57 PM, 37 synthetic unreviewed cases): **F1 0.95** (P 0.91, R 1.00), clean docs flagged 0%, grounding 100%, pairs 8/8. `detect-text` is admin-only (reopen per eval run) | `engine/`, `base44/app/base44/shared` |
+| Base44 app | 🟢 **/demo now shows AI-detected findings** (2:12 PM): 12 flags, 8/8 categories, matched all 11 hand-planted issues + 1 extra, 0 on clean content. Rewrite suggestions live. Rate-limit fix verified (`b912bb1`). **Deploy freeze 2:55–4:00** | `base44/app/`, `base44/PLAN.md` |
 | Rewrite, snapshots, Daytona | ⬜ later / stretch | — |
 
 ## 5. Hand-offs (the deadlines that matter)
