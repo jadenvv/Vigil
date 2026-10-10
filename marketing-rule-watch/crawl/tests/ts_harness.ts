@@ -22,5 +22,12 @@ const mock = async (_u: string, init: RequestInit) => {
 const ok = await fetchPage("https://firm.example/blog/x", { token: "t", zone: "z", screenshot: true, fetchFn: mock });
 let err = "";
 try { await fetchPage("https://firm.example/fail", { token: "t", zone: "z", fetchFn: mock }); } catch (e) { err = (e as Error).message; }
+const slow = async (u: string, init: RequestInit) => { await new Promise((r) => setTimeout(r, 300)); return mock(u, init); };
+const t0 = Date.now();
+const par = await fetchPage("https://firm.example/x", { token: "t", zone: "z", screenshot: true, fetchFn: slow });
+const elapsed = Date.now() - t0;
+let err2 = "";
+try { await fetchPage("https://firm.example/fail", { token: "t", zone: "z", screenshot: true, fetchFn: mock }); } catch (e) { err2 = (e as Error).message; }
+out.parallel = { elapsed_ms: elapsed, has_shot: !!par.screenshot, err_with_shot: err2 };
 out.fetch = { page: ok.page, screenshot_len: ok.screenshot?.length ?? 0, log_lines: ok.log.length, err, sent };
 console.log(JSON.stringify(out));
