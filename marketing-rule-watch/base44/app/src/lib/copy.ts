@@ -70,6 +70,34 @@ export const COPY = {
   reject: "Dismiss",
   saveEdit: "Save edit",
   cancel: "Cancel",
+  calcCheckTitle: "Check calculation",
+  calcCheckQuoteLabel: "Quote being checked",
+  calcTypeLabel: "Check type",
+  calcTypeCumulative: "Cumulative return",
+  calcTypeCompounded: "Compounded annual return",
+  calcStartValue: "Starting value (you supply)",
+  calcEndValue: "Ending value (you supply)",
+  calcAnnualReturn: "Annual return % (you supply)",
+  calcYears: "Years (you supply)",
+  calcStatedPct: "Stated return (%)",
+  calcAssumption: "No deposits or withdrawals between start and end",
+  calcCompoundedNote: "Assumes a constant annual rate, compounded annually.",
+  calcRun: "Run check",
+  calcRunning: "Checking…",
+  calcMissing: (fields: string[]) => `Fill in ${fields.join(", ")} before running the check.`,
+  calcInvalid: (fields: string[]) =>
+    fields.length > 0 ? `The check needs valid numbers for ${fields.join(", ")}.` : "Check the inputs and try again.",
+  calcStatedLabel: "Stated",
+  calcCalculatedLabel: "Calculated",
+  calcMatch: "Matches supplied inputs",
+  calcMismatch: "Does not match supplied inputs",
+  calcCheckedAt: (when: string) => `Checked ${when}`,
+  calcCached: "Served from a recent check.",
+  calcStale: "Inputs changed — run the check again.",
+  calcDenied: "Calculation checks are limited to reviewers.",
+  calcCooldown: "Too many checks just now. Try again shortly.",
+  calcServiceError: "The calculation service isn't reachable right now. Try again later.",
+  calcNote: "Checks arithmetic only; does not verify actual investment performance.",
 };
 
 // Phase 5 rewrite drawer stays off until after Sense Check 2.
@@ -81,6 +109,9 @@ export const SHOW_REWRITE = true;
 // "Re-check now" on flag detail: off until the `recheck` function and the Recheck entity are deployed.
 // Open on the demo firm, to the firm's owner and to admins; capped at one Bright Data fetch per page per 10 min.
 export const SHOW_RECHECK = true;
+
+// "Check calculation" panel on flag detail. Backend: functions/check-calculation.
+export const SHOW_CALC_CHECK = true;
 
 // When false, the drawer skips the rewrite call and offers Edit / Dismiss only,
 // so no failed request ever reaches the console. Turn off again if the Base44 LLM quota runs out.
