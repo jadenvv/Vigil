@@ -2,11 +2,14 @@
 // and brightdata.ts to base44/app/base44/shared/brightdata.ts.
 // Input  {firm_id: string, urls: string[], screenshot?: boolean}
 // Output {created: number, failed: [{url, error}], log: string[]}
+// P2 change: markdown is cleaned and capped (shared/page-text.ts) before storing, because Page.markdown
+// is limited to ~20k chars; sha256 is of the STORED text so flag spans stay exact substrings of it.
 // Secrets: BRIGHTDATA_TOKEN, BRIGHTDATA_ZONE (npx base44 secrets set --env-file ../../.env).
 // VERIFY before demo: (1) UploadFile accepts a File built server-side, (2) Page RLS lets admin create.
 import { createClientFromRequest } from "npm:@base44/sdk";
 import { secrets } from "base44:runtime";
-import { fetchPage, MAX_URLS } from "../../shared/brightdata.ts";
+import { fetchPage, MAX_URLS, sha256Hex } from "../../shared/brightdata.ts";
+import { capText, cleanMarkdown } from "../../shared/page-text.ts";
 
 export default async function (req: Request): Promise<Response> {
   const base44 = createClientFromRequest(req);
@@ -31,6 +34,13 @@ export default async function (req: Request): Promise<Response> {
     try {
       const r = await fetchPage(url, { token, zone, screenshot });
       log.push(...r.log);
+      const raw = r.page.markdown.length;
+      const cleaned = cleanMarkdown(r.page.markdown);
+      r.page.markdown = capText(cleaned);
+      r.page.sha256 = await sha256Hex(r.page.markdown);
+      log.push(`text ${url}: fetched ${raw} chars, cleaned ${cleaned.length}, stored ${r.page.markdown.length}` +
+        (r.page.markdown.length < cleaned.length ? ` (stored first ${r.page.markdown.length} of ${cleaned.length} chars)` : ""));
+      if (!r.page.markdown) throw new Error("page has no readable text after cleaning");
       if (r.screenshot) {
         try {
           const file = new File([r.screenshot], `${r.page.sha256.slice(0, 16)}.png`, { type: "image/png" });
@@ -40,7 +50,13 @@ export default async function (req: Request): Promise<Response> {
           log.push(`upload failed for ${url}: ${(e as Error).message}`);
         }
       }
-      await base44.asServiceRole.entities.Page.create({ firm_id, ...r.page });
+      try {
+        await base44.asServiceRole.entities.Page.create({ firm_id, ...r.page });
+      } catch (e) {
+        // deno-lint-ignore no-explicit-any
+        const msg = (e as any)?.response?.data?.message ?? (e as Error).message;
+        throw new Error(`fetched but not stored: ${msg}`);
+      }
       created++;
     } catch (e) {
       failed.push({ url, error: (e as Error).message.slice(0, 200) });
