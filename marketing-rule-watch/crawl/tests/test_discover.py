@@ -96,3 +96,49 @@ def test_site_down_does_not_crash(sandbox):
 def test_parse_serp_fallback_on_html():
     html = '<a href="https://firm.example/x">x</a> text https://press.example/y).'
     assert discover.parse_serp(html) == ["https://firm.example/x", "https://press.example/y"]
+
+
+def test_normalize_collapses_linkedin_country_subdomains():
+    assert discover.normalize("https://il.linkedin.com/company/x/") == "https://linkedin.com/company/x"
+    assert discover.normalize("https://www.linkedin.com/company/x") == "https://linkedin.com/company/x"
+    assert not discover.keep(discover.normalize("https://uk.linkedin.com/in/someone"))
+
+
+def test_offsite_gets_reserved_slots_when_site_is_big(sandbox, monkeypatch):
+    monkeypatch.setenv("BRIGHTDATA_SERP_ZONE", "serp_zone")
+    many = "".join(f'<a href="/p{i}">x</a>' for i in range(100))
+
+    def site(req):
+        return httpx.Response(200, text=many) if req.url.path == "/" else httpx.Response(404)
+
+    def bd(req):
+        q = json.loads(req.content)["url"]
+        return httpx.Response(200, json={"organic": [{"link": f"https://review{i}.example/{len(q)}"} for i in range(5)]})
+    rows = discover.discover("F", "f.example", httpx.Client(transport=httpx.MockTransport(site)),
+                             httpx.Client(transport=httpx.MockTransport(bd)))
+    assert len(rows) == 25
+    assert sum(r["source"] == "serp" for r in rows) == 8  # cap // 3
+    assert rows[0]["url"] == "https://f.example/"  # homepage still first
+
+
+def test_small_site_lets_offsite_fill_the_rest(sandbox, monkeypatch):
+    monkeypatch.setenv("BRIGHTDATA_SERP_ZONE", "serp_zone")
+    n = iter(range(1000))
+
+    def bd(req):
+        return httpx.Response(200, json={"organic": [{"link": f"https://news.example/{next(n)}"} for _ in range(10)]})
+    rows = discover.discover("Hartwell Wealth", "hartwell.example", site_client(),
+                             httpx.Client(transport=httpx.MockTransport(bd)))
+    assert len(rows) == 25
+    assert sum(r["source"] == "site" for r in rows) == 6
+
+
+def test_empty_serp_body_warns_and_returns_nothing(sandbox, monkeypatch, capsys):
+    monkeypatch.setenv("BRIGHTDATA_SERP_ZONE", "serp_zone")
+    assert discover.serp(httpx.Client(transport=httpx.MockTransport(lambda r: httpx.Response(200, text=""))), "q") == []
+    assert "empty response" in capsys.readouterr().err
+
+
+def test_normalize_drops_tracking_params_only():
+    assert discover.normalize("https://il.linkedin.com/company/x?originalSubdomain=il") == "https://linkedin.com/company/x"
+    assert discover.normalize("https://f.example/a?utm_source=x&page=2&trk=y") == "https://f.example/a?page=2"
