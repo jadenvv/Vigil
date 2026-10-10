@@ -18,6 +18,7 @@ export const COPY = {
   notFound: "We couldn't find that item.",
   noDemoFirm: "The demo firm isn't loaded yet.",
   screenshotUnavailable: "Screenshot unavailable",
+  openScreenshot: "Open full-size screenshot",
   quoteNotLocated: "The flagged quote couldn't be located in the page text. It is shown on its own above.",
   whyLabel: "Why this was flagged",
   quoteLabel: "Flagged quote",
