@@ -59,6 +59,9 @@ function InboxBody({ firm, groups, flagCount, pagesScanned, decisions }) {
         <p data-testid="scope-note" className="mt-1 text-sm text-slate-500">
           {COPY.scopeNote}
         </p>
+        <Link to={`/firm/${firm.id}/exam`} data-testid="exam-link" className="mt-2 inline-block text-sm underline">
+          {COPY.examLink}
+        </Link>
       </div>
       {groups.length === 0 ? (
         <EmptyBlock title={COPY.emptyInbox} detail={COPY.emptyInboxDetail} />
