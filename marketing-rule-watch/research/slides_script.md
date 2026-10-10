@@ -2,7 +2,7 @@
 
 ## Instructions for the slide maker
 
-Paste everything below the second line into Gamma → Create new → **Paste in text** → **Preserve this exact text** (don't let it generate or expand). `---` splits cards, so you get 12 cards.
+Paste everything below the second line into Gamma → Create new → **Paste in text** → **Preserve this exact text** (don't let it generate or expand). `---` splits cards, so you get 10 cards (Gamma's free limit).
 
 **Simple above everything else.**
 - One idea per slide. Keep the text given and add nothing to it: no extra bullets, summaries, icons, stock photos, illustrations, gradients or emoji.
@@ -27,6 +27,8 @@ Paste everything below the second line into Gamma → Create new → **Paste in 
 # Vigil
 
 Keeps watch over everything a small advisory firm has published, and flags what may conflict with the SEC Marketing Rule, for a human to review.
+
+**Discover → Capture → Detect → Review**, all inside one Base44 app, with Bright Data for web access. The LLM only suggests. A person decides.
 
 ---
 
@@ -67,14 +69,6 @@ Advisers now write marketing with AI, so there's more of it to review, and it go
 > — former regulator tester
 
 A weekly search can't keep up. Vigil uses AI to review it, and a person makes every call.
-
----
-
-# How Vigil works
-
-**Discover → Capture → Detect → Review**
-
-Everything runs inside one Base44 app. Bright Data does the web access. The LLM only suggests. A person decides.
 
 ---
 
@@ -150,10 +144,4 @@ No trigger word. A keyword list misses it. Vigil flags it.
 
 All test cases are synthetic and haven't been reviewed by a compliance professional yet. `—` means not measured yet.
 
----
-
-# Next
-
-Dated snapshots of every page, so a firm can show an examiner what its site said on any past date.
-
-Built with Base44 and Bright Data.
+**Next:** dated snapshots of every page, so a firm can show an examiner what its site said on any past date.
