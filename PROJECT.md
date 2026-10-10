@@ -62,7 +62,7 @@ Last updated: **2:00 PM**
 | Keyword baseline measured | ✅ F1 0.70 · clean docs wrongly flagged 28% · pairs 6/8 | `eval/reports/baseline_regex_120954.json` |
 | Sense Check 1 | 🟡 brief written, results not logged yet | `research/check1_brief.md`, `research/sense_checks.md` |
 | Devin demo site | ⏳ not in repo | `demo-site/` has only `CLAUDE.md` |
-| Crawl (`fetch.py`, screenshots) | 🟢 Bright Data runs **inside Base44**: `scan` fetched 2 test pages + screenshots (all HTTP 200, screenshots stored as public PNGs). Zones `web_unlocker1` + `serp_api1`. ~10–13 s per URL, so batch ≤5 | `crawl/`, `base44/app/base44/functions/scan` |
+| Crawl (`fetch.py`, screenshots) | 🟢 Bright Data runs **inside Base44**: `scan` fetched 2 test pages + screenshots (all HTTP 200, screenshots stored as public PNGs). Web Unlocker zone works (name not recorded here); SERP zone `serp_api1`. ~10–13 s per URL, so batch ≤5 | `crawl/`, `base44/app/base44/functions/scan` |
 | Detector (`engine/`) | 🟡 Python engine + JS port pushed (parity 0 mismatches); live `detect-text` endpoint up. No Anthropic budget → switching to Base44 built-in LLM (`InvokeLLM`) | `engine/`, `base44/app/base44/shared` |
 | Base44 app | 🟢 Demo mode live: https://marketing-rule-watch-a0747dd2.base44.app/demo (seeded fictional firm, 11 flags, 8/8 categories, no login, inbox ≈1.2 s, flag ≈2–4 s, 0 console errors). Next: scan/detect functions, then a real crawl replaces the seed. Detection is keyword mode until `.env` is filled | `base44/app/`, `base44/PLAN.md` |
 | Rewrite, snapshots, Daytona | ⬜ later / stretch | — |
