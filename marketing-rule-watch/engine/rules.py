@@ -11,6 +11,8 @@ from __future__ import annotations
 
 import re
 
+from engine.postprocess import RX, blanket_testimonial_disclosure, testimonial_unit
+
 _SENT_END = re.compile(r"[.!?]+(?=\s|$)|\n+")
 _CLAUSE_SPLIT = re.compile(r",\s+|;\s+|:\s+|\s+(?:--|-|—|–)\s+|\s+and\s+")
 _FIGURE = re.compile(r"[+-]?\d+(?:\.\d+)?\s?%|\$\s?\d|\b\d+x\b|\breturn", re.I)
@@ -74,7 +76,6 @@ ATTRIB_AFTER = re.compile(r"\s*,?\s*(?:says|said|wrote|writes|--|-|—|–)", re
 REVIEW = re.compile(r"reposted from|from our (?:yelp|google|facebook)|\breviews? (?:on|from)\b|\b(?:five|5) stars?\b|★", re.I)
 ENDORSE = re.compile(r"\b(?:she|he|they) (?:says|said|swears|recommends)\b[^.!?]*", re.I)
 HINT_EXTRA = {
-    "quoted text (possible testimonial)": QUOTE,
     "review / star language": REVIEW,
     "third-party endorsement": ENDORSE,
     "net figure present": re.compile(r"\bnet\b", re.I),
@@ -82,11 +83,29 @@ HINT_EXTRA = {
 }
 
 
+def quote_hints(text: str) -> list[str]:
+    """Per quote: does it carry its OWN client-status + compensation disclosure? A page-wide
+    "disclosure present" cue made the model treat a neighbour's disclosure as covering every quote."""
+    blanket = blanket_testimonial_disclosure(text)
+    out = []
+    for m in QUOTE.finditer(text):
+        unit = testimonial_unit(text, m.start(), m.end())
+        if RX["client_status"].search(unit) and RX["compensation"].search(unit):
+            label = "quoted text with its own client/compensation disclosure"
+        elif blanket:
+            label = "quoted text covered by a page-wide testimonial disclosure"
+        else:
+            label = "TESTIMONIAL_NO_DISCLOSURE? quoted text with NO disclosure of its own"
+        out.append(f'{label}: "{m.group(0)[:80]}"')
+    return out
+
+
 def hints(text: str, limit: int = 25) -> list[str]:
     out = []
     for cat, rx in CUES.items():
         for m in rx.finditer(text):
             out.append(f'{cat}? cue "{m.group(0)}"')
+    out += quote_hints(text)
     for label, rx in HINT_EXTRA.items():
         for m in rx.finditer(text):
             out.append(f'{label}: "{m.group(0)[:80]}"')
