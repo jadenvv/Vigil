@@ -48,7 +48,8 @@ CUES = {
     "BENEFITS_WITHOUT_RISK": re.compile(
         r"\bguarantee[sd]?\b|\brisk[- ]free\b|\bno risk\b|\bwithout risk\b|\bnever (?:lost|lose[sd]?)\b"
         r"|\bcan(?:'|no)?t lose\b|\bzero (?:worries|risk)\b|\bworry[- ]free\b|\bno downside\b"
-        r"|\bfully protected\b|\bsafe bet\b", re.I),
+        r"|\bfully protected\b|\bsafe bet\b"
+        r"|\bnever (?:had|seen|posted|suffered) a (?:losing|down|negative)\b", re.I),
     "UNSUBSTANTIATED_CLAIM": re.compile(
         r"#\s?1\b|\bnumber one\b|\bthe best (?:in|advisor|firm|financial|wealth|investment)\b"
         r"|\boutperform\w*|\bbeat(?:s|en|ing)? the (?:market|s&p|index|benchmark)"
@@ -62,8 +63,8 @@ CUES = {
         r"|\bbest (?:year|quarter|month|day|trade)s?\b", re.I),
     "RATING_NO_DISCLOSURE": re.compile(
         r"\bnamed (?:a |one of the |as a |as one of the )?(?:top|best)\b|\branked #?\d+|\btop[- ]rated\b"
-        r"|\baward[- ]winning\b|\bvoted (?:the )?(?:best|top|#\s?1)\b|\brecognized (?:by|as) [^.]{0,40}\btop\b"
-        r"|\b(?:five|5)[- ]star (?:rated|advisor|firm)", re.I),
+        r"|\baward[- ]winning\b|\bvoted (?:[\w']+ ){0,3}(?:best|top|#\s?1)\b|\brecognized (?:by|as) [^.]{0,40}\btop\b"
+        r"|\b(?:five|5)[- ]star (?:rated|advisor|firm|wealth|financial)", re.I),
     "GROSS_WITHOUT_NET": re.compile(r"\bgross\b", re.I),
 }
 ADVICE_ACT = re.compile(r"\b(?:we|i)\s+(?:put clients in(?:to)?|told clients to buy|recommended|bought|picked|added)\b", re.I)
@@ -106,7 +107,8 @@ def _flag(cat, text, a, b, conf):
 
 def rule_candidates(text: str) -> list[dict]:
     out: list[dict] = []
-    for sent in sentences(text):
+    sents = sentences(text)
+    for k, sent in enumerate(sents):
         s, e = sent
         st = text[s:e]
         has_fig = bool(_FIGURE.search(st))
@@ -131,17 +133,23 @@ def rule_candidates(text: str) -> list[dict]:
             start = m.start() if m.group(0).lower().startswith("best") else s
             out.append(_flag("UNFAIR_PERFORMANCE_PRESENTATION", text, start, e, 0.7))
 
-        m = CUES["RATING_NO_DISCLOSURE"].search(text, s, e)
-        if m:
-            out.append(_flag("RATING_NO_DISCLOSURE", text, m.start(), e, 0.7))
+        rs = [clause_at(text, sent, m.start()) for m in CUES["RATING_NO_DISCLOSURE"].finditer(text, s, e)]
+        if rs:
+            out.append(_flag("RATING_NO_DISCLOSURE", text, min(r[0] for r in rs), max(r[1] for r in rs), 0.7))
 
-        if CUES["GROSS_WITHOUT_NET"].search(text, s, e):
-            f = re.compile(r"(?:returned\s+)?[+-]?\d+(?:\.\d+)?\s?%", re.I).search(text, s, e)
-            if f:
-                out.append(_flag("GROSS_WITHOUT_NET", text, f.start(), e, 0.8))
+        # gross: union of the clauses that hold "gross" and a figure
+        gs = [clause_at(text, sent, m.start()) for m in CUES["GROSS_WITHOUT_NET"].finditer(text, s, e)]
+        gs = [g for g in gs if _FIGURE.search(text, g[0], g[1])]
+        if gs:
+            out.append(_flag("GROSS_WITHOUT_NET", text, min(g[0] for g in gs), max(g[1] for g in gs), 0.8))
 
-        if ADVICE_ACT.search(text, s, e) and ADVICE_GAIN.search(text, s, e):
-            out.append(_flag("UNBALANCED_SPECIFIC_ADVICE", text, s, e, 0.7))
+        # a specific pick, with the gain in the same or the next sentence
+        if ADVICE_ACT.search(text, s, e):
+            nxt = sents[k + 1] if k + 1 < len(sents) else None
+            if ADVICE_GAIN.search(text, s, e):
+                out.append(_flag("UNBALANCED_SPECIFIC_ADVICE", text, s, e, 0.7))
+            elif nxt and ADVICE_GAIN.search(text, nxt[0], nxt[1]):
+                out.append(_flag("UNBALANCED_SPECIFIC_ADVICE", text, s, nxt[1], 0.7))
 
         for m in ENDORSE.finditer(text, s, e):
             out.append(_flag("TESTIMONIAL_NO_DISCLOSURE", text, m.start(), m.end(), 0.8))
