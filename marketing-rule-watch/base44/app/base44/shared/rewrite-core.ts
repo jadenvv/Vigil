@@ -98,7 +98,7 @@ export async function rewriteFlag(base44: any, page: string, flag: Flag, channel
 
   // "Cleared" = re-detection finds no flag of this category inside the rewritten passage.
   const again = await detectText(base44, newPage, channel);
-  const stillFlagged = again.some((f) => {
+  const stillFlagged = again.flags.some((f) => {
     if (f.category !== flag.category) return false;
     const i = newPage.indexOf(f.span);
     return applied.some((a) => i < a.newEnd && i + f.span.length > a.newStart);
@@ -110,7 +110,7 @@ export async function rewriteFlag(base44: any, page: string, flag: Flag, channel
     suggested_text: suggested,
     suggested_page: newPage,
     flags_total: 1,
-    flags_cleared: stillFlagged ? 0 : 1,
+    flags_cleared: stillFlagged || again.mode === "llm_error" ? 0 : 1, // unverified counts as not cleared
     placeholders: [...new Set(suggested.match(PLACEHOLDER) ?? [])],
   };
 }

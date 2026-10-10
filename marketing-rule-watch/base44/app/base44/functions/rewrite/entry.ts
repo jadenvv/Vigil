@@ -2,7 +2,6 @@
 // Anonymous on the demo firm (testers use the drawer), admin only elsewhere. Writes nothing:
 // the drawer records the human's choice as a Decision.
 import { createClientFromRequest } from "npm:@base44/sdk";
-import { llmAvailable } from "../../shared/llm.ts";
 import { rewriteFlag } from "../../shared/rewrite-core.ts";
 
 export default async function (req: Request): Promise<Response> {
@@ -22,9 +21,6 @@ export default async function (req: Request): Promise<Response> {
       return Response.json({ error: "Rewrite is admin only outside the demo firm" }, { status: 401 });
     }
   }
-  // No key, no rewrite: never show a canned suggestion as if a model wrote it.
-  if (!llmAvailable()) return Response.json({ error: "rewrite needs ANTHROPIC_API_KEY" }, { status: 503 });
-
   try {
     const result = await rewriteFlag(base44, String(page.markdown ?? ""), flag, page.channel ?? "");
     return Response.json(result);

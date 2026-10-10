@@ -1,6 +1,6 @@
 // {page_id} -> runs detection on the stored Page and replaces its Flag rows. Admin only.
 import { createClientFromRequest } from "npm:@base44/sdk";
-import { detectText, MAX_TEXT, MODE } from "../../shared/detect-core.ts";
+import { detectText, MAX_TEXT } from "../../shared/detect-core.ts";
 
 export default async function (req: Request): Promise<Response> {
   const base44 = createClientFromRequest(req);
@@ -17,12 +17,14 @@ export default async function (req: Request): Promise<Response> {
   const markdown = String(page.markdown ?? "");
   if (markdown.length > MAX_TEXT) return Response.json({ error: `page over ${MAX_TEXT} chars` }, { status: 400 });
 
-  const flags = await detectText(base44, markdown, page.channel ?? "");
+  const { flags, mode } = await detectText(base44, markdown, page.channel ?? "");
+  // A failed LLM call must not wipe the page's existing flags and leave it looking clean.
+  if (mode === "llm_error") return Response.json({ error: "LLM call failed; flags unchanged", mode }, { status: 502 });
 
   const old = await base44.asServiceRole.entities.Flag.filter({ page_id });
   for (const f of old) await base44.asServiceRole.entities.Flag.delete(f.id);
   if (flags.length) {
     await base44.asServiceRole.entities.Flag.bulkCreate(flags.map((f) => ({ ...f, page_id, status: "open" })));
   }
-  return Response.json({ created: flags.length, replaced: old.length, mode: MODE });
+  return Response.json({ created: flags.length, replaced: old.length, mode });
 }
