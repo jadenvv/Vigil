@@ -1,8 +1,9 @@
-// Team-only screen: create a firm, crawl its URLs with `scan`, then run `detect` per page.
+// Team-only screen: find a firm's pages with `discover`, pick which to check, then `scan` and `detect` them.
 // Testers never see this; /demo reads stored rows only.
 import { useEffect, useState } from "react";
 import { base44 } from "@/api/base44Client";
-import { EmptyBlock, LoadingBlock, Shell } from "@/components/Chrome";
+import { ChannelChip } from "@/components/Badges";
+import { EmptyBlock, ErrorBlock, LoadingBlock, Shell } from "@/components/Chrome";
 import { Link } from "@/lib/router";
 
 const MAX_URLS = 25;
@@ -52,53 +53,134 @@ export default function Setup() {
   );
 }
 
+function errorText(error) {
+  return error?.response?.data?.error ?? error?.message ?? "Unknown error";
+}
+
+// "https://www.Example.com/about/" -> fetch "www.example.com", match "example.com".
+// Matching ignores "www." so the same firm isn't created twice; fetching keeps it because some sites need it.
+function normalizeDomain(raw) {
+  const fetchDomain = raw
+    .trim()
+    .toLowerCase()
+    .replace(/^[a-z]+:\/\//, "")
+    .replace(/[/?#].*$/, "")
+    .replace(/:\d+$/, "")
+    .replace(/\.+$/, "");
+  return { fetchDomain, matchDomain: fetchDomain.replace(/^www\./, "") };
+}
+
+// Reuse an existing non-demo firm for the same domain so re-scans don't create duplicates.
+// The demo firm is never reused: a scan must not change what testers see.
+async function findOrCreateFirm({ name, domain, advisorNames }) {
+  const [plain, withWww] = await Promise.all([
+    base44.entities.Firm.filter({ domain }),
+    base44.entities.Firm.filter({ domain: `www.${domain}` }),
+  ]);
+  const reusable = [...plain, ...withWww].find((firm) => !firm.is_demo);
+  if (reusable) return { firm: reusable, reused: true };
+  const firm = await base44.entities.Firm.create({ name, domain, advisor_names: advisorNames, is_demo: false });
+  return { firm, reused: false };
+}
+
 function SetupForm() {
-  const [form, setForm] = useState({ name: "", domain: "", advisors: "", urls: "" });
+  const [form, setForm] = useState({ name: "", domain: "", advisors: "", includeSearch: false });
+  const [discovery, setDiscovery] = useState({ status: "idle" });
+  const [selected, setSelected] = useState(() => new Set());
+  const [manualText, setManualText] = useState("");
   const [running, setRunning] = useState(false);
   const [log, setLog] = useState([]);
-  const [firmId, setFirmId] = useState(null);
-  const urls = parseList(form.urls);
-  const tooMany = urls.length > MAX_URLS;
+  const [outcome, setOutcome] = useState(null);
 
+  const update = (key) => (event) =>
+    setForm((f) => ({ ...f, [key]: event.target.type === "checkbox" ? event.target.checked : event.target.value }));
   const append = (line) => setLog((lines) => [...lines, line]);
-  const update = (key) => (event) => setForm((f) => ({ ...f, [key]: event.target.value }));
+
+  const found = discovery.status === "ready" ? discovery.urls : [];
+  const onSite = found.filter((item) => item.source === "site");
+  const elsewhere = found.filter((item) => item.source !== "site");
+  const manualUrls = parseList(manualText);
+  const toScan = [...new Set([...found.filter((item) => selected.has(item.url)).map((item) => item.url), ...manualUrls])];
+  const tooMany = toScan.length > MAX_URLS;
+  const { fetchDomain, matchDomain } = normalizeDomain(form.domain);
+
+  const handleFind = async (event) => {
+    event?.preventDefault();
+    if (!form.name.trim() || !fetchDomain || discovery.status === "loading") return;
+    setForm((f) => ({ ...f, domain: fetchDomain }));
+    setDiscovery({ status: "loading" });
+    setOutcome(null);
+    setLog([]);
+    try {
+      const res = await base44.functions.invoke("discover", {
+        name: form.name.trim(),
+        domain: fetchDomain,
+        include_search: form.includeSearch,
+      });
+      const urls = Array.isArray(res.data?.urls) ? res.data.urls : [];
+      // Own-site pages start checked (up to the scan limit); pages found elsewhere start unchecked
+      // because search can return other firms with similar names.
+      setSelected(new Set(urls.filter((item) => item.source === "site").slice(0, MAX_URLS).map((item) => item.url)));
+      setDiscovery({ status: "ready", urls, searchesUsed: res.data?.searches_used ?? 0 });
+    } catch (error) {
+      setDiscovery({ status: "error", message: errorText(error) });
+    }
+  };
+
+  const setGroup = (items, checked) =>
+    setSelected((current) => {
+      const next = new Set(current);
+      for (const item of items) checked ? next.add(item.url) : next.delete(item.url);
+      return next;
+    });
+  const toggle = (url) =>
+    setSelected((current) => {
+      const next = new Set(current);
+      next.has(url) ? next.delete(url) : next.add(url);
+      return next;
+    });
 
   // Sequential and no retries: Bright Data and LLM credits are finite.
-  const handleScan = async (event) => {
-    event.preventDefault();
-    if (running || tooMany || !urls.length || !form.name.trim() || !form.domain.trim()) return;
+  const handleScan = async () => {
+    if (running || tooMany || !toScan.length) return;
     setRunning(true);
     setLog([]);
-    setFirmId(null);
+    setOutcome(null);
     try {
-      const firm = await base44.entities.Firm.create({
+      const { firm, reused } = await findOrCreateFirm({
         name: form.name.trim(),
-        domain: form.domain.trim(),
-        advisor_names: parseList(form.advisors),
-        is_demo: false,
+        domain: matchDomain,
+        advisorNames: parseList(form.advisors),
       });
-      append(`Created firm ${firm.name}`);
+      append(reused ? `Adding to existing firm ${firm.name}` : `Created firm ${firm.name}`);
+      // Remember what the firm already had, so detect runs only on pages this scan created or re-fetched.
+      const before = new Map((await base44.entities.Page.filter({ firm_id: firm.id })).map((p) => [p.id, p.fetched_at]));
       // Each URL takes 10-13 s with a screenshot, so small batches keep every call under the function time limit.
       let created = 0;
       const failed = [];
-      for (let start = 0; start < urls.length; start += SCAN_BATCH_SIZE) {
-        const batch = urls.slice(start, start + SCAN_BATCH_SIZE);
-        append(`Scanning ${start + 1}-${start + batch.length} of ${urls.length}…`);
+      for (let start = 0; start < toScan.length; start += SCAN_BATCH_SIZE) {
+        const batch = toScan.slice(start, start + SCAN_BATCH_SIZE);
+        append(`Scanning ${start + 1}-${start + batch.length} of ${toScan.length}…`);
         try {
           const scan = (await base44.functions.invoke("scan", { firm_id: firm.id, urls: batch })).data;
           created += scan.created ?? 0;
           failed.push(...(scan.failed ?? []));
         } catch (error) {
           // A failed batch is reported, not retried: credits are finite.
-          const reason = error?.response?.data?.error ?? error.message;
-          failed.push(...batch.map((url) => ({ url, error: reason })));
+          failed.push(...batch.map((url) => ({ url, error: errorText(error) })));
         }
-        append(`Scanned ${Math.min(start + batch.length, urls.length)} of ${urls.length}`);
+        append(`Scanned ${Math.min(start + batch.length, toScan.length)} of ${toScan.length}`);
       }
-      append(`Scan stored ${created} pages`);
+      if (created === 0) {
+        setOutcome({ created: 0, failed });
+        return;
+      }
+      append(`Scan stored ${created} ${created === 1 ? "page" : "pages"}`);
       for (const failure of failed) append(`Could not fetch ${failure.url}: ${failure.error}`);
 
-      const pages = await base44.entities.Page.filter({ firm_id: firm.id });
+      const pages = (await base44.entities.Page.filter({ firm_id: firm.id })).filter(
+        (page) => !before.has(page.id) || before.get(page.id) !== page.fetched_at,
+      );
       let flagTotal = 0;
       for (const [i, page] of pages.entries()) {
         append(`Checking page ${i + 1} of ${pages.length}: ${page.url}`);
@@ -106,46 +188,115 @@ function SetupForm() {
           const detect = (await base44.functions.invoke("detect", { page_id: page.id })).data;
           flagTotal += detect.created ?? 0;
         } catch (error) {
-          append(`Check failed for ${page.url}: ${error?.response?.data?.error ?? error.message}`);
+          append(`Check failed for ${page.url}: ${errorText(error)}`);
         }
       }
-      append(`Done: ${flagTotal} potential issues for review`);
-      setFirmId(firm.id);
+      append(`Done: ${flagTotal} potential ${flagTotal === 1 ? "issue" : "issues"} for review`);
+      setOutcome({ created, failed, firmId: firm.id });
     } catch (error) {
-      append(`Stopped: ${error?.response?.data?.error ?? error.message}`);
+      append(`Stopped: ${errorText(error)}`);
     } finally {
       setRunning(false);
     }
   };
 
   const input = "mt-1 w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm";
+  const primary = "rounded-md bg-slate-900 px-4 py-2 text-sm text-white hover:bg-slate-800 disabled:opacity-50";
   return (
-    <form onSubmit={handleScan} className="max-w-2xl space-y-4">
-      <h1 className="text-2xl font-semibold tracking-tight">Scan a firm</h1>
-      <label className="block text-sm">
-        Firm name
-        <input className={input} value={form.name} onChange={update("name")} required />
-      </label>
-      <label className="block text-sm">
-        Domain
-        <input className={input} value={form.domain} onChange={update("domain")} placeholder="example.com" required />
-      </label>
-      <label className="block text-sm">
-        Advisor names (comma or line separated)
-        <input className={input} value={form.advisors} onChange={update("advisors")} />
-      </label>
-      <label className="block text-sm">
-        URLs to scan, one per line (up to {MAX_URLS})
-        <textarea className={`${input} h-40 font-mono`} value={form.urls} onChange={update("urls")} required />
-      </label>
-      {tooMany && <p className="text-sm text-red-700">That is {urls.length} URLs. The limit is {MAX_URLS}.</p>}
-      <button
-        type="submit"
-        disabled={running || tooMany}
-        className="rounded-md bg-slate-900 px-4 py-2 text-white hover:bg-slate-800 disabled:opacity-50"
-      >
-        {running ? "Scanning…" : "Scan"}
-      </button>
+    <div className="max-w-2xl space-y-6">
+      <form onSubmit={handleFind} className="space-y-4">
+        <h1 className="text-2xl font-semibold tracking-tight">Scan a firm</h1>
+        <label className="block text-sm">
+          Firm name
+          <input className={input} value={form.name} onChange={update("name")} required disabled={running} />
+        </label>
+        <label className="block text-sm">
+          Domain
+          <input
+            className={input}
+            value={form.domain}
+            onChange={update("domain")}
+            placeholder="example.com"
+            required
+            disabled={running}
+          />
+          {form.domain.trim() && fetchDomain !== form.domain.trim() && (
+            <span data-testid="domain-hint" className="mt-1 block text-xs text-slate-500">
+              Will check {fetchDomain}
+            </span>
+          )}
+        </label>
+        <details className="text-sm">
+          <summary className="cursor-pointer text-slate-600">Advisor names (optional)</summary>
+          <input
+            className={input}
+            value={form.advisors}
+            onChange={update("advisors")}
+            placeholder="Comma or line separated"
+            disabled={running}
+          />
+        </details>
+        <label className="flex items-center gap-2 text-sm">
+          <input type="checkbox" checked={form.includeSearch} onChange={update("includeSearch")} disabled={running} />
+          Also search LinkedIn and review sites (uses search credits)
+        </label>
+        <button type="submit" disabled={running || discovery.status === "loading"} className={primary}>
+          {discovery.status === "loading" ? "Finding pages…" : "Find pages"}
+        </button>
+      </form>
+
+      {discovery.status === "loading" && <LoadingBlock rows={3} />}
+      {discovery.status === "error" && (
+        <ErrorBlock message={`We couldn't find pages: ${discovery.message}`} onRetry={() => handleFind()} />
+      )}
+
+      {discovery.status === "ready" && (
+        <section className="space-y-4" aria-label="Pages to check">
+          {found.length === 0 ? (
+            <EmptyBlock title={`No pages found on ${fetchDomain}. Add URLs manually.`} />
+          ) : (
+            <>
+              <UrlGroup
+                title="On your site"
+                items={onSite}
+                selected={selected}
+                onToggle={toggle}
+                onSetAll={(checked) => setGroup(onSite, checked)}
+                disabled={running}
+              />
+              <UrlGroup
+                title="Elsewhere on the web"
+                note="Check that these are about your firm before scanning."
+                items={elsewhere}
+                selected={selected}
+                onToggle={toggle}
+                onSetAll={(checked) => setGroup(elsewhere, checked)}
+                disabled={running}
+              />
+            </>
+          )}
+          <details className="text-sm" open={found.length === 0}>
+            <summary className="cursor-pointer text-slate-600">Add a URL manually</summary>
+            <textarea
+              aria-label="URLs to add, one per line"
+              className={`${input} h-28 font-mono`}
+              value={manualText}
+              onChange={(event) => setManualText(event.target.value)}
+              placeholder="https://example.com/page"
+              disabled={running}
+            />
+          </details>
+          <div className="flex flex-wrap items-center gap-3">
+            <button type="button" onClick={handleScan} disabled={running || tooMany || !toScan.length} className={primary}>
+              {running ? "Scanning…" : `Scan ${toScan.length} ${toScan.length === 1 ? "page" : "pages"}`}
+            </button>
+            <span data-testid="selected-count" className={`text-sm ${tooMany ? "text-red-700" : "text-slate-600"}`}>
+              {toScan.length} selected (max {MAX_URLS})
+            </span>
+          </div>
+        </section>
+      )}
+
       {log.length > 0 && (
         <ol aria-live="polite" className="space-y-1 rounded-lg border border-slate-200 bg-white p-4 font-mono text-xs">
           {log.map((line, i) => (
@@ -153,11 +304,63 @@ function SetupForm() {
           ))}
         </ol>
       )}
-      {firmId && (
-        <Link to={`/firm/${firmId}`} className="inline-block text-sm underline">
+      {outcome?.created === 0 && (
+        <div role="alert" data-testid="no-pages" className="rounded-lg border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900">
+          <p className="font-medium">No pages could be stored</p>
+          <ul className="mt-2 space-y-1 text-xs">
+            {outcome.failed.map((failure) => (
+              <li key={failure.url} className="break-all">
+                {failure.url}: {failure.error}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+      {outcome?.firmId && (
+        <Link to={`/firm/${outcome.firmId}`} className="inline-block text-sm underline">
           Open the findings
         </Link>
       )}
-    </form>
+    </div>
+  );
+}
+
+function UrlGroup({ title, note, items, selected, onToggle, onSetAll, disabled }) {
+  if (!items.length) return null;
+  const count = items.filter((item) => selected.has(item.url)).length;
+  return (
+    <fieldset className="rounded-lg border border-slate-200 bg-white p-4">
+      <legend className="px-1 text-sm font-medium">
+        {title} <span className="font-normal text-slate-500">({count} of {items.length})</span>
+      </legend>
+      {note && <p className="mb-2 text-xs text-amber-800">{note}</p>}
+      <div className="mb-2 flex gap-3 text-xs">
+        <button type="button" className="underline" onClick={() => onSetAll(true)} disabled={disabled}>
+          Select all
+        </button>
+        <button type="button" className="underline" onClick={() => onSetAll(false)} disabled={disabled}>
+          Select none
+        </button>
+      </div>
+      <ul className="space-y-1">
+        {items.map((item) => (
+          <li key={item.url}>
+            <label className="flex items-start gap-2 text-sm">
+              <input
+                type="checkbox"
+                className="mt-1"
+                checked={selected.has(item.url)}
+                onChange={() => onToggle(item.url)}
+                disabled={disabled}
+              />
+              <span className="flex flex-wrap items-center gap-2">
+                <ChannelChip channel={item.channel} />
+                <span className="break-all">{item.url}</span>
+              </span>
+            </label>
+          </li>
+        ))}
+      </ul>
+    </fieldset>
   );
 }
