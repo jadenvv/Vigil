@@ -1,0 +1,558 @@
+{
+  "detector": "baseline_regex",
+  "timestamp": "2026-10-10 15:11:10",
+  "cases_sha": "7f3b517f2d",
+  "n_cases": 16,
+  "subsets": {
+    "all": {
+      "n_cases": 16,
+      "n_clean": 8,
+      "precision": 0.2727272727272727,
+      "recall": 0.5454545454545454,
+      "f1": 0.3636363636363636,
+      "tp": 6,
+      "fp": 16,
+      "fn": 5,
+      "clean_doc_fp_rate": 0.625,
+      "flags_per_clean_doc": 0.625,
+      "grounding_rate": 1.0,
+      "citation_accuracy": 1.0,
+      "per_category": {
+        "BENEFITS_WITHOUT_RISK": {
+          "tp": 1,
+          "fp": 15,
+          "fn": 1,
+          "precision": 0.0625,
+          "recall": 0.5,
+          "f1": 0.1111111111111111
+        },
+        "GROSS_WITHOUT_NET": {
+          "tp": 1,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "HYPOTHETICAL_PERFORMANCE": {
+          "tp": 1,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "RATING_NO_DISCLOSURE": {
+          "tp": 2,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "TESTIMONIAL_NO_DISCLOSURE": {
+          "tp": 0,
+          "fp": 0,
+          "fn": 1,
+          "precision": null,
+          "recall": 0.0,
+          "f1": null
+        },
+        "UNBALANCED_SPECIFIC_ADVICE": {
+          "tp": 0,
+          "fp": 0,
+          "fn": 1,
+          "precision": null,
+          "recall": 0.0,
+          "f1": null
+        },
+        "UNFAIR_PERFORMANCE_PRESENTATION": {
+          "tp": 0,
+          "fp": 0,
+          "fn": 1,
+          "precision": null,
+          "recall": 0.0,
+          "f1": null
+        },
+        "UNSUBSTANTIATED_CLAIM": {
+          "tp": 1,
+          "fp": 1,
+          "fn": 1,
+          "precision": 0.5,
+          "recall": 0.5,
+          "f1": 0.5
+        }
+      }
+    },
+    "reviewed": {
+      "n_cases": 0,
+      "n_clean": 0,
+      "precision": null,
+      "recall": null,
+      "f1": null,
+      "tp": 0,
+      "fp": 0,
+      "fn": 0,
+      "clean_doc_fp_rate": null,
+      "flags_per_clean_doc": null,
+      "grounding_rate": null,
+      "citation_accuracy": null,
+      "per_category": {}
+    },
+    "pattern_synthetic": {
+      "n_cases": 0,
+      "n_clean": 0,
+      "precision": null,
+      "recall": null,
+      "f1": null,
+      "tp": 0,
+      "fp": 0,
+      "fn": 0,
+      "clean_doc_fp_rate": null,
+      "flags_per_clean_doc": null,
+      "grounding_rate": null,
+      "citation_accuracy": null,
+      "per_category": {}
+    }
+  },
+  "providers": {
+    "local": 16
+  },
+  "pairs": {
+    "pairs": 0,
+    "passed": 0,
+    "pass_rate": null,
+    "detail": {}
+  },
+  "rewrite": {
+    "tried": 5,
+    "passed": 5,
+    "pass_rate": 1.0,
+    "note": "necessary, not sufficient: also have a human rate rewrite quality"
+  },
+  "cases": [
+    {
+      "id": "demo_home",
+      "provenance": "demo_site",
+      "reviewed": false,
+      "clean": false,
+      "tp": [
+        "RATING_NO_DISCLOSURE"
+      ],
+      "fp": [
+        "BENEFITS_WITHOUT_RISK"
+      ],
+      "fn": [
+        "UNSUBSTANTIATED_CLAIM"
+      ],
+      "ungrounded": 0,
+      "cite_ok": 1,
+      "pred_cats": [
+        "BENEFITS_WITHOUT_RISK",
+        "RATING_NO_DISCLOSURE"
+      ],
+      "status": "miss+fp",
+      "flags": [
+        {
+          "category": "BENEFITS_WITHOUT_RISK",
+          "span": "guarantee future results"
+        },
+        {
+          "category": "RATING_NO_DISCLOSURE",
+          "span": "Ranked #2 Wealth Manager by Pemberline Advisor Review"
+        }
+      ],
+      "provider": null
+    },
+    {
+      "id": "demo_about",
+      "provenance": "demo_site",
+      "reviewed": false,
+      "clean": false,
+      "tp": [],
+      "fp": [
+        "BENEFITS_WITHOUT_RISK",
+        "UNSUBSTANTIATED_CLAIM"
+      ],
+      "fn": [
+        "BENEFITS_WITHOUT_RISK"
+      ],
+      "ungrounded": 0,
+      "cite_ok": 0,
+      "pred_cats": [
+        "BENEFITS_WITHOUT_RISK",
+        "UNSUBSTANTIATED_CLAIM"
+      ],
+      "status": "miss+fp",
+      "flags": [
+        {
+          "category": "BENEFITS_WITHOUT_RISK",
+          "span": "guarantee future results"
+        },
+        {
+          "category": "UNSUBSTANTIATED_CLAIM",
+          "span": "best served by a written plan"
+        }
+      ],
+      "provider": null
+    },
+    {
+      "id": "demo_services",
+      "provenance": "demo_site",
+      "reviewed": false,
+      "clean": false,
+      "tp": [
+        "BENEFITS_WITHOUT_RISK",
+        "UNSUBSTANTIATED_CLAIM"
+      ],
+      "fp": [
+        "BENEFITS_WITHOUT_RISK"
+      ],
+      "fn": [],
+      "ungrounded": 0,
+      "cite_ok": 2,
+      "pred_cats": [
+        "BENEFITS_WITHOUT_RISK",
+        "UNSUBSTANTIATED_CLAIM"
+      ],
+      "status": "extra_flag",
+      "flags": [
+        {
+          "category": "BENEFITS_WITHOUT_RISK",
+          "span": "guaranteed income for life"
+        },
+        {
+          "category": "BENEFITS_WITHOUT_RISK",
+          "span": "guarantee future results"
+        },
+        {
+          "category": "UNSUBSTANTIATED_CLAIM",
+          "span": "beats the market"
+        }
+      ],
+      "provider": null
+    },
+    {
+      "id": "demo_performance",
+      "provenance": "demo_site",
+      "reviewed": false,
+      "clean": false,
+      "tp": [
+        "HYPOTHETICAL_PERFORMANCE"
+      ],
+      "fp": [
+        "BENEFITS_WITHOUT_RISK",
+        "BENEFITS_WITHOUT_RISK"
+      ],
+      "fn": [
+        "UNFAIR_PERFORMANCE_PRESENTATION"
+      ],
+      "ungrounded": 0,
+      "cite_ok": 1,
+      "pred_cats": [
+        "BENEFITS_WITHOUT_RISK",
+        "HYPOTHETICAL_PERFORMANCE"
+      ],
+      "status": "miss+fp",
+      "flags": [
+        {
+          "category": "BENEFITS_WITHOUT_RISK",
+          "span": "guarantee future results. Net"
+        },
+        {
+          "category": "BENEFITS_WITHOUT_RISK",
+          "span": "guarantee future results"
+        },
+        {
+          "category": "HYPOTHETICAL_PERFORMANCE",
+          "span": "back-tested Tactical Rotation Model would have returned 19% a year from 2004 to 2019"
+        }
+      ],
+      "provider": null
+    },
+    {
+      "id": "demo_testimonials",
+      "provenance": "demo_site",
+      "reviewed": false,
+      "clean": false,
+      "tp": [],
+      "fp": [
+        "BENEFITS_WITHOUT_RISK",
+        "BENEFITS_WITHOUT_RISK"
+      ],
+      "fn": [
+        "TESTIMONIAL_NO_DISCLOSURE"
+      ],
+      "ungrounded": 0,
+      "cite_ok": 0,
+      "pred_cats": [
+        "BENEFITS_WITHOUT_RISK"
+      ],
+      "status": "miss+fp",
+      "flags": [
+        {
+          "category": "BENEFITS_WITHOUT_RISK",
+          "span": "guarantee of future performance"
+        },
+        {
+          "category": "BENEFITS_WITHOUT_RISK",
+          "span": "guarantee future results"
+        }
+      ],
+      "provider": null
+    },
+    {
+      "id": "demo_blog_best_pick",
+      "provenance": "demo_site",
+      "reviewed": false,
+      "clean": false,
+      "tp": [],
+      "fp": [
+        "BENEFITS_WITHOUT_RISK"
+      ],
+      "fn": [
+        "UNBALANCED_SPECIFIC_ADVICE"
+      ],
+      "ungrounded": 0,
+      "cite_ok": 0,
+      "pred_cats": [
+        "BENEFITS_WITHOUT_RISK"
+      ],
+      "status": "miss+fp",
+      "flags": [
+        {
+          "category": "BENEFITS_WITHOUT_RISK",
+          "span": "guarantee future results"
+        }
+      ],
+      "provider": null
+    },
+    {
+      "id": "demo_blog_recap",
+      "provenance": "demo_site",
+      "reviewed": false,
+      "clean": false,
+      "tp": [
+        "GROSS_WITHOUT_NET"
+      ],
+      "fp": [
+        "BENEFITS_WITHOUT_RISK"
+      ],
+      "fn": [],
+      "ungrounded": 0,
+      "cite_ok": 1,
+      "pred_cats": [
+        "BENEFITS_WITHOUT_RISK",
+        "GROSS_WITHOUT_NET"
+      ],
+      "status": "extra_flag",
+      "flags": [
+        {
+          "category": "BENEFITS_WITHOUT_RISK",
+          "span": "guarantee future results"
+        },
+        {
+          "category": "GROSS_WITHOUT_NET",
+          "span": "9% gross of fees in 2025"
+        }
+      ],
+      "provider": null
+    },
+    {
+      "id": "demo_blog_recognition",
+      "provenance": "demo_site",
+      "reviewed": false,
+      "clean": false,
+      "tp": [
+        "RATING_NO_DISCLOSURE"
+      ],
+      "fp": [
+        "BENEFITS_WITHOUT_RISK"
+      ],
+      "fn": [],
+      "ungrounded": 0,
+      "cite_ok": 1,
+      "pred_cats": [
+        "BENEFITS_WITHOUT_RISK",
+        "RATING_NO_DISCLOSURE"
+      ],
+      "status": "extra_flag",
+      "flags": [
+        {
+          "category": "BENEFITS_WITHOUT_RISK",
+          "span": "guarantee future results"
+        },
+        {
+          "category": "RATING_NO_DISCLOSURE",
+          "span": "named a Top 40 Advisor by Copperfen Wealth Digest"
+        }
+      ],
+      "provider": null
+    },
+    {
+      "id": "demo_fees_clean",
+      "provenance": "demo_site",
+      "reviewed": false,
+      "clean": true,
+      "tp": [],
+      "fp": [
+        "BENEFITS_WITHOUT_RISK"
+      ],
+      "fn": [],
+      "ungrounded": 0,
+      "cite_ok": 0,
+      "pred_cats": [
+        "BENEFITS_WITHOUT_RISK"
+      ],
+      "status": "false_positive",
+      "flags": [
+        {
+          "category": "BENEFITS_WITHOUT_RISK",
+          "span": "guarantee future results"
+        }
+      ],
+      "provider": null
+    },
+    {
+      "id": "demo_blog_index_clean",
+      "provenance": "demo_site",
+      "reviewed": false,
+      "clean": true,
+      "tp": [],
+      "fp": [
+        "BENEFITS_WITHOUT_RISK"
+      ],
+      "fn": [],
+      "ungrounded": 0,
+      "cite_ok": 0,
+      "pred_cats": [
+        "BENEFITS_WITHOUT_RISK"
+      ],
+      "status": "false_positive",
+      "flags": [
+        {
+          "category": "BENEFITS_WITHOUT_RISK",
+          "span": "guarantee future results"
+        }
+      ],
+      "provider": null
+    },
+    {
+      "id": "demo_clean_footer_disclaimer",
+      "provenance": "demo_site",
+      "reviewed": false,
+      "clean": true,
+      "tp": [],
+      "fp": [
+        "BENEFITS_WITHOUT_RISK"
+      ],
+      "fn": [],
+      "ungrounded": 0,
+      "cite_ok": 0,
+      "pred_cats": [
+        "BENEFITS_WITHOUT_RISK"
+      ],
+      "status": "false_positive",
+      "flags": [
+        {
+          "category": "BENEFITS_WITHOUT_RISK",
+          "span": "guarantee future results"
+        }
+      ],
+      "provider": null
+    },
+    {
+      "id": "demo_clean_perf_disclosures",
+      "provenance": "demo_site",
+      "reviewed": false,
+      "clean": true,
+      "tp": [],
+      "fp": [
+        "BENEFITS_WITHOUT_RISK"
+      ],
+      "fn": [],
+      "ungrounded": 0,
+      "cite_ok": 0,
+      "pred_cats": [
+        "BENEFITS_WITHOUT_RISK"
+      ],
+      "status": "false_positive",
+      "flags": [
+        {
+          "category": "BENEFITS_WITHOUT_RISK",
+          "span": "guarantee future results. Net"
+        }
+      ],
+      "provider": null
+    },
+    {
+      "id": "demo_clean_net_table",
+      "provenance": "demo_site",
+      "reviewed": false,
+      "clean": true,
+      "tp": [],
+      "fp": [],
+      "fn": [],
+      "ungrounded": 0,
+      "cite_ok": 0,
+      "pred_cats": [],
+      "status": "ok",
+      "flags": [],
+      "provider": null
+    },
+    {
+      "id": "demo_clean_disclosed_testimonial",
+      "provenance": "demo_site",
+      "reviewed": false,
+      "clean": true,
+      "tp": [],
+      "fp": [
+        "BENEFITS_WITHOUT_RISK"
+      ],
+      "fn": [],
+      "ungrounded": 0,
+      "cite_ok": 0,
+      "pred_cats": [
+        "BENEFITS_WITHOUT_RISK"
+      ],
+      "status": "false_positive",
+      "flags": [
+        {
+          "category": "BENEFITS_WITHOUT_RISK",
+          "span": "guarantee of future performance"
+        }
+      ],
+      "provider": null
+    },
+    {
+      "id": "demo_clean_income_shield",
+      "provenance": "demo_site",
+      "reviewed": false,
+      "clean": true,
+      "tp": [],
+      "fp": [],
+      "fn": [],
+      "ungrounded": 0,
+      "cite_ok": 0,
+      "pred_cats": [],
+      "status": "ok",
+      "flags": [],
+      "provider": null
+    },
+    {
+      "id": "demo_clean_fictional_notice",
+      "provenance": "demo_site",
+      "reviewed": false,
+      "clean": true,
+      "tp": [],
+      "fp": [],
+      "fn": [],
+      "ungrounded": 0,
+      "cite_ok": 0,
+      "pred_cats": [],
+      "status": "ok",
+      "flags": [],
+      "provider": null
+    }
+  ]
+}
