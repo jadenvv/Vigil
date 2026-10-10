@@ -90,7 +90,7 @@ const RX = {
   rating_date: /rating date|as of|dated|\((?:19|20)\d\d\)|(?:jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)[a-z]*\.? (?:19|20)\d\d/i,
   rating_paid: /\bpaid\b|compensat|licensing fee|fee to use/i,
   net: /\bnet\b/i,
-  neg_guarantee: /\b(?:not|no|cannot|can't|never|nor)\b[^.!?]{0,30}\bguarantee/i,
+  neg_guarantee: /\b(?:not|no|cannot|can't|never|nor|nothing)\b[^.!?]{0,30}\b(?:guarantee|risk[- ]free)/i,
   neg_hypo: /\b(?:do not|don't|does not|never|no)\b[^.!?]{0,25}\b(?:publish|show|present|provide|use|offer)|\b(?:upon|on) request\b/i,
   advice_balanced: /including (?:those|ones|picks|recommendations|positions) that (?:lost|declined|fell|underperformed)|full list of (?:our |all )?(?:recommendations|picks)/i,
   disclaimer: /past performance (?:does not|is not|cannot|may not|is no)|involves? risk|possible loss of principal|risk of loss/i,
@@ -101,6 +101,24 @@ function periods1510(chunk) {
     new RegExp(`\\b${n}[- ]?(?:year|yr)s?\\b|\\b${n} years?\\b|\\b${w}[- ]year`, "i").test(chunk));
 }
 
+const OPEN_QUOTE = /(?:^|(?<=[\s\u2605]))"|\u201c/m;
+
+// The text that belongs to one testimonial: its line up to the span, then on to the next
+// opening quote or paragraph break. A neighbour's disclosure must not clear this one.
+function testimonialUnit(chunk, start, end) {
+  const a = chunk.lastIndexOf("\n", start - 1) + 1;
+  const pb = chunk.indexOf("\n\n", end);
+  const q = search(OPEN_QUOTE, chunk, end);
+  const stops = [pb, q ? q.start : -1].filter((x) => x >= 0);
+  return chunk.slice(a, stops.length ? Math.min(...stops) : chunk.length);
+}
+
+// One sentence that covers all testimonials/reviews on the page.
+function blanketTestimonialDisclosure(chunk) {
+  return findAll(/[^.!?\n]*(?:testimonials|reviews|endorsements)\b[^.!?\n]*[.!?]?/i, chunk)
+    .some((m) => RX.client_status.test(m.text) && RX.compensation.test(m.text));
+}
+
 export function suppressed(chunk, flag) {
   const { category: cat, span } = flag;
   const i = chunk.indexOf(span);
@@ -109,8 +127,11 @@ export function suppressed(chunk, flag) {
   const near = i >= 0 ? chunk.slice(Math.max(0, i - 150), i + span.length + 350) : chunk;
   if (RX.disclaimer.test(sent) && !/\bwe guarantee|\bguaranteed (?:returns?|income)/i.test(sent))
     return "inside a standard risk disclaimer";
-  if (cat === "TESTIMONIAL_NO_DISCLOSURE" && RX.client_status.test(near) && RX.compensation.test(near))
-    return "client status and compensation disclosed";
+  if (cat === "TESTIMONIAL_NO_DISCLOSURE") {
+    const unit = i >= 0 ? testimonialUnit(chunk, i, i + span.length) : span;
+    if ((RX.client_status.test(unit) && RX.compensation.test(unit)) || blanketTestimonialDisclosure(chunk))
+      return "client status and compensation disclosed";
+  }
   if (cat === "RATING_NO_DISCLOSURE" && RX.rating_method.test(near) && (RX.rating_date.test(near) || RX.rating_paid.test(near)))
     return "rating methodology and date/payment disclosed";
   if (cat === "GROSS_WITHOUT_NET" && RX.net.test(near)) return "net performance shown";
@@ -188,11 +209,11 @@ function clauseAt(text, [s, e], pos) {
 }
 
 const CUES = {
-  BENEFITS_WITHOUT_RISK: /\bguarantee[sd]?\b|\brisk[- ]free\b|\bno risk\b|\bwithout risk\b|\bnever (?:lost|lose[sd]?)\b|\bcan(?:'|no)?t lose\b|\bzero (?:worries|risk)\b|\bworry[- ]free\b|\bno downside\b|\bfully protected\b|\bsafe bet\b/i,
+  BENEFITS_WITHOUT_RISK: /\bguarantee[sd]?\b|\brisk[- ]free\b|\bno risk\b|\bwithout risk\b|\bnever (?:lost|lose[sd]?)\b|\bcan(?:'|no)?t lose\b|\bzero (?:worries|risk)\b|\bworry[- ]free\b|\bno downside\b|\bfully protected\b|\bsafe bet\b|\bnever (?:had|seen|posted|suffered) a (?:losing|down|negative)\b/i,
   UNSUBSTANTIATED_CLAIM: /#\s?1\b|\bnumber one\b|\bthe best (?:in|advisor|firm|financial|wealth|investment)\b|\boutperform\w*|\bbeat(?:s|en|ing)? the (?:market|s&p|index|benchmark)|\beliminat\w* (?:emotional|all risk|risk|errors|mistakes|losses)|\bpredicts? (?:the )?market|\bbefore they happen\b/i,
   HYPOTHETICAL_PERFORMANCE: /\bwould have (?:returned|grown|earned|made|gained|avoided|beaten|outperformed|delivered)\b|\bback-?test\w*|\bhypothetical\b|\bsimulated\b|\bmodel portfolio\b/i,
   UNFAIR_PERFORMANCE_PRESENTATION: /\b(?:since|from) the [^.,;]{0,25}?\b(?:low|lows|bottom|trough)\b|\bbest (?:year|quarter|month|day|trade)s?\b/i,
-  RATING_NO_DISCLOSURE: /\bnamed (?:a |one of the |as a |as one of the )?(?:top|best)\b|\branked #?\d+|\btop[- ]rated\b|\baward[- ]winning\b|\bvoted (?:the )?(?:best|top|#\s?1)\b|\brecognized (?:by|as) [^.]{0,40}\btop\b|\b(?:five|5)[- ]star (?:rated|advisor|firm)/i,
+  RATING_NO_DISCLOSURE: /\bnamed (?:a |one of the |as a |as one of the )?(?:top|best)\b|\branked #?\d+|\btop[- ]rated\b|\baward[- ]winning\b|\bvoted (?:[\w']+ ){0,3}(?:best|top|#\s?1)\b|\brecognized (?:by|as) [^.]{0,40}\btop\b|\b(?:five|5)[- ]star (?:rated|advisor|firm|wealth|financial)/i,
   GROSS_WITHOUT_NET: /\bgross\b/i,
 };
 const ADVICE_ACT = /\b(?:we|i)\s+(?:put clients in(?:to)?|told clients to buy|recommended|bought|picked|added)\b/i;
@@ -225,7 +246,9 @@ const mk = (category, text, a, b, confidence) => ({ category, span: text.slice(a
 
 export function ruleCandidates(text) {
   const out = [];
-  for (const sent of sentences(text)) {
+  const sents = sentences(text);
+  for (let k = 0; k < sents.length; k++) {
+    const sent = sents[k];
     const [s, e] = sent;
     const hasFig = FIGURE.test(text.slice(s, e));
 
@@ -245,13 +268,18 @@ export function ruleCandidates(text) {
     }
     m = search(CUES.UNFAIR_PERFORMANCE_PRESENTATION, text, s, e);
     if (m && hasFig) out.push(mk("UNFAIR_PERFORMANCE_PRESENTATION", text, m.text.toLowerCase().startsWith("best") ? m.start : s, e, 0.7));
-    m = search(CUES.RATING_NO_DISCLOSURE, text, s, e);
-    if (m) out.push(mk("RATING_NO_DISCLOSURE", text, m.start, e, 0.7));
-    if (search(CUES.GROSS_WITHOUT_NET, text, s, e)) {
-      const f = search(/(?:returned\s+)?[+-]?\d+(?:\.\d+)?\s?%/i, text, s, e);
-      if (f) out.push(mk("GROSS_WITHOUT_NET", text, f.start, e, 0.8));
+    const rs = findAll(CUES.RATING_NO_DISCLOSURE, text, s, e).map((x) => clauseAt(text, sent, x.start));
+    if (rs.length) out.push(mk("RATING_NO_DISCLOSURE", text, Math.min(...rs.map((r) => r[0])), Math.max(...rs.map((r) => r[1])), 0.7));
+    // gross: union of the clauses that hold "gross" and a figure
+    const gs = findAll(CUES.GROSS_WITHOUT_NET, text, s, e).map((x) => clauseAt(text, sent, x.start))
+      .filter((g) => search(FIGURE, text, g[0], g[1]));
+    if (gs.length) out.push(mk("GROSS_WITHOUT_NET", text, Math.min(...gs.map((g) => g[0])), Math.max(...gs.map((g) => g[1])), 0.8));
+    // a specific pick, with the gain in the same or the next sentence
+    if (search(ADVICE_ACT, text, s, e)) {
+      const nxt = sents[k + 1];
+      if (search(ADVICE_GAIN, text, s, e)) out.push(mk("UNBALANCED_SPECIFIC_ADVICE", text, s, e, 0.7));
+      else if (nxt && search(ADVICE_GAIN, text, nxt[0], nxt[1])) out.push(mk("UNBALANCED_SPECIFIC_ADVICE", text, s, nxt[1], 0.7));
     }
-    if (search(ADVICE_ACT, text, s, e) && search(ADVICE_GAIN, text, s, e)) out.push(mk("UNBALANCED_SPECIFIC_ADVICE", text, s, e, 0.7));
     for (const en of findAll(ENDORSE, text, s, e)) out.push(mk("TESTIMONIAL_NO_DISCLOSURE", text, en.start, en.end, 0.8));
   }
   for (const q of findAll(QUOTE, text))

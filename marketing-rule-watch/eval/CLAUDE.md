@@ -5,7 +5,9 @@ Read the root `CLAUDE.md` first. This folder **measures** the detector; it doesn
 ## Files
 - `compliance_eval.py`: the harness. Holds `TAXONOMY`, the single source of truth for categories.
 - `cases.jsonl`: 37 seeded cases (19 with issues, 18 clean, 8 minimal pairs).
-- `reports/`: JSON output of each run. Commit these; they're the before/after receipts for the pitch.
+- `cases_holdout.jsonl`: 19 single-sentence cases (12 issues, 7 clean), written by P4 *before* the rules detector, to check generalization. Run with `--cases eval/cases_holdout.jsonl`.
+- `cases_pages.jsonl`: 9 multi-paragraph pages (10 issues, 2 clean pages) with nav/footer text, disclosed and undisclosed claims side by side, and near-misses. The rules fallback scored **F1 0.29** on these before tuning (`reports/rules_v1_pages.json`) and 1.00 after (`rules_v2_pages.json`). That makes this a **dev set now**, not a test. The 0.29 is the honest "unseen pages" number for keyword rules.
+- `reports/`: JSON output of each run. Commit these; they're the before/after receipts for the pitch. The harness names files `<detector>_<HHMMSS>.json`, so two runs in the same second overwrite each other: rename after each run (`rules_v2_pages.json` etc.).
 
 ## Commands (run from repo root)
 ```
