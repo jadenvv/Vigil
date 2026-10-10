@@ -1,0 +1,17 @@
+{
+  "name": "Firm",
+  "type": "object",
+  "properties": {
+    "name": { "type": "string", "description": "Firm display name" },
+    "domain": { "type": "string", "description": "Primary website domain, e.g. example-advisors.com" },
+    "advisor_names": { "type": "array", "items": { "type": "string" }, "description": "Advisor names used for discovery" },
+    "is_demo": { "type": "boolean", "default": false, "description": "App-internal: the fictional demo firm" }
+  },
+  "required": ["name", "domain"],
+  "rls": {
+    "read": true,
+    "create": { "user_condition": { "role": "admin" } },
+    "update": { "user_condition": { "role": "admin" } },
+    "delete": { "user_condition": { "role": "admin" } }
+  }
+}

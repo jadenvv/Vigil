@@ -1,0 +1,18 @@
+// Base44 Project Configuration
+// JSONC enables inline documentation and discoverability directly in config files.
+// Full-stack template with backend and client configuration.
+
+{
+  "name": "Marketing Rule Watch",
+
+  "visibility": "public",
+
+  // Site/hosting configuration for the client application
+  // Docs: https://docs.base44.com/developers/backend/overview/project-structure
+  "site": {
+    "installCommand": "npm install",
+    "buildCommand": "npm run build",
+    "serveCommand": "npm run dev",
+    "outputDirectory": "./dist"
+  }
+}

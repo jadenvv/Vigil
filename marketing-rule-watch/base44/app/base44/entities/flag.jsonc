@@ -1,0 +1,24 @@
+{
+  "name": "Flag",
+  "type": "object",
+  "properties": {
+    "page_id": { "type": "string", "description": "Page this flag was found on" },
+    "category": {
+      "type": "string",
+      "enum": ["UNSUBSTANTIATED_CLAIM", "BENEFITS_WITHOUT_RISK", "UNBALANCED_SPECIFIC_ADVICE", "UNFAIR_PERFORMANCE_PRESENTATION", "GROSS_WITHOUT_NET", "HYPOTHETICAL_PERFORMANCE", "TESTIMONIAL_NO_DISCLOSURE", "RATING_NO_DISCLOSURE"],
+      "description": "TAXONOMY id; source of truth is eval/compliance_eval.py"
+    },
+    "span": { "type": "string", "description": "Exact substring of the page markdown" },
+    "rule": { "type": "string", "description": "Rule paragraph ref (unverified; hidden in UI)" },
+    "confidence": { "type": "number", "minimum": 0, "maximum": 1, "description": "Detector confidence 0-1" },
+    "why": { "type": "string", "description": "One-sentence plain-English reason" },
+    "status": { "type": "string", "enum": ["open", "approved", "rejected"], "default": "open", "description": "Review status" }
+  },
+  "required": ["page_id", "category", "span"],
+  "rls": {
+    "read": true,
+    "create": { "user_condition": { "role": "admin" } },
+    "update": { "user_condition": { "role": "admin" } },
+    "delete": { "user_condition": { "role": "admin" } }
+  }
+}

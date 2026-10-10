@@ -1,0 +1,20 @@
+{
+  "name": "Page",
+  "type": "object",
+  "properties": {
+    "firm_id": { "type": "string", "description": "Firm this page belongs to" },
+    "url": { "type": "string", "format": "uri", "description": "Fetched URL" },
+    "channel": { "type": "string", "enum": ["website", "blog", "linkedin", "review_site", "press", "other"], "default": "other", "description": "Where the content was published" },
+    "markdown": { "type": "string", "description": "Page text as markdown (untrusted scraped content)" },
+    "fetched_at": { "type": "string", "format": "date-time", "description": "UTC fetch time" },
+    "sha256": { "type": "string", "description": "sha256 of markdown" },
+    "screenshot_ref": { "type": "string", "description": "Screenshot URL, or empty string if unavailable" }
+  },
+  "required": ["firm_id", "url", "markdown"],
+  "rls": {
+    "read": true,
+    "create": { "user_condition": { "role": "admin" } },
+    "update": { "user_condition": { "role": "admin" } },
+    "delete": { "user_condition": { "role": "admin" } }
+  }
+}
