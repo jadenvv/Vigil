@@ -35,7 +35,26 @@ export function keep(url: string): boolean {
   if (SKIP_EXT.test(p.pathname)) return false;
   if (SKIP_HOSTS.some((h) => (p.host + p.pathname).toLowerCase().includes(h))) return false;
   if (p.host.includes("linkedin.com") && p.pathname.startsWith("/in/")) return false; // personal profile
+  if (isPersonalOrSpam(p)) return false;
   return true;
+}
+
+// Business pages only (root CLAUDE.md): no personal social profiles or posts, no celebrity-wealth spam.
+// Patterns come from a live "Hartwell Wealth" search on 2026-10-10. Search results only carry the URL
+// (parseSerp keeps links, not titles), so spam is matched on the URL slug alone.
+const WEALTH_SPAM = /net[-_ ]?worth|hidden[-_]wealth|wealth-grew|-worth-the-/i;
+
+function isPersonalOrSpam(p: URL): boolean {
+  const host = p.host.toLowerCase().replace(/^www\./, "");
+  const path = p.pathname.toLowerCase();
+  if (host === "instagram.com" || host.endsWith(".instagram.com")) return true; // reels and profiles
+  if (host.endsWith("forbes.com") && path.startsWith("/profile/")) return true;
+  if (host.endsWith("facebook.com")) {
+    // a company's own page (facebook.com/<page>) stays; profiles and individual posts/photos go
+    if (path === "/profile.php" || path.startsWith("/people/")) return true;
+    if (/\/(photos|posts|videos|reel|permalink\.php)\b/.test(path)) return true;
+  }
+  return WEALTH_SPAM.test(path);
 }
 
 /** Bare host of a domain input like "hartwell.example", "https://www.hartwell.example/x". */
@@ -125,5 +144,38 @@ if (import.meta.main) {
   const seen = new Set<string>();
   eq(dedupe(["https://h.example/a/", "https://www.h.example/a", "mailto:x"], seen), ["https://h.example/a"], "dedupe");
   eq(applyCap(Array.from({ length: 30 }, (_, i) => `s${i}`), ["o1", "o2"], 25).site.length, 23, "cap keeps room for off-site");
+  // Fixture: the 24 search hits from the live "Hartwell Wealth" run (2026-10-10), after normalize().
+  const dropped = [
+    "https://hub.stellantis.com/article/how-much-is-lisa-hartwell-worth-the-hidden-wealth-of-a-rising-star",
+    "https://oplev-api.tv2lorry.dk/article/how-lisa-hartwell-s-net-worth-reveals-the-hidden-wealth-of-a-modern-entrepreneur",
+    "https://confapp.aarachminov.com/how-ed-hartwell-s-2020-fortune-reveals-the-hidden-wealth-of-a-tech-industry-trailblazer.html",
+    "https://instagram.com/reel/DandgipA7Py",
+    "https://booking.aabentlandbrug.dk/article/how-jamal-hartwell-s-wealth-grew-the-hidden-story-behind-his-net-worth",
+    "https://facebook.com/DeepLifeQuotes365/photos/my-husband-brought-his-girlfriend-to-our-divorce-hearing-so-she-could-watch-him-/122236927286780192",
+    "https://booking.aabentlandbrug.dk/article/how-ed-hartwell-s-wealth-grew-the-untold-story-behind-his-2021-financial-empire",
+    "https://n8n.soundshockaudio.com/article/the-hidden-wealth-of-ed-hartwell-a-deep-look-at-his-2021-financial-standing",
+    "https://facebook.com/profile.php?id=61593429118701",
+    "https://forbes.com/profile/mack-hartwell",
+  ];
+  const kept = [
+    "https://adviserinfo.sec.gov/firm/summary/322723",
+    "https://linkedin.com/company/hartwell-wealth-management",
+    "https://hartwellwealth.com/",
+    "https://products.bankerslife.com/georgia/hartwell/wealth-management-solutions",
+    "https://getwarmer.com/firms/hartwell-company",
+    "https://indyfin.com/financial-advisor/michigan/st-joseph/james-hartwell-2843080",
+    "https://hartwellwealth.com/faq.php",
+    "https://indyfin.com/financial-advisor-firm/michigan/st-joseph/hartwell-company-322723",
+    "https://advisor.ml.com/sites/oh/columbus-oh/the_hartwell_team",
+    "https://financestrategists.com/wealth-management/hartwell-ga",
+    "https://excelsiorwp.com/team/anna-hartwell",
+    "https://hartwellfinancialservices.com/team/phil-hartwell",
+    "https://careers.edwardjones.com/job/23268316/financial-advisor-hartwell-ga",
+    "https://money.usnews.com/financial-advisors/advisor/krista-hartwell-7857707",
+  ];
+  eq(dropped.filter(keep), [], "personal/spam fixture all dropped");
+  eq(kept.filter((u) => !keep(u)), [], "business fixture all kept");
+  eq(keep("https://facebook.com/HartwellWealth"), true, "company facebook page kept");
+  eq(keep("https://facebook.com/people/Jane-Doe/1000"), false, "facebook person dropped");
   console.log("discover.ts self-check: ok");
 }
