@@ -40,6 +40,7 @@ import json
 import re
 import sys
 import time
+import urllib.error
 import urllib.request
 from collections import defaultdict
 from pathlib import Path
@@ -135,6 +136,10 @@ def load_cases(path: Path) -> list[dict]:
     return cases
 
 
+class DetectorUnavailable(RuntimeError):
+    """The live detector can't answer (quota, HTTP error, non-LLM mode). Aborts the run, no report."""
+
+
 def load_detector(spec: str):
     if spec == "baseline_regex":
         return baseline_regex, naive_rewrite
@@ -145,8 +150,17 @@ def load_detector(spec: str):
                 # Base44 returns 403 to Python's default urllib User-Agent.
                 headers={"Content-Type": "application/json",
                          "User-Agent": "compliance-eval/1.0"})
-            with urllib.request.urlopen(req, timeout=60) as r:
-                return json.loads(r.read())
+            try:
+                with urllib.request.urlopen(req, timeout=60) as r:
+                    body = json.loads(r.read())
+            except (urllib.error.URLError, TimeoutError) as e:
+                raise DetectorUnavailable(f"HTTP request failed: {e}") from e
+            # A refused or failed LLM call comes back 200 with zero flags. Scoring that would
+            # report fake clean-doc wins and misses, so stop the run instead.
+            mode = body.get("mode", "llm") if isinstance(body, dict) else "llm"
+            if mode != "llm":
+                raise DetectorUnavailable(f"endpoint answered mode={mode!r}, not 'llm'")
+            return body
         return http_detect, None
     mod_name, _, fn_name = spec.partition(":")
     sys.path.insert(0, str(Path.cwd()))
@@ -364,6 +378,8 @@ def main() -> None:
     for c in cases:
         try:
             preds = _flags(detect(c["text"], c.get("channel", "")))
+        except DetectorUnavailable as e:
+            sys.exit(f"Stopped at case {len(recs) + 1}/{len(cases)} ({c['id']}): {e}. No report saved.")
         except Exception as e:  # a crashing detector should show up as misses, not abort the run
             print(f"  detector error on {c['id']}: {e}", file=sys.stderr)
             preds = []
