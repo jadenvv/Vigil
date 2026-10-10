@@ -6,6 +6,7 @@ import { EmptyBlock, LoadingBlock, Shell } from "@/components/Chrome";
 import { Link } from "@/lib/router";
 
 const MAX_URLS = 25;
+const SCAN_BATCH_SIZE = 5;
 
 function parseList(text) {
   return text
@@ -77,10 +78,25 @@ function SetupForm() {
         is_demo: false,
       });
       append(`Created firm ${firm.name}`);
-      append(`Scanning ${urls.length} URLs…`);
-      const scan = (await base44.functions.invoke("scan", { firm_id: firm.id, urls })).data;
-      append(`Scan stored ${scan.created} pages`);
-      for (const failure of scan.failed ?? []) append(`Could not fetch ${failure.url}: ${failure.error}`);
+      // Each URL takes 10-13 s with a screenshot, so small batches keep every call under the function time limit.
+      let created = 0;
+      const failed = [];
+      for (let start = 0; start < urls.length; start += SCAN_BATCH_SIZE) {
+        const batch = urls.slice(start, start + SCAN_BATCH_SIZE);
+        append(`Scanning ${start + 1}-${start + batch.length} of ${urls.length}…`);
+        try {
+          const scan = (await base44.functions.invoke("scan", { firm_id: firm.id, urls: batch })).data;
+          created += scan.created ?? 0;
+          failed.push(...(scan.failed ?? []));
+        } catch (error) {
+          // A failed batch is reported, not retried: credits are finite.
+          const reason = error?.response?.data?.error ?? error.message;
+          failed.push(...batch.map((url) => ({ url, error: reason })));
+        }
+        append(`Scanned ${Math.min(start + batch.length, urls.length)} of ${urls.length}`);
+      }
+      append(`Scan stored ${created} pages`);
+      for (const failure of failed) append(`Could not fetch ${failure.url}: ${failure.error}`);
 
       const pages = await base44.entities.Page.filter({ firm_id: firm.id });
       let flagTotal = 0;

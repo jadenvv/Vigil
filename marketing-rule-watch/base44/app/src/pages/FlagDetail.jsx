@@ -149,13 +149,16 @@ function Screenshot({ page }) {
     );
   }
   return (
-    <img
-      src={src}
-      alt={`Screenshot of ${page.url}`}
-      data-testid="screenshot"
-      onError={() => setFailed(true)}
-      className="w-full rounded-lg border border-slate-200"
-    />
+    <a href={src} target="_blank" rel="noreferrer noopener" title={COPY.openScreenshot} className="block">
+      <img
+        src={src}
+        alt={`Screenshot of ${page.url}`}
+        data-testid="screenshot"
+        onError={() => setFailed(true)}
+        className="w-full rounded-lg border border-slate-200 hover:border-slate-400"
+      />
+      <span className="mt-1 block text-xs text-slate-500">{COPY.openScreenshot}</span>
+    </a>
   );
 }
 
