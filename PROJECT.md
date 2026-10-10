@@ -53,7 +53,7 @@ Schedule and cut order: `marketing-rule-watch/TIMELINE.md`. Pitch: `marketing-ru
 
 Update this table when a hand-off lands. Status reflects **what is pushed to git**. Work on someone's laptop doesn't count until it's pushed.
 
-Last updated: **2:00 PM**
+Last updated: **1:57 PM**
 
 | Workstream | Status | Evidence in repo |
 |---|---|---|
@@ -86,7 +86,7 @@ Last updated: **2:00 PM**
 | Question | What the Base44 docs say (vendored skills, 1:08 PM) | Still needs |
 |---|---|---|
 | Can Base44 backend functions make outbound HTTPS calls? | ✅ **Yes: Plan A.** A deployed `ping-out` function got HTTP responses from api.brightdata.com and api.anthropic.com (1:45 PM). | Tell P1 / team. |
-| Is there a built-in LLM? | **Yes.** `base44.integrations.Core.InvokeLLM({prompt, response_json_schema})` returns structured JSON with no API key. | Confirm it's on our plan, and whether its model is close enough to P4's eval model (see `base44/PLAN.md` §4). |
+| Which LLM? | ✅ **Decided 1:56 PM: Base44 built-in `InvokeLLM` only.** No key, event-provided Base44 credits; no Anthropic budget, so the app has no Anthropic path. | LLM eval numbers come from the live `detect-text` endpoint, not local runs. P4 to confirm. |
 | Can P4's eval hit the live detector? | **Yes on paper.** Functions are reachable at `POST https://<app-domain>/functions/<name>`. | P2 ships `detect-text`; confirm it's callable without login. |
 | Does Bright Data called from inside Base44 count for the track? | — | P1 asks the Bright Data mentor (2–3 PM). |
 | Are the rule paragraph refs right? | — | Mentor or tester. Until then, the UI hides them. |
