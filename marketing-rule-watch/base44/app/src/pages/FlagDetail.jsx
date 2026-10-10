@@ -4,7 +4,7 @@ import { ChannelChip, Confidence, SeverityBadge } from "@/components/Badges";
 import { ErrorBlock, LoadingBlock, Shell } from "@/components/Chrome";
 import { base44 } from "@/api/base44Client";
 import RewriteDrawer from "@/components/RewriteDrawer";
-import { COPY, SHOW_PAGE_VIEW, SHOW_REWRITE, SHOW_RULE_REFS } from "@/lib/copy";
+import { COPY, SHOW_PAGE_VIEW, SHOW_RECHECK, SHOW_REWRITE, SHOW_RULE_REFS } from "@/lib/copy";
 import { loadFlag, loadSessionDecisions } from "@/lib/data";
 import { quoted, splitOnSpan } from "@/lib/highlight";
 import { HIT_ID, prepareCapture } from "@/lib/capturedPage";
@@ -365,8 +365,53 @@ function EvidencePanel({ flag, page }) {
             <dd>{formatDate(page.fetched_at)}</dd>
           </>
         )}
+        {page.sha256 && (
+          <>
+            <dt title={COPY.hashHelp}>{COPY.hashLabel}</dt>
+            <dd className="font-mono" title={`${page.sha256}\n${COPY.hashHelp}`} data-testid="page-hash">
+              {page.sha256.slice(0, 16)}…
+            </dd>
+          </>
+        )}
       </dl>
+      {SHOW_RECHECK && <Recheck flagId={flag.id} />}
     </section>
+  );
+}
+
+// One live fetch per click (backend: functions/recheck, admin only, no retry). Nothing is stored.
+function Recheck({ flagId }) {
+  const [state, setState] = useState({ status: "idle" });
+  const run = async () => {
+    setState({ status: "loading" });
+    try {
+      const res = await base44.functions.invoke("recheck", { flag_id: flagId });
+      setState({ status: "done", result: res.data });
+    } catch (e) {
+      setState({ status: e?.response?.status === 401 ? "admin" : "error" });
+    }
+  };
+  const r = state.result;
+  return (
+    <div className="space-y-1 text-xs" data-testid="recheck">
+      <button
+        type="button"
+        onClick={run}
+        disabled={state.status === "loading"}
+        className="rounded-md border border-night-200 px-2 py-1 text-night-700 hover:bg-paper-100 disabled:opacity-60"
+      >
+        {state.status === "loading" ? COPY.rechecking : COPY.recheck}
+      </button>
+      {state.status === "done" && r && !r.error && (
+        <p role="status" className="text-night-700">
+          {COPY.recheckQuote(r.quote_present)} {COPY.recheckText(r.unchanged)} ({formatDate(r.checked_at)})
+        </p>
+      )}
+      {state.status === "admin" && <p role="status" className="text-night-600">{COPY.recheckAdminOnly}</p>}
+      {(state.status === "error" || (state.status === "done" && (!r || r.error))) && (
+        <p role="status" className="text-night-600">{COPY.recheckFailed}</p>
+      )}
+    </div>
   );
 }
 

@@ -32,6 +32,14 @@ export const COPY = {
   confidenceLabel: "Confidence",
   sourceLabel: "Source",
   fetchedLabel: "Captured",
+  hashLabel: "Page fingerprint",
+  hashHelp: "SHA-256 of the page text as captured. Any later change to the text gives a different fingerprint.",
+  recheck: "Re-check now",
+  rechecking: "Checking the live page…",
+  recheckQuote: (present: boolean) => (present ? "The flagged quote is still on the live page." : "The flagged quote is no longer on the live page."),
+  recheckText: (unchanged: boolean) => (unchanged ? "Page text unchanged since capture." : "Page text has changed since capture."),
+  recheckAdminOnly: "Only an admin can re-check (it uses a search credit).",
+  recheckFailed: "We couldn't reach the live page. The captured copy is unchanged.",
   ruleLabel: "Rule reference",
   backToInbox: "Back to all issues",
   pageTextLabel: "Page text",
@@ -67,6 +75,9 @@ export const COPY = {
 export const SHOW_PAGE_VIEW = false;
 
 export const SHOW_REWRITE = true;
+
+// "Re-check now" on flag detail: off until the `recheck` function is deployed. Admin only (spends a Bright Data credit).
+export const SHOW_RECHECK = false;
 
 // When false, the drawer skips the rewrite call and offers Edit / Dismiss only,
 // so no failed request ever reaches the console. Turn off again if the Base44 LLM quota runs out.
