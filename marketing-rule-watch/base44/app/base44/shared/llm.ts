@@ -7,6 +7,11 @@ export const PROVIDER: "anthropic" | "invokellm" = "anthropic";
 export const MODEL = "claude-sonnet-5-5"; // engine/llm.py default
 const TIMEOUT_MS = 60_000;
 
+/** True when callLLM can run: InvokeLLM needs no key, Anthropic needs the secret. */
+export function llmAvailable(): boolean {
+  return PROVIDER === "invokellm" || Boolean(secrets.get("ANTHROPIC_API_KEY"));
+}
+
 /** Returns raw model text (anthropic) or a parsed object (invokellm). Throws on any failure. */
 // deno-lint-ignore no-explicit-any
 export async function callLLM(base44: any, system: string, user: string, schema: object, maxTokens = 2000): Promise<unknown> {

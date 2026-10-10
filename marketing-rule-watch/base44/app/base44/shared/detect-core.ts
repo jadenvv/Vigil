@@ -10,6 +10,18 @@ export const MODE: "llm" | "rules" = "rules";
 export const MIN_CONF = 0.5; // from P4's eval
 export const MAX_TEXT = 200_000; // guard for a single page
 
+// Rules mode has no model to explain itself, and the TAXONOMY desc is jargon. Testers read this.
+export const PLAIN_WHY: Record<string, string> = {
+  UNSUBSTANTIATED_CLAIM: "States something as fact that the firm may not be able to prove.",
+  BENEFITS_WITHOUT_RISK: "Promises a benefit without saying what could go wrong.",
+  UNBALANCED_SPECIFIC_ADVICE: "Highlights a past winning pick without showing the full record, losers included.",
+  UNFAIR_PERFORMANCE_PRESENTATION: "Shows a hand-picked time period that makes results look better than usual.",
+  GROSS_WITHOUT_NET: "Shows returns before fees without the after-fee returns next to them.",
+  HYPOTHETICAL_PERFORMANCE: "Shows model or backtested results, not real client results, to a general audience.",
+  TESTIMONIAL_NO_DISCLOSURE: "Quotes a client or endorser without saying whether they were paid or are a current client.",
+  RATING_NO_DISCLOSURE: "Cites a rating or award without its date, who gave it, or whether the firm paid for it.",
+};
+
 export interface Flag {
   category: string;
   span: string;
@@ -35,7 +47,9 @@ export async function detectText(base44: any, text: string, channel = "", mode =
         cands = [];
       }
     }
-    flags.push(...postprocess(chunk, cands, MIN_CONF));
+    const kept: Flag[] = postprocess(chunk, cands, MIN_CONF);
+    if (mode === "rules") for (const f of kept) f.why = PLAIN_WHY[f.category] ?? f.why;
+    flags.push(...kept);
   }
   return flags.filter((f) => text.includes(f.span)); // grounding: span must be an exact page substring
 }
