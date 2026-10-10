@@ -1,0 +1,190 @@
+{
+  "detector": "baseline_regex",
+  "timestamp": "2026-10-10 14:55:42",
+  "cases_sha": "5ee195cde7",
+  "n_cases": 7,
+  "subsets": {
+    "all": {
+      "n_cases": 7,
+      "n_clean": 3,
+      "precision": null,
+      "recall": 0.0,
+      "f1": null,
+      "tp": 0,
+      "fp": 0,
+      "fn": 4,
+      "clean_doc_fp_rate": 0.0,
+      "flags_per_clean_doc": 0.0,
+      "grounding_rate": null,
+      "citation_accuracy": null,
+      "per_category": {
+        "BENEFITS_WITHOUT_RISK": {
+          "tp": 0,
+          "fp": 0,
+          "fn": 3,
+          "precision": null,
+          "recall": 0.0,
+          "f1": null
+        },
+        "UNSUBSTANTIATED_CLAIM": {
+          "tp": 0,
+          "fp": 0,
+          "fn": 1,
+          "precision": null,
+          "recall": 0.0,
+          "f1": null
+        }
+      }
+    },
+    "reviewed": {
+      "n_cases": 0,
+      "n_clean": 0,
+      "precision": null,
+      "recall": null,
+      "f1": null,
+      "tp": 0,
+      "fp": 0,
+      "fn": 0,
+      "clean_doc_fp_rate": null,
+      "flags_per_clean_doc": null,
+      "grounding_rate": null,
+      "citation_accuracy": null,
+      "per_category": {}
+    },
+    "pattern_synthetic": {
+      "n_cases": 0,
+      "n_clean": 0,
+      "precision": null,
+      "recall": null,
+      "f1": null,
+      "tp": 0,
+      "fp": 0,
+      "fn": 0,
+      "clean_doc_fp_rate": null,
+      "flags_per_clean_doc": null,
+      "grounding_rate": null,
+      "citation_accuracy": null,
+      "per_category": {}
+    }
+  },
+  "pairs": {
+    "pairs": 0,
+    "passed": 0,
+    "pass_rate": null,
+    "detail": {}
+  },
+  "rewrite": {
+    "tried": 0,
+    "passed": 0,
+    "pass_rate": null,
+    "note": "necessary, not sufficient: also have a human rate rewrite quality"
+  },
+  "cases": [
+    {
+      "id": "tester_a_new_words_bulletproof",
+      "provenance": "tester",
+      "reviewed": false,
+      "clean": false,
+      "tp": [],
+      "fp": [],
+      "fn": [
+        "BENEFITS_WITHOUT_RISK"
+      ],
+      "ungrounded": 0,
+      "cite_ok": 0,
+      "pred_cats": [],
+      "status": "miss",
+      "flags": []
+    },
+    {
+      "id": "tester_a_new_words_zero_downside",
+      "provenance": "tester",
+      "reviewed": false,
+      "clean": false,
+      "tp": [],
+      "fp": [],
+      "fn": [
+        "BENEFITS_WITHOUT_RISK"
+      ],
+      "ungrounded": 0,
+      "cite_ok": 0,
+      "pred_cats": [],
+      "status": "miss",
+      "flags": []
+    },
+    {
+      "id": "tester_a_new_words_comes_close",
+      "provenance": "tester",
+      "reviewed": false,
+      "clean": false,
+      "tp": [],
+      "fp": [],
+      "fn": [
+        "UNSUBSTANTIATED_CLAIM"
+      ],
+      "ungrounded": 0,
+      "cite_ok": 0,
+      "pred_cats": [],
+      "status": "miss",
+      "flags": []
+    },
+    {
+      "id": "tester_a_employee_venting_hours",
+      "provenance": "tester",
+      "reviewed": false,
+      "clean": true,
+      "tp": [],
+      "fp": [],
+      "fn": [],
+      "ungrounded": 0,
+      "cite_ok": 0,
+      "pred_cats": [],
+      "status": "ok",
+      "flags": []
+    },
+    {
+      "id": "tester_a_employee_venting_crm",
+      "provenance": "tester",
+      "reviewed": false,
+      "clean": true,
+      "tp": [],
+      "fp": [],
+      "fn": [],
+      "ungrounded": 0,
+      "cite_ok": 0,
+      "pred_cats": [],
+      "status": "ok",
+      "flags": []
+    },
+    {
+      "id": "tester_b_inflated_down_year",
+      "provenance": "tester",
+      "reviewed": false,
+      "clean": false,
+      "tp": [],
+      "fp": [],
+      "fn": [
+        "BENEFITS_WITHOUT_RISK"
+      ],
+      "ungrounded": 0,
+      "cite_ok": 0,
+      "pred_cats": [],
+      "status": "miss",
+      "flags": []
+    },
+    {
+      "id": "tester_b_confident_but_clean",
+      "provenance": "tester",
+      "reviewed": false,
+      "clean": true,
+      "tp": [],
+      "fp": [],
+      "fn": [],
+      "ungrounded": 0,
+      "cite_ok": 0,
+      "pred_cats": [],
+      "status": "ok",
+      "flags": []
+    }
+  ]
+}
