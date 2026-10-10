@@ -70,6 +70,44 @@ export function sameSite(url: string, domain: string): boolean {
   return host === d || host.endsWith("." + d);
 }
 
+/** Where a firm's site lives: a bare domain, or a host plus path (GitHub Pages and similar hosts). */
+export interface SiteBase {
+  url: string; // "https://host/path/", always ending in "/"
+  host: string; // lowercased, no "www."
+  path: string; // "/" for a bare domain, else "/path/"
+}
+
+/**
+ * Accepts "hartwell.example", "https://www.hartwell.example", "nathanqiu07.github.io/quarrywick-wealth-demo"
+ * or ".../quarrywick-wealth-demo/index.html" (a file name is trimmed to its folder). null if unparseable.
+ */
+export function siteBase(input: string): SiteBase | null {
+  const raw = input.trim();
+  const p = parse(/^https?:\/\//i.test(raw) ? raw : `https://${raw}`);
+  if (!p || !p.host.includes(".")) return null;
+  let path = p.pathname.replace(/\/[^/]*\.[a-z0-9]+$/i, "/"); // drop a trailing file like index.html
+  if (!path.endsWith("/")) path += "/";
+  const host = p.host.toLowerCase().replace(/^www\./, "");
+  return { url: `${p.protocol}//${p.host.toLowerCase()}${path}`, host, path };
+}
+
+/**
+ * In scope for this firm. A bare domain keeps the old rule (host or any subdomain). A base with a
+ * path means the same host AND under that path, so other sites sharing the host are excluded.
+ */
+export function inScope(url: string, base: SiteBase): boolean {
+  const p = parse(url);
+  if (!p) return false;
+  const host = p.host.toLowerCase().replace(/^www\./, "");
+  if (base.path === "/") return host === base.host || host.endsWith("." + base.host);
+  return host === base.host && (p.pathname + "/").startsWith(base.path);
+}
+
+/** "Sitemap:" lines in a robots.txt. */
+export function sitemapsFromRobots(txt: string): string[] {
+  return [...txt.matchAll(/^\s*sitemap:\s*(\S+)/gim)].map((m) => m[1]);
+}
+
 const A_HREF = /<a\b[^>]*?\bhref\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s"'>]+))/gi;
 
 /** <a href> targets, resolved against `base`. mailto/tel/javascript/# are dropped. */
@@ -113,6 +151,17 @@ export function dedupe(urls: string[], seen: Set<string>): string[] {
     }
   }
   return out;
+}
+
+/**
+ * A folder and its index.html are one page; scanning both would store it twice. Keeps the
+ * index.html form (what sitemaps list) and drops the folder. Input is normalize()d URLs.
+ */
+export function dropFolderDuplicates(urls: string[]): string[] {
+  const folders = new Set(
+    urls.filter((u) => /\/index\.html?$/i.test(u)).map((u) => normalize(u.replace(/\/index\.html?$/i, "/"))),
+  );
+  return urls.filter((u) => !folders.has(u));
 }
 
 /** discover.py's cap: off-site gets at least a third of the cap (more if the site is small). */
@@ -177,5 +226,25 @@ if (import.meta.main) {
   eq(kept.filter((u) => !keep(u)), [], "business fixture all kept");
   eq(keep("https://facebook.com/HartwellWealth"), true, "company facebook page kept");
   eq(keep("https://facebook.com/people/Jane-Doe/1000"), false, "facebook person dropped");
+  // site base: bare domain keeps the old behaviour; a path scopes to that folder on the host
+  const dom = siteBase("www.Hartwell.example")!;
+  eq(dom, { url: "https://www.hartwell.example/", host: "hartwell.example", path: "/" }, "bare domain base");
+  eq([inScope("https://blog.hartwell.example/p", dom), inScope("https://other.example/", dom)], [true, false], "domain scope");
+  const gh = siteBase("nathanqiu07.github.io/quarrywick-wealth-demo")!;
+  eq(gh.url, "https://nathanqiu07.github.io/quarrywick-wealth-demo/", "path base");
+  eq(siteBase("https://nathanqiu07.github.io/quarrywick-wealth-demo/index.html")!.path, "/quarrywick-wealth-demo/", "file trimmed");
+  eq([
+    inScope("https://nathanqiu07.github.io/quarrywick-wealth-demo/blog/x.html", gh),
+    inScope("https://nathanqiu07.github.io/quarrywick-wealth-demo", gh), // normalize() strips the slash
+    inScope("https://nathanqiu07.github.io/other-repo/", gh),
+    inScope("https://nathanqiu07.github.io/quarrywick-wealth-demo-old/", gh),
+    inScope("https://sub.nathanqiu07.github.io/quarrywick-wealth-demo/", gh),
+  ], [true, true, false, false, false], "path scope");
+  eq(sitemapsFromRobots("User-agent: *\nSitemap: https://h.example/s1.xml\n  sitemap:https://h.example/s2.xml"),
+    ["https://h.example/s1.xml", "https://h.example/s2.xml"], "robots sitemaps");
+  eq(siteBase("not a url"), null, "bad base");
+  eq(dropFolderDuplicates(["https://h.io/repo", "https://h.io/repo/index.html", "https://h.io/repo/blog", "https://h.io/repo/a.html"]),
+    ["https://h.io/repo/index.html", "https://h.io/repo/blog", "https://h.io/repo/a.html"], "folder + index.html collapse");
+  eq(dropFolderDuplicates(["https://h.example/", "https://h.example/index.html"]), ["https://h.example/index.html"], "root collapse");
   console.log("discover.ts self-check: ok");
 }
