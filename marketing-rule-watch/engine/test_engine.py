@@ -105,6 +105,20 @@ class Suppression(unittest.TestCase):
         self.assertEqual(suppressed(text, flag), "1/5/10-year periods shown")
 
 
+class Examples(unittest.TestCase):
+    def test_quoted_example_of_what_not_to_say_is_dropped(self):
+        from engine.postprocess import suppressed
+        text = 'For example, a firm might say "our fund offers guaranteed returns of 10% a year" without proof.'
+        flag = {"category": "BENEFITS_WITHOUT_RISK", "span": "our fund offers guaranteed returns of 10% a year"}
+        self.assertEqual(suppressed(text, flag), "example or quoted rule, not the firm's own claim")
+
+    def test_firms_own_claim_after_for_example_still_flags(self):
+        from engine.postprocess import suppressed
+        text = "For example, our clients have never lost money in a down year."
+        flag = {"category": "BENEFITS_WITHOUT_RISK", "span": "our clients have never lost money in a down year"}
+        self.assertIsNone(suppressed(text, flag))
+
+
 class QuoteHints(unittest.TestCase):
     def test_neighbours_disclosure_does_not_cover_another_quote(self):
         from engine.rules import quote_hints

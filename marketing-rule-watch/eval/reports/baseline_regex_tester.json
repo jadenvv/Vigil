@@ -1,38 +1,54 @@
 {
   "detector": "baseline_regex",
-  "timestamp": "2026-10-10 14:55:42",
-  "cases_sha": "5ee195cde7",
-  "n_cases": 7,
+  "timestamp": "2026-10-10 15:22:54",
+  "cases_sha": "bbf1254659",
+  "n_cases": 10,
   "subsets": {
     "all": {
-      "n_cases": 7,
-      "n_clean": 3,
-      "precision": null,
+      "n_cases": 10,
+      "n_clean": 5,
+      "precision": 0.0,
       "recall": 0.0,
-      "f1": null,
+      "f1": 0.0,
       "tp": 0,
-      "fp": 0,
-      "fn": 4,
-      "clean_doc_fp_rate": 0.0,
-      "flags_per_clean_doc": 0.0,
-      "grounding_rate": null,
+      "fp": 7,
+      "fn": 5,
+      "clean_doc_fp_rate": 0.4,
+      "flags_per_clean_doc": 1.2,
+      "grounding_rate": 1.0,
       "citation_accuracy": null,
       "per_category": {
         "BENEFITS_WITHOUT_RISK": {
           "tp": 0,
-          "fp": 0,
-          "fn": 3,
-          "precision": null,
+          "fp": 3,
+          "fn": 4,
+          "precision": 0.0,
           "recall": 0.0,
+          "f1": 0.0
+        },
+        "HYPOTHETICAL_PERFORMANCE": {
+          "tp": 0,
+          "fp": 1,
+          "fn": 0,
+          "precision": 0.0,
+          "recall": null,
+          "f1": null
+        },
+        "TESTIMONIAL_NO_DISCLOSURE": {
+          "tp": 0,
+          "fp": 2,
+          "fn": 0,
+          "precision": 0.0,
+          "recall": null,
           "f1": null
         },
         "UNSUBSTANTIATED_CLAIM": {
           "tp": 0,
-          "fp": 0,
+          "fp": 1,
           "fn": 1,
-          "precision": null,
+          "precision": 0.0,
           "recall": 0.0,
-          "f1": null
+          "f1": 0.0
         }
       }
     },
@@ -67,6 +83,9 @@
       "per_category": {}
     }
   },
+  "providers": {
+    "local": 10
+  },
   "pairs": {
     "pairs": 0,
     "passed": 0,
@@ -94,7 +113,8 @@
       "cite_ok": 0,
       "pred_cats": [],
       "status": "miss",
-      "flags": []
+      "flags": [],
+      "provider": null
     },
     {
       "id": "tester_a_new_words_zero_downside",
@@ -110,7 +130,8 @@
       "cite_ok": 0,
       "pred_cats": [],
       "status": "miss",
-      "flags": []
+      "flags": [],
+      "provider": null
     },
     {
       "id": "tester_a_new_words_comes_close",
@@ -126,7 +147,8 @@
       "cite_ok": 0,
       "pred_cats": [],
       "status": "miss",
-      "flags": []
+      "flags": [],
+      "provider": null
     },
     {
       "id": "tester_a_employee_venting_hours",
@@ -140,7 +162,8 @@
       "cite_ok": 0,
       "pred_cats": [],
       "status": "ok",
-      "flags": []
+      "flags": [],
+      "provider": null
     },
     {
       "id": "tester_a_employee_venting_crm",
@@ -154,7 +177,8 @@
       "cite_ok": 0,
       "pred_cats": [],
       "status": "ok",
-      "flags": []
+      "flags": [],
+      "provider": null
     },
     {
       "id": "tester_b_inflated_down_year",
@@ -170,7 +194,8 @@
       "cite_ok": 0,
       "pred_cats": [],
       "status": "miss",
-      "flags": []
+      "flags": [],
+      "provider": null
     },
     {
       "id": "tester_b_confident_but_clean",
@@ -184,7 +209,105 @@
       "cite_ok": 0,
       "pred_cats": [],
       "status": "ok",
-      "flags": []
+      "flags": [],
+      "provider": null
+    },
+    {
+      "id": "tester_b_example_not_ad",
+      "provenance": "tester",
+      "reviewed": false,
+      "clean": true,
+      "tp": [],
+      "fp": [
+        "BENEFITS_WITHOUT_RISK",
+        "UNSUBSTANTIATED_CLAIM",
+        "TESTIMONIAL_NO_DISCLOSURE",
+        "TESTIMONIAL_NO_DISCLOSURE"
+      ],
+      "fn": [],
+      "ungrounded": 0,
+      "cite_ok": 0,
+      "pred_cats": [
+        "BENEFITS_WITHOUT_RISK",
+        "TESTIMONIAL_NO_DISCLOSURE",
+        "UNSUBSTANTIATED_CLAIM"
+      ],
+      "status": "false_positive",
+      "flags": [
+        {
+          "category": "BENEFITS_WITHOUT_RISK",
+          "span": "guaranteed returns of 10%"
+        },
+        {
+          "category": "UNSUBSTANTIATED_CLAIM",
+          "span": "#1 adviser in the country\" without any proof"
+        },
+        {
+          "category": "TESTIMONIAL_NO_DISCLOSURE",
+          "span": "\"our fund offers guaranteed returns of 10% a year\""
+        },
+        {
+          "category": "TESTIMONIAL_NO_DISCLOSURE",
+          "span": "\"the #1 adviser in the country\""
+        }
+      ],
+      "provider": null
+    },
+    {
+      "id": "tester_b_quoted_rule_not_ad",
+      "provenance": "tester",
+      "reviewed": false,
+      "clean": true,
+      "tp": [],
+      "fp": [
+        "BENEFITS_WITHOUT_RISK",
+        "HYPOTHETICAL_PERFORMANCE"
+      ],
+      "fn": [],
+      "ungrounded": 0,
+      "cite_ok": 0,
+      "pred_cats": [
+        "BENEFITS_WITHOUT_RISK",
+        "HYPOTHETICAL_PERFORMANCE"
+      ],
+      "status": "false_positive",
+      "flags": [
+        {
+          "category": "BENEFITS_WITHOUT_RISK",
+          "span": "guaranteed"
+        },
+        {
+          "category": "HYPOTHETICAL_PERFORMANCE",
+          "span": "hypothetical performance to people it isn't relevant to"
+        }
+      ],
+      "provider": null
+    },
+    {
+      "id": "tester_b_example_page_with_real_claim",
+      "provenance": "tester",
+      "reviewed": false,
+      "clean": false,
+      "tp": [],
+      "fp": [
+        "BENEFITS_WITHOUT_RISK"
+      ],
+      "fn": [
+        "BENEFITS_WITHOUT_RISK"
+      ],
+      "ungrounded": 0,
+      "cite_ok": 0,
+      "pred_cats": [
+        "BENEFITS_WITHOUT_RISK"
+      ],
+      "status": "miss+fp",
+      "flags": [
+        {
+          "category": "BENEFITS_WITHOUT_RISK",
+          "span": "risk-free"
+        }
+      ],
+      "provider": null
     }
   ]
 }
