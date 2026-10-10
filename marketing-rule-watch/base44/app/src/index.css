@@ -35,3 +35,33 @@
     @apply bg-background text-foreground antialiased;
   }
 }
+
+@layer base {
+  ::selection {
+    background: #fff1d6; /* Lamp 100 */
+    color: #0b1120;
+  }
+}
+
+/* The scan line from the logo passes once over the flagged quote on the home page, then fades. */
+@keyframes vigil-scan {
+  from {
+    top: 0%;
+    opacity: 1;
+  }
+  75% {
+    opacity: 1;
+  }
+  to {
+    top: 100%;
+    opacity: 0;
+  }
+}
+.vigil-scan {
+  animation: vigil-scan 1.1s cubic-bezier(0.16, 1, 0.3, 1) 0.25s 1 both;
+}
+@media (prefers-reduced-motion: reduce) {
+  .vigil-scan {
+    animation: none;
+  }
+}

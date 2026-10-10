@@ -1,5 +1,6 @@
 // Shared page chrome: footer on every screen, demo banner, and the loading / error / empty states.
 import { COPY } from "@/lib/copy";
+import { Link } from "@/lib/router";
 
 export function Footer() {
   return (
@@ -23,7 +24,9 @@ export function Shell({ demo = false, children }) {
       {demo && <DemoBanner />}
       <header className="border-b border-paper-200 bg-white">
         <div className="mx-auto max-w-5xl px-4 py-3">
-          <img src="/vigil-lockup.svg" alt={COPY.appName} className="h-6 w-auto" />
+          <Link to="/" className="inline-block rounded focus:outline-none focus-visible:ring-2 focus-visible:ring-lamp-500">
+            <img src="/vigil-lockup.svg" alt={`${COPY.appName} home`} className="h-6 w-auto" />
+          </Link>
         </div>
       </header>
       <main className="mx-auto w-full max-w-5xl flex-1 px-4 pb-24 pt-6">{children}</main>
