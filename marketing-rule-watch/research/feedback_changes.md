@@ -14,14 +14,14 @@ Last updated: **3:45 PM**.
 |---|---|---|---|---|
 | A1 | Their unreviewed content is employees venting, not firm marketing | Scope wording: "content your firm and its advisers publish or adopt" | P1 (copy), P2 | 🟢 app copy; pitch ✅ |
 | A4 | Examiners use what's online to question the firm | Printable "Before your exam" summary of open flags | P2 | 🟢 |
-| A5 | Keyword lists miss new wording | Demo a flag with no trigger keyword; show eval vs keyword baseline | P4, P1 | 🟡 eval + slide done; demo pick ⏳ |
+| A5 | Keyword lists miss new wording | Demo a flag with no trigger keyword; show eval vs keyword baseline | P4, P1 | ✅ eval, slide and demo pick |
 | A6 | AI must be overseen, audited and carry a disclaimer | Disclaimer on every screen, Decision audit log, consistency check | P2, P4 | ✅ audit + disclaimer; 🟡 consistency tool built, LLM not measured |
 | B1 | Regulators search public ads and follow up | Pitch line: regulators look at the same public pages we scan | P1 | ✅ in slide script |
 | B2 | They want the captured ad and a way to re-find it live | Screenshot, capture time, live link on every flag | P2, P3 | 🟡 hash + re-check ⏳ |
 | B3 | Repeated false positives would kill trust | Precision first, one-click Dismiss, honest numbers | P4, P2 | ✅ |
 | B4 | Only ads tied to real investment offers, not examples | Skip educational and example text; add an eval case | P4 | 🟢 |
 | B5 | Human in the loop at the right points | Nothing auto-publishes; rewrite is a draft until approved | P2 | ✅ |
-| B6 | AI is producing more misleading content | Pitch line: AI-written marketing means more to review | P1 | ⏳ not in slide script yet |
+| B6 | AI is producing more misleading content | Pitch line: AI-written marketing means more to review | P1 | ✅ in slide script |
 
 ## Tester A (compliance, role not stated)
 
@@ -67,7 +67,10 @@ Last updated: **3:45 PM**.
 - ✅ Harder set (`80d9a18`, `eval/cases_hard.jsonl`): offline rules mode recall 0.36. LLM mode not measured on it yet.
 - ✅ The F1 0.70 → 0.95 comparison is on slide 2 of `research/slides_script.md`, labelled synthetic.
 
-**Owner.** P4 (eval, demo example), P1 (slide). **Status.** 🟡 eval comparison and slide done; picking the no-keyword demo flag is ⏳.
+- ✅ Demo flag picked: demo-site #3 on `/about.html`, "Our clients have never lost money in a down year." (BENEFITS_WITHOUT_RISK). It has no trigger word. The keyword baseline misses it and flags the footer disclaimer "guarantee future results" instead (`reports/baseline_regex_demo_site.json`, case `demo_about`). The live LLM crawl at 3:18 caught it (its 2 misses were #6 and #8). Backup: #1, "the most trusted retirement firm in the Pacific Northwest", which the keyword list also misses.
+- ✅ Slide 2 pairs it with Tester A's word-list quote ("you're just adding to that list of words").
+
+**Owner.** P4 (eval, demo example), P1 (slide). **Status.** ✅ eval, slide and demo pick. Re-check #3 is still caught after the 4:00 deploy.
 
 ### A6. AI must be overseen, audited and carry a disclaimer
 
@@ -165,7 +168,9 @@ Last updated: **3:45 PM**.
 
 **Change.** Pitch line: "Advisers now write marketing with AI, so there's more of it to review, and it goes out faster." This is the tester's view, not a statistic, and we'll present it that way.
 
-**Owner.** P1. **Status.** ⏳ not in `research/slides_script.md` yet; add it to slide 1 or cut it.
+- ✅ Slide 1 of `research/slides_script.md`: "And the volume is growing", with the quote verbatim and attributed to the former regulator tester. It argues why now: AI-written marketing outpaces a weekly search, so we use AI to review it and a person decides.
+
+**Owner.** P1. **Status.** ✅ in the slide script.
 
 ## Change log
 
@@ -185,3 +190,4 @@ Fill in as changes land: date and time, ID, commit, and the eval before/after if
 | 15:27 | B2 | `0a6e10c` page-as-captured view (off) | n/a |
 | 15:34 | B2 | `9e2f6ba` bug F: quotes with `#`, `>`, `\|` now match | n/a |
 | 15:41 | B1, A1, A4, A6, B2, B3, B4 | `21b36e2` slide script with feedback table | n/a |
+| 15:50 | A5, B6 | slide script: no-keyword demo flag, word-list quote, AI-volume quote | Keyword baseline misses demo #3 and flags the disclaimer |

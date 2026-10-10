@@ -26,6 +26,13 @@ Vigil keeps watch over everything you've published.
 
 The tool for finding unreviewed content today is a weekly Google search. Meanwhile, regulators search the same public pages.
 
+**And the volume is growing.** Advisers now write marketing with AI, so there's more of it to review, and it goes out faster.
+
+> "AI in this environment is contributing to the production of misleading information and can be, in fact, making it harder to identify truth from fiction."
+> — former regulator tester
+
+A weekly search can't keep up with AI-written copy. Vigil uses AI to review it, and a person makes every call.
+
 [[Check 2: add the strongest verbatim quote about how issues slip through, or delete this line]]
 
 ---
@@ -40,6 +47,13 @@ Scan → flag with evidence → suggested rewrite → a person approves, edits o
 
 **On a real crawl of our fictional demo firm (10 pages, 11 planted issues):**
 Vigil found **9 of 11**, with **0 false alarms** and **0 flags on clean content**. [[update if the final run changed]]
+
+**Why not a keyword list?** That's how compliance teams picture this tool today:
+
+> "When you find new things, find new words that mean the same thing, you're just adding to that list of words"
+> — compliance tester
+
+Vigil reads for meaning. On the demo site, "Our clients have never lost money in a down year." has no trigger word: the keyword list misses it and flags the risk disclaimer ("guarantee future results") instead. Vigil flags the promise and leaves the disclaimer alone.
 
 **Against a keyword list (37 synthetic test cases):**
 
