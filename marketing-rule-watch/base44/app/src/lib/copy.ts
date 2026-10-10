@@ -27,7 +27,20 @@ export const COPY = {
   ruleLabel: "Rule reference",
   backToInbox: "Back to all issues",
   pageTextLabel: "Page text",
+  rewriteTitle: "Suggested rewrite",
+  originalLabel: "Original",
+  suggestedLabel: "Suggested",
+  rewriteUnavailable: "A suggested rewrite isn't available yet. You can write one with Edit.",
+  flagsCleared: (cleared: number, total: number) => `Flags cleared: ${cleared} of ${total}`,
+  approve: "Approve",
+  edit: "Edit",
+  reject: "Dismiss",
+  saveEdit: "Save edit",
+  cancel: "Cancel",
 };
+
+// Phase 5 rewrite drawer stays off until after Sense Check 2.
+export const SHOW_REWRITE = false;
 
 export const CHANNEL_LABELS: Record<string, string> = {
   website: "Website",
