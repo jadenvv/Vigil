@@ -20,8 +20,8 @@ Optional context line, appended at the end (it is a fact, not an instruction):
 ## Greenlight version (what we actually send for Check 1)
 This frames the call as "should we build this?" Testers hear the description word for word, and instructions get refused, so the framing is stated as a fact about the project, not as a command to the tester.
 
-**Description (succinct, about 65 words; testers hear it word for word):**
-> An early idea we haven't built yet. We're deciding whether to build it. An AI tool for compliance officers at small investment advisory firms. It scans what the firm has published online, including its website, blog, social posts and third-party pages. It flags language that may break the SEC Marketing Rule, showing the exact quote and where it appeared. It keeps dated snapshots of each page and drafts a compliant rewrite for the officer to approve.
+**Description (about 105 words; testers hear it word for word):**
+> An early idea we haven't built yet. We're deciding whether to build it. Our theme is catching what humans miss. It's an AI tool for compliance officers at small investment advisory firms. It scans what the firm has published online, including its website, blog, social posts and third-party pages. It flags language that may break the SEC Marketing Rule, showing the exact quote and where it appeared. It keeps dated snapshots of each page and drafts a compliant rewrite for the officer to approve. We looked into this because in 2024 the SEC fined nine advisers a combined $1.24 million, mostly over claims on their public websites.
 
 **Questions (3, short):**
 1. Would you use this? What would stop you?
