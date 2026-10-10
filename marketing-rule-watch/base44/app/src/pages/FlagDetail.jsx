@@ -374,6 +374,13 @@ function EvidencePanel({ flag, page }) {
           </>
         )}
       </dl>
+      <Link
+        to={`/page/${page.id}/history?from=${encodeURIComponent(`/flag/${flag.id}`)}`}
+        data-testid="history-link"
+        className="inline-block text-xs underline"
+      >
+        {COPY.historyLink}
+      </Link>
       {SHOW_RECHECK && <Recheck flagId={flag.id} />}
     </section>
   );
