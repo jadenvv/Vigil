@@ -47,7 +47,7 @@ A tool for **compliance officers at small SEC-registered investment advisers**. 
 | **P4 · Detector** | Detect + rewrite prompts, grounding, eval, Daytona (stretch) | `marketing-rule-watch/engine/CLAUDE.md`, `marketing-rule-watch/eval/CLAUDE.md` |
 | **Devin** | Fictional demo firm site + answer key + eval cases | `marketing-rule-watch/demo-site/CLAUDE.md` |
 
-Schedule and cut order: `marketing-rule-watch/TIMELINE.md`. Pitch: `marketing-rule-watch/PITCH.md`.
+Schedule and cut order: `marketing-rule-watch/TIMELINE.md`. Pitch: `marketing-rule-watch/research/slides_script.md`.
 
 ## 4. Status board
 
@@ -60,7 +60,7 @@ Last updated: **3:20 PM**
 | Docs, contracts, timeline | ✅ done | `marketing-rule-watch/*.md` |
 | Eval harness + 37 seeded cases | ✅ done | `eval/compliance_eval.py`, `eval/cases.jsonl` |
 | Keyword baseline measured | ✅ F1 0.70 · clean docs wrongly flagged 28% · pairs 6/8 | `eval/reports/baseline_regex_120954.json` |
-| Sense Check 1 | 🟡 brief written, results not logged yet | `research/check1_brief.md`, `research/sense_checks.md` |
+| Sense Check 1 | 🟡 brief written, results not logged yet | `research/sense_checks.md` |
 | Demo site | 🟢 Fictional **Quarrywick Wealth** live at https://nathanqiu07.github.io/quarrywick-wealth-demo/ (10 pages, 11 planted issues, answer key). Built by a Claude agent (Devin was down). Devin gets the third-party review site when back (`demo-site/DEVIN_THIRD_PARTY.md`) | `demo-site/` |
 | Crawl (`fetch.py`, screenshots) | 🟢 Bright Data runs **inside Base44**: `scan` fetched 2 test pages + screenshots (all HTTP 200, screenshots stored as public PNGs). Web Unlocker zone works (name not recorded here); SERP zone `serp_api1`. ~10–13 s per URL, so batch ≤5 | `crawl/`, `base44/app/base44/functions/scan` |
 | Detector (`engine/`) | 🟢 v3 live (Base44 InvokeLLM). Live eval 4:10 PM, 69 calls, 0 quota errors (cabebb3): 37 synthetic cases F1 0.70→**0.98** (keyword→LLM), clean docs wrongly flagged 28%→**0%**, recall 21/21, pairs 8/8; 10 tester-inspired cases 5/5 caught, 0/5 clean flagged; demo site 11/11, 0/8 clean flagged (dev set, tuned on it); consistency 2/3 pages identical, 3/3 same categories. Caveats travel with every number | `engine/`, `base44/app/base44/shared` |
