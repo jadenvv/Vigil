@@ -3,3 +3,4 @@ crawl/calls.log
 __pycache__/
 *.pyc
 node_modules/
+crawl/out/
