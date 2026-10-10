@@ -1,0 +1,45 @@
+# Answer key: Quarrywick Wealth demo site
+
+Quarrywick Wealth and its staff (Odile Ketteridge, CFP; Tomas Wrenfield) are **fictional**. Every page carries the banner "Fictional firm for a hackathon demo. Not a real investment adviser."
+
+- Live site: https://nathanqiu07.github.io/quarrywick-wealth-demo/
+- Sitemap: https://nathanqiu07.github.io/quarrywick-wealth-demo/sitemap.xml
+- Source: `demo-site/site/` (published copy: https://github.com/nathanqiu07/quarrywick-wealth-demo)
+
+Name check (2026-10-10): the SEC IAPD firm search (`api.adviserinfo.sec.gov/search/firm`) returned 0 hits for "Quarrywick"; a web search for "Quarrywick" found no firm or person. The advisor name "Odile Ketteridge" returned 0 IAPD individual hits and no web results. ("Hartwell Wealth", used earlier, matches a real registered adviser, so it was dropped.)
+
+## Planted issues (11)
+
+Each span is a character-exact substring of the page's visible text (tags stripped). All are plain ASCII with straight quotes.
+
+| # | Page path | Exact planted sentence | Category |
+|---|---|---|---|
+| 1 | `/index.html` | `Quarrywick Wealth is the most trusted retirement firm in the Pacific Northwest.` | UNSUBSTANTIATED_CLAIM |
+| 2 | `/index.html` | `Ranked #2 Wealth Manager by Pemberline Advisor Review.` | RATING_NO_DISCLOSURE |
+| 3 | `/about.html` | `Our clients have never lost money in a down year.` | BENEFITS_WITHOUT_RISK |
+| 4 | `/services.html` | `Our proprietary process consistently beats the market.` | UNSUBSTANTIATED_CLAIM |
+| 5 | `/services.html` | `Our Income Shield program provides guaranteed income for life, so market swings never touch your retirement.` | BENEFITS_WITHOUT_RISK |
+| 6 | `/performance.html` | `Since the March 2020 market low, our Core Growth portfolios have gained 151%.` | UNFAIR_PERFORMANCE_PRESENTATION |
+| 7 | `/performance.html` | `Our back-tested Tactical Rotation Model would have returned 19% a year from 2004 to 2019.` | HYPOTHETICAL_PERFORMANCE |
+| 8 | `/testimonials.html` | `"Odile completely turned our retirement around and we doubled our savings in five years."` | TESTIMONIAL_NO_DISCLOSURE |
+| 9 | `/blog/our-best-pick.html` | `Our 2021 pick, Veltrane Semiconductor, tripled in under two years.` | UNBALANCED_SPECIFIC_ADVICE |
+| 10 | `/blog/2025-market-recap.html` | `Our Core Growth strategy returned 17.9% gross of fees in 2025.` | GROSS_WITHOUT_NET |
+| 11 | `/blog/firm-recognition.html` | `Quarrywick Wealth was named a Top 40 Advisor by Copperfen Wealth Digest.` | RATING_NO_DISCLOSURE |
+
+Per category: UNSUBSTANTIATED_CLAIM 2, BENEFITS_WITHOUT_RISK 2, RATING_NO_DISCLOSURE 2, UNBALANCED_SPECIFIC_ADVICE 1, UNFAIR_PERFORMANCE_PRESENTATION 1, GROSS_WITHOUT_NET 1, HYPOTHETICAL_PERFORMANCE 1, TESTIMONIAL_NO_DISCLOSURE 1.
+
+Page paths are relative to the site root above. Pages with no planted issue: `/fees.html`, `/blog/index.html`.
+
+## Clean content (must NOT be flagged)
+
+- **Risk disclaimer, every page footer:** "Investing involves risk, including possible loss of principal. Past performance does not guarantee future results."
+- **Performance disclosures (`/performance.html`):** the paragraph beginning "Past performance does not guarantee future results. Net returns reflect the deduction of the highest advisory fee..."
+- **Net-of-fees performance table (`/performance.html`):** Core Growth composite annualized returns for the period ending December 31, 2025, 1/5/10 years, net (11.2% / 8.4% / 7.9%) shown first, gross (12.3% / 9.5% / 9.0%) shown alongside with equal prominence, plus a benchmark row. The gross row is compliant because net is shown next to it.
+- **Disclosed testimonial (`/testimonials.html`):** "Tomas answered every question we had about rolling over my 401(k) and never made us feel rushed." from Margaret L., followed by the disclosure that she is a current client, was not paid or otherwise compensated, has no material conflicts, and her experience may not be representative.
+- **Full fee schedule (`/fees.html`):** tiered AUM fees (1.00% / 0.75% / 0.60% / 0.45%), a worked example, planning-only fees and other costs.
+- **Income Shield description (`/services.html`):** "For clients within five years of retirement, Income Shield sets aside a reserve of conservative holdings to fund near-term spending." (neutral; only the "guaranteed income" sentence is planted).
+- **Footer fictional-firm notice and the top banner.**
+
+## Third-party site
+
+(Reserved for the fictional review-directory site described in `DEVIN_THIRD_PARTY.md`. Append its planted sentences here: page, exact text, category.)
