@@ -38,7 +38,9 @@ export const COPY = {
   rechecking: "Checking the live page…",
   recheckQuote: (present: boolean) => (present ? "The flagged quote is still on the live page." : "The flagged quote is no longer on the live page."),
   recheckText: (unchanged: boolean) => (unchanged ? "Page text unchanged since capture." : "Page text has changed since capture."),
-  recheckAdminOnly: "Only an admin can re-check (it uses a search credit).",
+  recheckCheckedAgo: (minutes: number) => (minutes < 1 ? "Checked less than a minute ago." : `Checked ${minutes} min ago.`),
+  recheckCacheNote: "Each page is checked live at most once every 10 minutes.",
+  recheckNotAllowed: "Re-check is open on the demo firm, and to this firm's owner or an admin. Each check uses a search credit.",
   recheckFailed: "We couldn't reach the live page. The captured copy is unchanged.",
   ruleLabel: "Rule reference",
   backToInbox: "Back to all issues",
@@ -76,7 +78,8 @@ export const SHOW_PAGE_VIEW = false;
 
 export const SHOW_REWRITE = true;
 
-// "Re-check now" on flag detail: off until the `recheck` function is deployed. Admin only (spends a Bright Data credit).
+// "Re-check now" on flag detail: off until the `recheck` function and the Recheck entity are deployed.
+// Open on the demo firm, to the firm's owner and to admins; capped at one Bright Data fetch per page per 10 min.
 export const SHOW_RECHECK = false;
 
 // When false, the drawer skips the rewrite call and offers Edit / Dismiss only,
