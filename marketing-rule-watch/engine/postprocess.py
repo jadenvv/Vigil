@@ -79,6 +79,10 @@ RX = {
     "neg_hypo": re.compile(r"\b(?:do not|don't|does not|never|no)\b[^.!?]{0,25}\b(?:publish|show|present|provide|use|offer)|\b(?:upon|on) request\b", re.I),
     "advice_balanced": re.compile(r"including (?:those|ones|picks|recommendations|positions) that (?:lost|declined|fell|underperformed)|full list of (?:our |all )?(?:recommendations|picks)", re.I),
     "disclaimer": re.compile(r"past performance (?:does not|is not|cannot|may not|is no)|involves? risk|possible loss of principal|risk of loss", re.I),
+    # a hand-picked start/window: standard periods elsewhere on the page don't excuse it
+    "cherry_window": re.compile(r"\b(?:since|from|off) the [^.,;]{0,25}?\b(?:low|lows|bottom|trough)\b"
+                                r"|\bbest (?:\d+|two|three|four|five|six|seven|eight|nine|ten) (?:years|quarters|months)\b"
+                                r"|\bbest (?:year|quarter|month|day|trade)s?\b", re.I),
 }
 
 
@@ -126,7 +130,7 @@ def suppressed(chunk: str, flag: dict) -> str | None:
         return "rating methodology and date/payment disclosed"
     if cat == "GROSS_WITHOUT_NET" and RX["net"].search(near):
         return "net performance shown"
-    if cat == "UNFAIR_PERFORMANCE_PRESENTATION" and _periods_1_5_10(near):
+    if cat == "UNFAIR_PERFORMANCE_PRESENTATION" and _periods_1_5_10(near) and not RX["cherry_window"].search(sent):
         return "1/5/10-year periods shown"
     if cat == "BENEFITS_WITHOUT_RISK" and RX["neg_guarantee"].search(sent) and not re.search(r"\bwe guarantee", sent, re.I):
         return "negated guarantee (disclaimer)"

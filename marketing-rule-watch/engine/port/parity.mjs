@@ -5,7 +5,7 @@ import { execFileSync } from "node:child_process";
 import { postprocess, ruleCandidates, hints, buildMessages, parseFlags } from "./detect_core.js";
 
 const texts = [];
-for (const f of ["eval/cases.jsonl", "eval/cases_holdout.jsonl", "eval/cases_pages.jsonl"])
+for (const f of ["eval/cases.jsonl", "eval/cases_holdout.jsonl", "eval/cases_pages.jsonl", "eval/cases_tester.jsonl", "eval/cases_demo_site.jsonl"])
   for (const l of readFileSync(f, "utf8").split("\n")) if (l.trim()) texts.push(JSON.parse(l).text);
 texts.push(execFileSync("python3", ["-c", "from engine.test_engine import PAGE; print(PAGE, end='')"]).toString());
 
