@@ -32,8 +32,6 @@ Paste the three cards below the line into Gamma → Paste in text → **Preserve
 
 On our fictional demo firm: found 9 of 11 planted issues, we fixed the 2 misses, now **11 of 11, 0 false alarms**.
 
-[[Screenshot: flag detail with highlighted quote and page screenshot]]
-
 ---
 
 # What testers told us, and what we changed
@@ -51,10 +49,21 @@ Keyword baseline → Vigil. One run each, on synthetic test cases we wrote; not 
 
 ---
 
-## Talk track (~2 minutes, not for the slides)
+## Run of show (~3 minutes, not for the slides)
+
+Order: **Slide 1 → Slide 2 → live demo → Slide 3.** Slide 2 sets up the demo, so keep it short and let the app show the details.
 
 **Slide 1 (30 s).** The SEC fines small advisers for single sentences: $75k for "no conflicts of interest" on a website. These firms have about 8 people. When we asked compliance testers how they catch content that skipped review, one said they search the firm's name. Another said manual review means shortcuts and no global view.
 
-**Slide 2 (60 s, live demo).** Type in the firm. Vigil discovers its pages and pages about it with Bright Data, captures each with a screenshot and timestamp, and an LLM flags potential issues. Every flag quotes the page word for word. Open one: the quote, the screenshot, the capture time. Ask for a rewrite, approve it, and it's logged. On our fictional demo firm it first found 9 of 11 planted issues; we fixed the two misses.
+**Slide 2 (20 s).** Vigil does that search for them, on every page. Four steps: discover, capture, detect, review. Let me show you.
+
+**Demo (90 s).** Switch to the Base44 app.
+1. **Scan.** Enter the fictional firm, Quarrywick Wealth, and start a scan. Say: "Bright Data finds the firm's own pages and pages about it." If the live scan is slow, open the stored results (demo mode) and say so.
+2. **Findings.** Show the list of potential issues across pages. Say "potential issues for review", never "violations".
+3. **Open one flag.** Point at the highlighted quote, the page screenshot and capture time, and the plain-English why. Say: "No quote found word for word on the page, no flag."
+4. **Rewrite → approve.** Ask for a rewrite, edit a word, approve. Say: "The AI suggests; the compliance officer decides."
+5. **Audit log / exam view.** Show the logged decision with its timestamp. Say: "This is what you hand an examiner."
+
+Fallback: a recorded video of the same five steps. Never demo on a real firm.
 
 **Slide 3 (30 s).** Every change came from a tester. The biggest fear was false positives, so we went precision-first: clean documents wrongly flagged went from 28% with keywords to 0%. A tester assumed AI meant a word list; reading for meaning took F1 from 0.70 to 0.98. These are our own synthetic cases, one run each. Next: dated snapshots, so a firm can prove what its site said on any date.
