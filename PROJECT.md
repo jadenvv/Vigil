@@ -53,7 +53,7 @@ Schedule and cut order: `marketing-rule-watch/TIMELINE.md`. Pitch: `marketing-ru
 
 Update this table when a hand-off lands. Status reflects **what is pushed to git**. Work on someone's laptop doesn't count until it's pushed.
 
-Last updated: **1:50 PM**
+Last updated: **1:55 PM**
 
 | Workstream | Status | Evidence in repo |
 |---|---|---|
@@ -64,7 +64,7 @@ Last updated: **1:50 PM**
 | Devin demo site | ⏳ not in repo | `demo-site/` has only `CLAUDE.md` |
 | Crawl (`fetch.py`, screenshots) | 🟡 URL → Page JSON + chunker pushed; not yet run on the demo site or ported into Base44 | `crawl/fetch.py` |
 | Detector (`engine/`) | ⏳ not in repo | `engine/` has only `CLAUDE.md` |
-| Base44 app | 🟡 Live at https://marketing-rule-watch-a0747dd2.base44.app (app `6acaa1caee5db1d7a0747dd2`). Entities live, Google login on, public. UI pushed (`556f99d`); seeding + deploying next. Detection is keyword mode until `.env` is filled | `base44/app/`, `base44/PLAN.md` |
+| Base44 app | 🟢 Demo mode live: https://marketing-rule-watch-a0747dd2.base44.app/demo (seeded fictional firm, 11 flags, 8/8 categories, no login, inbox ≈1.2 s, flag ≈2–4 s, 0 console errors). Next: scan/detect functions, then a real crawl replaces the seed. Detection is keyword mode until `.env` is filled | `base44/app/`, `base44/PLAN.md` |
 | Rewrite, snapshots, Daytona | ⬜ later / stretch | — |
 
 ## 5. Hand-offs (the deadlines that matter)
@@ -75,7 +75,7 @@ Last updated: **1:50 PM**
 | 1:30 | P1 → all | Mentor answer: Base44 outbound calls → plan A or B (see §6) | ✅ Plan A, proven by P2 at 1:45 |
 | 1:45 | P3 → P2 | Bright Data request code + sample `Page` JSON + one screenshot | ⏳ |
 | 2:30 | P4 → P2 | `engine/prompts/detect.md` + grounding logic, beats baseline | ⏳ |
-| **2:45** | **P2 → P1** | **Live link with demo mode** | ⏳ |
+| **2:45** | **P2 → P1** | **Live link with demo mode** | ✅ ready 1:52: https://marketing-rule-watch-a0747dd2.base44.app/demo |
 | ~5:00 | P4 → P2 | `engine/prompts/rewrite.md` | ⏳ |
 | 7:00 | P4 → P1 | Eval before/after report | ⏳ |
 | 7:00 | P2 → P1 | Screenshots for slides | ⏳ |
