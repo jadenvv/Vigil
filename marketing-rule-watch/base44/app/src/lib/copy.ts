@@ -1,5 +1,5 @@
 // Every user-facing string lives here so the copy rules can be checked in one place:
-// say "potential issue for review", never "violation" or "non-compliant".
+// say "potential issue for review"; never the two banned words listed in base44/CLAUDE.md "Copy rules".
 
 // Rule paragraph refs are unverified. Flip only after a mentor or tester confirms them.
 export const SHOW_RULE_REFS = false;
