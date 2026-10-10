@@ -70,11 +70,12 @@ function normalizeDomain(raw) {
   return { fetchDomain, matchDomain: fetchDomain.replace(/^www\./, "") };
 }
 
-// discover logs "plain_get <status> … <url>"; a failed homepage fetch means the domain didn't resolve or respond.
+// discover logs "plain_get <status> … <url>", or "plain_get ERR:<name> … <url>" for DNS failures and timeouts.
+// An error or 4xx/5xx on the homepage means the domain didn't resolve or respond.
 function homepageFailed(log) {
   return log.some((line) => {
-    const match = line.match(/^plain_get (\d{3}) .* (https?:\/\/[^/\s]+\/?)$/);
-    return Boolean(match) && Number(match[1]) >= 400;
+    const match = line.match(/^plain_get (?:(\d{3})|ERR:\S+) .* (https?:\/\/[^/\s]+\/?)$/);
+    return Boolean(match) && (!match[1] || Number(match[1]) >= 400);
   });
 }
 
