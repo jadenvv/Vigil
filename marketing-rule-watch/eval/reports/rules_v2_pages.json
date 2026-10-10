@@ -1,6 +1,6 @@
 {
   "detector": "engine.detect:detect",
-  "timestamp": "2026-10-10 13:28:06",
+  "timestamp": "2026-10-10 13:30:14",
   "cases_sha": "db65ac10eb",
   "n_cases": 9,
   "subsets": {
@@ -186,7 +186,12 @@
     "pass_rate": null,
     "detail": {}
   },
-  "rewrite": null,
+  "rewrite": {
+    "tried": 7,
+    "passed": 7,
+    "pass_rate": 1.0,
+    "note": "necessary, not sufficient: also have a human rate rewrite quality"
+  },
   "cases": [
     {
       "id": "pg_home",

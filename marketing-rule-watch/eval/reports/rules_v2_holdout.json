@@ -1,6 +1,6 @@
 {
   "detector": "engine.detect:detect",
-  "timestamp": "2026-10-10 13:28:05",
+  "timestamp": "2026-10-10 13:30:14",
   "cases_sha": "f716234a2b",
   "n_cases": 19,
   "subsets": {
@@ -186,7 +186,12 @@
     "pass_rate": null,
     "detail": {}
   },
-  "rewrite": null,
+  "rewrite": {
+    "tried": 12,
+    "passed": 12,
+    "pass_rate": 1.0,
+    "note": "necessary, not sufficient: also have a human rate rewrite quality"
+  },
   "cases": [
     {
       "id": "ho_noloss_promise",

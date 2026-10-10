@@ -88,3 +88,33 @@ class RulesPath(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class Rewrite(unittest.TestCase):
+    TEXT = "Our fund returned 12% gross in 2025. We guarantee you will retire early."
+
+    def test_apply_edits_skips_ungrounded_and_overlaps(self):
+        from engine.rewrite import apply_edits
+        new, applied = apply_edits(self.TEXT, [
+            {"find": "returned 12% gross in 2025", "replace": "returned 12% gross ([NET]% net) in 2025"},
+            {"find": "12% gross", "replace": "OVERLAP"},
+            {"find": "text that is not there", "replace": "X"},
+        ])
+        self.assertEqual(len(applied), 1)
+        self.assertIn("[NET]% net", new)
+        self.assertTrue(new.endswith("We guarantee you will retire early."))  # untouched outside edits
+
+    def test_llm_edits_are_applied_not_trusted(self):
+        from engine import rewrite as R
+        reply = json.dumps({"edits": [{"flag": 0, "find": "We guarantee you will retire early",
+                                       "replace": "We aim to help you retire on your terms; returns are not guaranteed"}]})
+        with mock.patch.object(llm, "available", return_value=True), \
+             mock.patch.object(llm, "complete", return_value=reply) as m:
+            out = R.rewrite(self.TEXT, [{"category": "BENEFITS_WITHOUT_RISK", "span": "We guarantee you will retire early"}])
+        self.assertIn("not guaranteed", out)
+        self.assertIn("UNTRUSTED DATA", m.call_args[0][0])
+
+    def test_placeholders(self):
+        from engine.rewrite import has_placeholders
+        self.assertTrue(has_placeholders("x ([NET]% net of fees)"))
+        self.assertFalse(has_placeholders("see [Schedule a call](/contact)"))

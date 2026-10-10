@@ -112,9 +112,15 @@ def detect(text: str, channel: str = "", debug: list | None = None) -> list[dict
     return flags
 
 
+
+# the eval harness looks for rewrite() in the detector's module
+from engine.rewrite import rewrite  # noqa: E402,F401
+
+
 if __name__ == "__main__":
     import sys
     txt = sys.stdin.read()
     dbg: list = []
     print(json.dumps({"mode": _mode(), "flags": detect(txt, sys.argv[1] if len(sys.argv) > 1 else "", dbg),
                       "dropped": dbg}, indent=2))
+

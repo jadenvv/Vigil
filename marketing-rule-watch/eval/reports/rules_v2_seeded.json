@@ -1,6 +1,6 @@
 {
   "detector": "engine.detect:detect",
-  "timestamp": "2026-10-10 13:28:05",
+  "timestamp": "2026-10-10 13:30:14",
   "cases_sha": "36752aa95d",
   "n_cases": 37,
   "subsets": {
@@ -219,7 +219,12 @@
       }
     }
   },
-  "rewrite": null,
+  "rewrite": {
+    "tried": 19,
+    "passed": 19,
+    "pass_rate": 1.0,
+    "note": "necessary, not sufficient: also have a human rate rewrite quality"
+  },
   "cases": [
     {
       "id": "guarantee_violating",
