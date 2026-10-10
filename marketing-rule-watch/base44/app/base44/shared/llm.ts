@@ -24,20 +24,31 @@ function secret(name: string): string {
   }
 }
 
-/** Returns the parsed JSON object the model produces for `schema`. Throws on any failure. */
+/** Who answered. Returned with every result so it is attributable (eval report, UI, pitch). */
+export interface Answered {
+  output: unknown;
+  provider: "base44" | "groq";
+  model: string;
+}
+
+// InvokeLLM does not report its model.
+const BASE44_MODEL = "base44-invokellm";
+
+/** The parsed JSON object the model produced for `schema`, and who produced it. Throws on any failure. */
 // deno-lint-ignore no-explicit-any
-export async function callLLM(base44: any, system: string, user: string, schema: object): Promise<unknown> {
+export async function callLLM(base44: any, system: string, user: string, schema: object): Promise<Answered> {
   try {
-    return await callInvokeLLM(base44, system, user, schema);
+    return { output: await callInvokeLLM(base44, system, user, schema), provider: "base44", model: BASE44_MODEL };
   } catch (e) {
     const key = secret("GROQ_API_KEY");
     if (!(e instanceof LLMUnavailable) || !key) throw e;
     console.log(`llm: InvokeLLM unavailable (${e.message}); falling back to Groq`);
-    return callGroq(key, system, user);
+    const model = secret("LLM_MODEL") || DEFAULT_MODEL;
+    return { output: await callGroq(key, model, system, user), provider: "groq", model };
   }
 }
 
-async function callGroq(key: string, system: string, user: string): Promise<unknown> {
+async function callGroq(key: string, model: string, system: string, user: string): Promise<unknown> {
   const res = await fetch(GROQ_URL, {
     method: "POST",
     // Groq's Cloudflare rejects some default user agents (error 1010), so name ourselves.
@@ -47,12 +58,13 @@ async function callGroq(key: string, system: string, user: string): Promise<unkn
       "User-Agent": "marketing-rule-watch/1.0",
     },
     body: JSON.stringify({
-      model: secret("LLM_MODEL") || DEFAULT_MODEL,
+      model,
       temperature: 0,
       max_completion_tokens: 4000, // gpt-oss reasons before answering; leave room for both
       response_format: { type: "json_object" }, // prompts spell out the exact JSON shape
       messages: [{ role: "system", content: system }, { role: "user", content: user }],
     }),
+    signal: AbortSignal.timeout(60_000),
   });
   const body = await res.text();
   if (res.status === 401 || res.status === 403 || res.status === 429) {
