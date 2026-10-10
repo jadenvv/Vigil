@@ -57,28 +57,29 @@ function errorText(error) {
   return error?.response?.data?.error ?? error?.message ?? "Unknown error";
 }
 
-// "https://www.Example.com/firm/?x=1" -> siteUrl "https://www.example.com/firm/", host "www.example.com",
-// matchKey "example.com/firm". The path is kept because a firm can live under a path (e.g. GitHub Pages),
-// and it is part of the match key so two firms sharing a host never merge. Matching ignores "www.".
+// Mirrors siteBase() in base44/shared/discover.ts so /setup and discover agree on a firm's site:
+// "https://www.Example.com/firm/index.html?x=1" -> siteUrl "https://www.example.com/firm/",
+// matchKey "example.com/firm". A trailing file (index.html, *.php…) means its folder. The path is kept
+// because a firm can live under a path (GitHub Pages), and it is part of the match key so two firms
+// sharing a host never merge. Matching ignores "www.".
 function normalizeSite(raw) {
+  const empty = { siteUrl: "", host: "", display: "", matchKey: "" };
   const trimmed = raw.trim();
-  if (!trimmed) return { siteUrl: "", host: "", display: "", matchKey: "" };
-  const withScheme = /^[a-z]+:\/\//i.test(trimmed) ? trimmed : `https://${trimmed}`;
+  if (!trimmed) return empty;
   let parsed;
   try {
-    parsed = new URL(withScheme);
+    parsed = new URL(/^https?:\/\//i.test(trimmed) ? trimmed : `https://${trimmed}`);
   } catch {
-    return { siteUrl: "", host: "", display: "", matchKey: "" };
+    return empty;
   }
-  const host = parsed.hostname.replace(/\.+$/, "");
-  const port = parsed.port ? `:${parsed.port}` : "";
-  // "/firm" is a directory on static hosts; without the slash, relative links on it resolve one level up.
-  const rawPath = parsed.pathname || "/";
-  const path = rawPath.endsWith("/") || /\.[a-z0-9]+$/i.test(rawPath) ? rawPath : `${rawPath}/`;
+  if (!parsed.host.includes(".")) return empty;
+  let path = parsed.pathname.replace(/\/[^/]*\.[a-z0-9]+$/i, "/");
+  if (!path.endsWith("/")) path += "/";
+  const host = parsed.host.toLowerCase();
   const pathKey = path.replace(/\/+$/, "");
   return {
-    siteUrl: `${parsed.protocol}//${host}${port}${path}`,
-    host,
+    siteUrl: `${parsed.protocol}//${host}${path}`,
+    host: parsed.hostname.toLowerCase(),
     display: `${host}${pathKey}`,
     matchKey: `${host.replace(/^www\./, "")}${pathKey}`,
   };
