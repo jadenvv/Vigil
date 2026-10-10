@@ -9,8 +9,8 @@ export const COPY = {
   footer: "Not legal advice. All flags require human review.",
   demoBanner: "Fictional firm for a hackathon demo",
   issueCount: (n: number) => `${n} potential ${n === 1 ? "issue" : "issues"} for review`,
-  issueCountAcross: (n: number, pages: number) =>
-    `${n} potential ${n === 1 ? "issue" : "issues"} for review across ${pages} ${pages === 1 ? "page" : "pages"}`,
+  issueCountAcross: (n: number, flaggedPages: number, pagesChecked: number) =>
+    `${n} potential ${n === 1 ? "issue" : "issues"} for review on ${flaggedPages} of ${pagesChecked} ${pagesChecked === 1 ? "page" : "pages"} checked`,
   emptyInbox: "No potential issues found",
   emptyInboxDetail: "Nothing on these pages matched a Marketing Rule pattern. A person should still review new content.",
   loadError: "We couldn't load this. Check your connection and try again.",

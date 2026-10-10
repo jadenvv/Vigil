@@ -16,6 +16,9 @@ async function read(request) {
   }
 }
 
+// Rows the inbox already loaded, so opening a flag from the inbox needs no new requests.
+const loadedFlags = new Map();
+
 export async function findDemoFirm() {
   const firms = await read(() => base44.entities.Firm.filter({ is_demo: true }, "-created_date", 1));
   return firms[0] ?? null;
@@ -37,10 +40,13 @@ export async function loadInbox(firmId, knownFirm = null) {
     .filter((group) => group.flags.length > 0)
     .sort((a, b) => severityScore(b.flags[0]) - severityScore(a.flags[0]));
   const flagCount = groups.reduce((n, group) => n + group.flags.length, 0);
+  for (const { page, flags } of groups) for (const flag of flags) loadedFlags.set(flag.id, { flag, page, firm });
   return { firm, groups, flagCount, pagesScanned: pages.length };
 }
 
 export async function loadFlag(flagId) {
+  if (loadedFlags.has(flagId)) return loadedFlags.get(flagId);
+  // Each lookup needs the previous row's foreign key, so a cold load is necessarily sequential.
   const flag = await read(() => base44.entities.Flag.get(flagId));
   const page = await read(() => base44.entities.Page.get(flag.page_id));
   const firm = await read(() => base44.entities.Firm.get(page.firm_id));

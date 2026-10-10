@@ -48,13 +48,13 @@ function InboxView({ result, demo }) {
   );
 }
 
-function InboxBody({ firm, groups, flagCount, decisions }) {
+function InboxBody({ firm, groups, flagCount, pagesScanned, decisions }) {
   return (
     <>
       <div className="mb-6">
         <h1 className="text-2xl font-semibold tracking-tight">{firm.name}</h1>
         <p className="mt-1 text-slate-600" data-testid="issue-count">
-          {COPY.issueCountAcross(flagCount, groups.length)}
+          {COPY.issueCountAcross(flagCount, groups.length, pagesScanned)}
         </p>
       </div>
       {groups.length === 0 ? (
