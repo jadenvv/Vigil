@@ -32,6 +32,8 @@ export function Router({ routes, fallback }) {
       window.scrollTo(0, 0);
     };
     window.addEventListener("popstate", onPopState);
+    // A child <Redirect> runs its effect before this one, so its popstate can fire before the listener exists.
+    setPath(window.location.pathname);
     return () => window.removeEventListener("popstate", onPopState);
   }, []);
 

@@ -21,7 +21,7 @@ export function DemoInbox() {
   const result = useAsync(async () => {
     const firm = await findDemoFirm();
     if (!firm) return { missingDemoFirm: true };
-    const [inbox, decisions] = await Promise.all([loadInbox(firm.id), loadDecisionsQuietly()]);
+    const [inbox, decisions] = await Promise.all([loadInbox(firm.id, firm), loadDecisionsQuietly()]);
     return { ...inbox, decisions };
   }, []);
   return <InboxView result={result} demo />;
