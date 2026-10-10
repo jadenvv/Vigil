@@ -1,0 +1,18 @@
+{
+  "type": "object",
+  "properties": {
+    "edits": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "flag": {"type": "integer"},
+          "find": {"type": "string"},
+          "replace": {"type": "string"}
+        },
+        "required": ["flag", "find", "replace"]
+      }
+    }
+  },
+  "required": ["edits"]
+}
