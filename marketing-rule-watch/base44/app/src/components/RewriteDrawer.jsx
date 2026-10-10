@@ -3,12 +3,13 @@
 import { useEffect, useState } from "react";
 import { base44 } from "@/api/base44Client";
 import { DecisionBadge } from "@/components/Badges";
-import { COPY } from "@/lib/copy";
+import { COPY, FETCH_REWRITE_SUGGESTIONS } from "@/lib/copy";
 import { recordDecision } from "@/lib/data";
 
 // rewrite writes nothing; it returns {original_text, suggested_text, flags_total, flags_cleared, placeholders}.
 // 503 = no model key yet, 502 = no usable suggestion, 401 = not allowed. Every failure still allows a manual edit.
 async function fetchSuggestion(flagId) {
+  if (!FETCH_REWRITE_SUGGESTIONS) return { status: "manual" };
   try {
     const res = await base44.functions.invoke("rewrite", { flag_id: flagId });
     return { status: "ready", ...res.data };
