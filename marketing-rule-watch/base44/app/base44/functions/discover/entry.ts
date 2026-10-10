@@ -1,7 +1,7 @@
 // {name, domain? | site?, include_search?=false} -> {urls:[{url, channel, source, same_site}], base, searches_used, log}.
 // Port of crawl/discover.py. Writes nothing: /setup shows the list, the human picks, scan fetches.
 // Who: any signed-in user for the site seed (free plain GETs, max 3, SSRF-guarded by shared/net-guard.ts);
-// include_search (Bright Data SERP credits) is admin only.
+// signed out, only the demo firm's own site (judges on the home page); include_search (SERP credits) is admin only.
 // `site` is a base URL that may include a path (e.g. a GitHub Pages repo); `domain` is a bare domain.
 // With a path, "same site" means same host AND under that path. A `domain` value with a path is treated as a site.
 // Site seed is a plain fetch (free). Search spends Bright Data SERP credits: one call per query, no retries.
@@ -100,17 +100,32 @@ async function serp(query: string, token: string, zone: string, log: string[]): 
   }
 }
 
+const siteKey = (b: SiteBase) => `${b.host}${b.path.replace(/\/$/, "")}`;
+
+/** True when `base` is exactly the site of a Firm marked is_demo (same normalized host + path). */
+// deno-lint-ignore no-explicit-any
+async function isDemoSite(base44: any, base: SiteBase): Promise<boolean> {
+  const demos = await base44.asServiceRole.entities.Firm.filter({ is_demo: true }).catch(() => []);
+  // deno-lint-ignore no-explicit-any
+  return demos.some((f: any) => {
+    const b = siteBase(String(f.domain ?? ""));
+    return b !== null && siteKey(b) === siteKey(base);
+  });
+}
+
 export default async function (req: Request): Promise<Response> {
   const base44 = createClientFromRequest(req);
   const user = await base44.auth.me().catch(() => null);
-  if (!user) return Response.json({ error: "Sign in to find pages" }, { status: 401 });
-  const isAdmin = user.role === "admin";
+  const isAdmin = user?.role === "admin";
 
   const { name = "", domain = "", site = "", include_search = false } = await req.json().catch(() => ({}));
-  if (include_search && !isAdmin) return Response.json({ error: "Search is admin only" }, { status: 403 });
   const base = siteBase(String(site || domain));
   if (!base) return Response.json({ error: "site or domain required, e.g. hartwell.example" }, { status: 400 });
-  if (include_search && !String(name).trim()) return Response.json({ error: "name required for search" }, { status: 400 });
+  // Signed out: only the demo firm's own site (exact host + path key), site seed only, never search.
+  if (!user && !(await isDemoSite(base44, base))) return Response.json({ error: "Sign in to find pages" }, { status: 401 });
+  const search = Boolean(include_search) && user !== null; // forced off when signed out
+  if (search && !isAdmin) return Response.json({ error: "Search is admin only" }, { status: 403 });
+  if (search && !String(name).trim()) return Response.json({ error: "name required for search" }, { status: 400 });
 
   const log: string[] = [];
   const seen = new Set<string>();
@@ -118,7 +133,7 @@ export default async function (req: Request): Promise<Response> {
   const off: string[] = [];
   let searchesUsed = 0;
 
-  if (include_search) {
+  if (search) {
     const token = secrets.get("BRIGHTDATA_TOKEN");
     const zone = secrets.get("BRIGHTDATA_SERP_ZONE");
     if (!token || !zone) return Response.json({ error: "BRIGHTDATA_TOKEN / BRIGHTDATA_SERP_ZONE not set" }, { status: 500 });
