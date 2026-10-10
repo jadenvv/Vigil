@@ -75,8 +75,8 @@ export default function Home() {
             issues found, <span className="whitespace-nowrap font-semibold">0 false alarms</span>.
           </p>
           <p className="mt-3 text-sm text-night-600">
-            The detector was tuned on this site. Run on Oct 10, 2026, on a site we built with known issues. Not an
-            independent audit.
+            One run on a site we built with planted issues; the detector was tuned on this site. Not real-world
+            accuracy. Oct 10, 2026.
           </p>
         </section>
       </div>
