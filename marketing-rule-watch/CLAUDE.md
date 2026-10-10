@@ -1,4 +1,4 @@
-# Marketing Rule Watch (working title)
+# Vigil (formerly "Marketing Rule Watch")
 
 Shared context for every agent and teammate. **Read this, then only the `CLAUDE.md` in the folder you're working in.** Don't load other teams' docs unless you're integrating with them.
 
@@ -21,6 +21,10 @@ We're building a small, honest tool for **compliance officers at small SEC-regis
 1. Risk lives in content published **outside** the review workflow (personal LinkedIn, old blog posts, third-party pages).
 2. Firms **can't prove what a page said on a past date.**
 3. Officers won't trust a flag without the exact quote plus a rule reference.
+
+## Brand
+
+The product is called **Vigil**. Before any UI, slide, favicon or pitch work, read `marketing-rule-watch/brand/BRAND.md` (logo files, palette, type, voice) and match `brand/preview.png`. Use the files in `brand/logo/` and the tokens in `brand/tokens.css`; never redraw the logo or invent colors. The copy rules in `base44/CLAUDE.md` still win on wording.
 
 ## Where things run
 

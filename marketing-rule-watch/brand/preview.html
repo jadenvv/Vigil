@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Vigil Brand Sheet</title>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="tokens.css">
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--vigil-paper-50); color: var(--vigil-night-950);
+         font: 400 15px/1.5 Geist, "Inter", system-ui, sans-serif; }
+  .wrap { max-width: 1120px; margin: 0 auto; padding: 48px 40px 56px; }
+  .eyebrow { font-size: 11px; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; color: var(--vigil-night-600); margin: 0 0 14px; }
+  h2 { font-size: 13px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--vigil-night-600); margin: 44px 0 16px; }
+  .hero { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .panel { border-radius: 14px; padding: 40px; display: flex; align-items: center; justify-content: center; min-height: 190px; }
+  .light { background: #fff; border: 1px solid var(--vigil-paper-200); }
+  .dark { background: var(--vigil-night-950); }
+  .tag { margin-top: 18px; font-size: 22px; font-weight: 600; letter-spacing: -.01em; }
+  .tag span { color: var(--vigil-night-600); font-weight: 400; }
+  .marks { display: flex; gap: 22px; align-items: flex-end; }
+  .marks figure { margin: 0; text-align: center; font: 500 11px "Geist Mono", ui-monospace, monospace; color: var(--vigil-night-600); }
+  .marks img { display: block; margin: 0 auto 8px; }
+  .swatches { display: grid; grid-template-columns: repeat(6, 1fr); gap: 12px; }
+  .sw { border-radius: 10px; overflow: hidden; border: 1px solid var(--vigil-paper-200); background: #fff; }
+  .sw .chip { height: 72px; }
+  .sw .meta { padding: 8px 10px; font-size: 12px; }
+  .sw .meta b { display: block; font-weight: 600; }
+  .sw .meta code { font: 400 11px "Geist Mono", ui-monospace, monospace; color: var(--vigil-night-600); }
+  .row { display: grid; grid-template-columns: 1.15fr 1fr; gap: 16px; }
+  .card { background: #fff; border: 1px solid var(--vigil-paper-200); border-radius: 10px; padding: 22px; }
+  .badges { display: flex; flex-wrap: wrap; gap: 8px; }
+  .badge { font-size: 12px; font-weight: 500; padding: 3px 10px; border-radius: 999px; }
+  .quote { background: var(--vigil-lamp-100); border-left: 3px solid var(--vigil-lamp-500); padding: 12px 14px; border-radius: 0 8px 8px 0;
+           font: 400 14px/1.55 "Geist Mono", ui-monospace, monospace; margin: 12px 0; }
+  .src { font: 400 12px "Geist Mono", ui-monospace, monospace; color: var(--vigil-night-600); }
+  .btns { display: flex; gap: 8px; margin-top: 14px; }
+  .btn { font: 500 13px Geist, system-ui, sans-serif; padding: 8px 14px; border-radius: 10px; border: 1px solid var(--vigil-paper-200); background: #fff; color: var(--vigil-night-950); }
+  .btn.primary { background: var(--vigil-night-950); color: var(--vigil-paper-50); border-color: var(--vigil-night-950); }
+  .type .big { font-size: 34px; font-weight: 600; letter-spacing: -.02em; line-height: 1.15; }
+  .type .mono { font: 400 14px "Geist Mono", ui-monospace, monospace; color: var(--vigil-night-600); margin-top: 10px; }
+  .foot { margin-top: 40px; font-size: 12px; color: var(--vigil-night-600); }
+  @media (max-width: 760px) { .hero, .row { grid-template-columns: 1fr; } .swatches { grid-template-columns: repeat(2, 1fr); } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <p class="eyebrow">Brand sheet · v1</p>
+  <div class="hero">
+    <div class="panel light"><img src="logo/vigil-lockup.svg" alt="Vigil" height="88"></div>
+    <div class="panel dark"><img src="logo/vigil-lockup-reversed.svg" alt="Vigil" height="88"></div>
+  </div>
+  <p class="tag">Keeps watch over everything you've published. <span>Vigil looks; a person decides.</span></p>
+
+  <h2>Mark</h2>
+  <div class="marks">
+    <figure><img src="logo/vigil-mark.svg" height="96" alt="">mark · 96</figure>
+    <figure><img src="logo/vigil-mark-light.svg" height="96" alt="">mark-light</figure>
+    <figure><img src="logo/vigil-mark.svg" height="48" alt="">48</figure>
+    <figure><img src="logo/vigil-mark.svg" height="24" alt="">24</figure>
+    <figure><img src="logo/favicon.svg" height="16" alt="">favicon · 16</figure>
+    <figure><img src="logo/vigil-glyph.svg" height="40" alt="">glyph</figure>
+    <figure><img src="logo/vigil-wordmark.svg" height="56" alt="">wordmark</figure>
+  </div>
+
+  <h2>Color</h2>
+  <div class="swatches">
+    <div class="sw"><div class="chip" style="background:#0B1120"></div><div class="meta"><b>Night 950</b><code>#0B1120</code></div></div>
+    <div class="sw"><div class="chip" style="background:#4A5570"></div><div class="meta"><b>Night 600</b><code>#4A5570</code></div></div>
+    <div class="sw"><div class="chip" style="background:#FAF8F4"></div><div class="meta"><b>Paper 50</b><code>#FAF8F4</code></div></div>
+    <div class="sw"><div class="chip" style="background:#E6E0D4"></div><div class="meta"><b>Paper 200</b><code>#E6E0D4</code></div></div>
+    <div class="sw"><div class="chip" style="background:#F5A524"></div><div class="meta"><b>Lamp 500 · accent</b><code>#F5A524</code></div></div>
+    <div class="sw"><div class="chip" style="background:#9A5B00"></div><div class="meta"><b>Lamp 700 · text</b><code>#9A5B00</code></div></div>
+  </div>
+
+  <h2>In the product</h2>
+  <div class="row">
+    <div class="card">
+      <div class="badges">
+        <span class="badge" style="background:#FBE3DE;color:#962C20">High</span>
+        <span class="badge" style="background:#FFF1D6;color:#9A5B00">Medium</span>
+        <span class="badge" style="background:#E3EAF5;color:#34558A">Low</span>
+        <span class="badge" style="background:#DDF0E6;color:#22674A">Approved</span>
+        <span class="badge" style="background:#F3EFE7;color:#4A5570">Dismissed</span>
+      </div>
+      <div class="quote">"Our clients have never lost money in a down year."</div>
+      <div class="src">performance.html · captured 2026-10-10 14:02 UTC</div>
+      <p style="margin:12px 0 0">Benefits without balancing risks. Potential issue for review.</p>
+      <div class="btns"><span class="btn primary">Approve rewrite</span><span class="btn">Edit</span><span class="btn">Dismiss</span></div>
+    </div>
+    <div class="card type">
+      <div class="big">6 potential issues for review</div>
+      <p style="margin:10px 0 0;color:var(--vigil-night-600)">Geist 600 for headings, 400 for body. Sentence case everywhere.</p>
+      <div class="mono">Geist Mono → quotes, URLs, timestamps, hashes</div>
+    </div>
+  </div>
+
+  <p class="foot">Rules: brand/BRAND.md · Tokens: brand/tokens.css, brand/tailwind.vigil.js · Logos: brand/logo/</p>
+</div>
+</body>
+</html>
