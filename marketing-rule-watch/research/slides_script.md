@@ -14,6 +14,7 @@ Paste the three cards below the line into Gamma → Paste in text → **Preserve
 - **9 advisers, $1.24M:** one day in Sept 2024. Claims on websites, third-party sites and social media.
 - The median SEC-registered adviser has **8 employees**. Nobody's job is watching every page.
 - **AI-written content is growing that pile.** Posts drafted in seconds get published faster than anyone can review them, and each one can carry the same one-sentence risk.
+- **What we replace: a person and a search box.** Compliance tools mostly review what staff submit before it goes out, or archive the firm's own site. Finding what's already public, including pages about the firm, and reading every sentence of it is still done by hand.
 
 > "I put the name of the firm into a search, um, and said the name of the firm news today."
 > — Sense interviewee, on the search they run by hand **every week** to find what skipped review
@@ -44,7 +45,7 @@ On our fictional demo firm: found 9 of 11 planted issues, we fixed the 2 misses,
 | "verify that it was … not a sample of something that somebody was using to illustrate a misleading advertisement" | Don't flag examples or quoted rule text | — |
 | "it must be overseen. It must be audited, um, and there there must be, um, disclaimer on AI results." | Human decides every flag, audit log, disclaimer on every screen | — |
 
-Keyword baseline → Vigil. One run each, on synthetic test cases we wrote; not reviewed by a compliance professional.
+Rows 2–3 changed after the calls; rows 1 and 4 were already built, and the calls told us to keep them. Keyword baseline → Vigil. One run each, on synthetic test cases we wrote; not reviewed by a compliance professional.
 
 **Next:** dated snapshots of every page, so a firm can show an examiner what its site said on any past date.
 
@@ -54,7 +55,7 @@ Keyword baseline → Vigil. One run each, on synthetic test cases we wrote; not 
 
 Order: **Slide 1 → Slide 2 → live demo → Slide 3.** Slide 2 sets up the demo, so keep it short and let the app show the details.
 
-**Slide 1 (30 s).** The SEC fines small advisers for single sentences: $75k for "no conflicts of interest" on a website. These firms have about 8 people. Today the check is manual. One person we interviewed through Sense types the firm's name into a search engine every week. Another said review means a person going through pages and making judgment calls, and that way you're probably missing a global view. And AI-written posts mean there's more to review every month, published faster than anyone can read them.
+**Slide 1 (30 s).** The SEC fines small advisers for single sentences: $75k for "no conflicts of interest" on a website. These firms have about 8 people. Today the check is manual. One person we interviewed through Sense types the firm's name into a search engine every week. Another said review means a person going through pages and making judgment calls, and that way you're probably missing a global view. Compliance software exists, but it mostly reviews what staff submit or archives the firm's own site. Going out and reading what's already public about the firm is still a person with a search box. That's what we replace. And AI-written posts mean there's more to review every month, published faster than anyone can read them.
 
 **Slide 2 (20 s).** Vigil does that search for them, on every page. Four steps: discover, capture, detect, review. Let me show you.
 
@@ -67,4 +68,4 @@ Order: **Slide 1 → Slide 2 → live demo → Slide 3.** Slide 2 sets up the de
 
 Fallback: a recorded video of the same five steps. Never demo on a real firm.
 
-**Slide 3 (30 s).** Every change came from a tester. The biggest fear was false positives, so we went precision-first: clean documents wrongly flagged went from 28% with keywords to 0%. A tester assumed AI meant a word list; reading for meaning took F1 from 0.70 to 0.98. These are our own synthetic cases, one run each. Next: dated snapshots, so a firm can prove what its site said on any date.
+**Slide 3 (30 s).** Each row is a worry we heard on a call. The biggest was false positives. We'd already built for precision, and the call told us to keep it that way: clean documents wrongly flagged went from 28% with keywords to 0%. A tester assumed AI meant a word list; reading for meaning took F1 from 0.70 to 0.98. These are our own synthetic cases, one run each. Next: dated snapshots, so a firm can prove what its site said on any date.
