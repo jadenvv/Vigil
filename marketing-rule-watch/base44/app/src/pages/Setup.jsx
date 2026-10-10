@@ -70,6 +70,14 @@ function normalizeDomain(raw) {
   return { fetchDomain, matchDomain: fetchDomain.replace(/^www\./, "") };
 }
 
+// discover logs "plain_get <status> … <url>"; a failed homepage fetch means the domain didn't resolve or respond.
+function homepageFailed(log) {
+  return log.some((line) => {
+    const match = line.match(/^plain_get (\d{3}) .* (https?:\/\/[^/\s]+\/?)$/);
+    return Boolean(match) && Number(match[1]) >= 400;
+  });
+}
+
 // Reuse an existing non-demo firm for the same domain so re-scans don't create duplicates.
 // The demo firm is never reused: a scan must not change what testers see.
 async function findOrCreateFirm({ name, domain, advisorNames }) {
@@ -121,7 +129,8 @@ function SetupForm() {
       // Own-site pages start checked (up to the scan limit); pages found elsewhere start unchecked
       // because search can return other firms with similar names.
       setSelected(new Set(urls.filter((item) => item.source === "site").slice(0, MAX_URLS).map((item) => item.url)));
-      setDiscovery({ status: "ready", urls, searchesUsed: res.data?.searches_used ?? 0 });
+      const log = Array.isArray(res.data?.log) ? res.data.log : [];
+      setDiscovery({ status: "ready", urls, unreachable: homepageFailed(log), searchesUsed: res.data?.searches_used ?? 0 });
     } catch (error) {
       setDiscovery({ status: "error", message: errorText(error) });
     }
@@ -245,13 +254,27 @@ function SetupForm() {
         </button>
       </form>
 
-      {discovery.status === "loading" && <LoadingBlock rows={3} />}
+      {discovery.status === "loading" && (
+        <div className="space-y-3">
+          <p role="status" className="text-sm text-slate-600">
+            {form.includeSearch
+              ? "Finding pages and searching the web. This takes about 40 seconds."
+              : "Finding pages on the site…"}
+          </p>
+          <LoadingBlock rows={3} />
+        </div>
+      )}
       {discovery.status === "error" && (
         <ErrorBlock message={`We couldn't find pages: ${discovery.message}`} onRetry={() => handleFind()} />
       )}
 
       {discovery.status === "ready" && (
         <section className="space-y-4" aria-label="Pages to check">
+          {discovery.unreachable && (
+            <p role="status" data-testid="unreachable" className="rounded-md bg-amber-50 p-3 text-sm text-amber-900">
+              We couldn't reach {fetchDomain}, so only its homepage is listed. Check the domain, or add URLs manually.
+            </p>
+          )}
           {found.length === 0 ? (
             <EmptyBlock title={`No pages found on ${fetchDomain}. Add URLs manually.`} />
           ) : (
@@ -325,6 +348,26 @@ function SetupForm() {
   );
 }
 
+// Search results are noisy (look-alike firms, personal profiles), so their host is shown first and bold.
+function UrlLabel({ item }) {
+  if (item.source === "site") return <span className="break-all">{item.url}</span>;
+  let host = item.url;
+  let rest = "";
+  try {
+    const parsed = new URL(item.url);
+    host = parsed.host;
+    rest = `${parsed.pathname}${parsed.search}`;
+  } catch {
+    // Not a parseable URL: show it whole.
+  }
+  return (
+    <span className="break-all">
+      <span className="font-semibold">{host}</span>
+      <span className="text-slate-500">{rest === "/" ? "" : rest}</span>
+    </span>
+  );
+}
+
 function UrlGroup({ title, note, items, selected, onToggle, onSetAll, disabled }) {
   if (!items.length) return null;
   const count = items.filter((item) => selected.has(item.url)).length;
@@ -355,7 +398,7 @@ function UrlGroup({ title, note, items, selected, onToggle, onSetAll, disabled }
               />
               <span className="flex flex-wrap items-center gap-2">
                 <ChannelChip channel={item.channel} />
-                <span className="break-all">{item.url}</span>
+                <UrlLabel item={item} />
               </span>
             </label>
           </li>
