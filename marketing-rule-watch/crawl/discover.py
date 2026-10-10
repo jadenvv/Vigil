@@ -8,7 +8,8 @@ Sources
        "<firm>" site:linkedin.com   "<firm>" reviews   "<firm>" "top advisor"
      POST https://api.brightdata.com/request
      {"zone": SERP_ZONE, "url": "https://www.google.com/search?q=...&brd_json=1", "format": "raw"}
-     VERIFY: brd_json=1 response shape. We read organic[].link and fall back to scraping URLs from the body.
+     brd_json=1 returns {"organic": [{"link", "title", ...}], ...} (verified live Oct 10). We read organic[].link
+     and fall back to scraping URLs from the body.
 
 USAGE (from marketing-rule-watch/)
   python3 crawl/discover.py --firm "Hartwell Wealth" --domain hartwell.example
@@ -33,6 +34,7 @@ import httpx
 from fetch import API_URL, HERE, MAX_URLS, guess_channel, load_env, log_call
 
 SERP_QUERIES = ['"{firm}" site:linkedin.com', '"{firm}" reviews', '"{firm}" "top advisor"']
+TRACKING_PARAMS = ("utm_", "originalsubdomain=", "trk=", "fbclid=", "gclid=")
 SKIP_EXT = re.compile(r"\.(pdf|jpe?g|png|gif|svg|webp|css|js|ico|zip|xml|mp4|mp3)$", re.I)
 SKIP_HOSTS = ("google.", "gstatic.", "googleusercontent.", "youtube.com", "facebook.com/sharer",
               "twitter.com/intent", "schema.org", "w3.org")
@@ -42,7 +44,10 @@ def normalize(url: str) -> str:
     """Drop fragment, query tracking noise and trailing slash so duplicates collapse."""
     p = urlparse(url.strip())
     path = p.path.rstrip("/") or "/"
-    return urlunparse((p.scheme.lower(), p.netloc.lower().removeprefix("www."), path, "", p.query, ""))
+    host = p.netloc.lower().removeprefix("www.")
+    host = re.sub(r"^[a-z]{2}\.linkedin\.com$", "linkedin.com", host)  # il.linkedin.com etc. from Google
+    query = "&".join(kv for kv in p.query.split("&") if kv and not kv.lower().startswith(TRACKING_PARAMS))
+    return urlunparse((p.scheme.lower(), host, path, "", query, ""))
 
 
 def keep(url: str) -> bool:
@@ -114,7 +119,7 @@ def parse_serp(body: str) -> list[str]:
 
 
 def serp(bd: httpx.Client, query: str) -> list[str]:
-    url = f"https://www.google.com/search?q={quote_plus(query)}&brd_json=1"
+    url = f"https://www.google.com/search?q={quote_plus(query)}&gl=us&hl=en&brd_json=1"
     body = {"zone": os.environ["BRIGHTDATA_SERP_ZONE"], "url": url, "format": "raw"}
     t0 = time.time()
     try:
@@ -127,25 +132,39 @@ def serp(bd: httpx.Client, query: str) -> list[str]:
     if r.status_code != 200:
         print(f"  ! SERP {query!r}: HTTP {r.status_code} {r.text[:120]!r}", file=sys.stderr)
         return []
+    if not r.content.strip():  # seen live: 200 with an empty body after ~50 s
+        print(f"  ! SERP {query!r}: empty response (not retried)", file=sys.stderr)
+        return []
     return parse_serp(r.text)
 
 
+def _dedupe(urls: list[str], seen: set) -> list[str]:
+    out = []
+    for u in urls:
+        n = normalize(u)
+        if n not in seen and keep(n):
+            seen.add(n)
+            out.append(n)
+    return out
+
+
 def discover(firm: str, domain: str, plain: httpx.Client, bd: httpx.Client | None, cap: int = MAX_URLS) -> list[dict]:
-    """Own-site URLs first (most likely to matter), then off-site SERP hits. Deduped, labelled, capped."""
-    found: list[tuple[str, str]] = [(u, "site") for u in site_seed(plain, domain)]
+    """Own-site URLs, then off-site SERP hits. Deduped, labelled, capped.
+
+    Off-site content is where hypothesis 1 says the risk is, so it gets at least a third of the cap
+    (more if the site is small). SERP hits on the firm's own domain count as own-site.
+    """
+    seen: set = set()
+    site = _dedupe(site_seed(plain, domain), seen)
+    off: list[str] = []
     if bd is not None:
         for q in SERP_QUERIES:
-            found += [(u, "serp") for u in serp(bd, q.format(firm=firm))]
-    seen, rows = set(), []
-    for u, src in found:
-        n = normalize(u)
-        if n in seen or not keep(n):
-            continue
-        seen.add(n)
-        rows.append({"url": n, "channel": guess_channel(n), "source": src})
-        if len(rows) >= cap:
-            break
-    return rows
+            for n in _dedupe(serp(bd, q.format(firm=firm)), seen):
+                (site if same_site(n, domain.split("//")[-1].split("/")[0]) else off).append(n)
+    off = off[:max(cap // 3, cap - len(site))]
+    site = site[:cap - len(off)]
+    return ([{"url": u, "channel": guess_channel(u), "source": "site"} for u in site] +
+            [{"url": u, "channel": guess_channel(u), "source": "serp"} for u in off])
 
 
 def main() -> int:
