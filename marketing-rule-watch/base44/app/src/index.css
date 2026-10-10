@@ -37,6 +37,10 @@
 }
 
 @layer base {
+  input[type="checkbox"],
+  input[type="radio"] {
+    accent-color: #0b1120; /* Night 950 */
+  }
   ::selection {
     background: #fff1d6; /* Lamp 100 */
     color: #0b1120;
@@ -63,5 +67,6 @@
 @media (prefers-reduced-motion: reduce) {
   .vigil-scan {
     animation: none;
+    opacity: 0;
   }
 }
