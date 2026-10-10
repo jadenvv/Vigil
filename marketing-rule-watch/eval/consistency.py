@@ -35,6 +35,7 @@ def main() -> None:
     ap.add_argument("--ids", required=True, help="comma-separated case ids")
     ap.add_argument("--runs", type=int, default=2)
     ap.add_argument("--out", default=str(HERE / "reports"))
+    ap.add_argument("--expect-provider", metavar="NAME", help="stop (no report) if another provider answers")
     a = ap.parse_args()
 
     wanted = a.ids.split(",")
@@ -52,7 +53,11 @@ def main() -> None:
                 raw = detect(c["text"], c.get("channel", ""))
             except DetectorUnavailable as e:
                 sys.exit(f"Stopped on {cid} run {n + 1}: {e}. No report saved.")
-            runs.append({"provider": _provider(raw),
+            pv = _provider(raw)
+            if a.expect_provider and pv and pv.split(":")[0] != a.expect_provider:
+                sys.exit(f"Mixed-provider run: {cid} run {n + 1} answered by {pv!r}, "
+                         f"expected {a.expect_provider!r}. No report saved.")
+            runs.append({"provider": pv,
                          "flags": sorted({(f["category"], f["span"]) for f in _flags(raw)})})
         sets = [set(r["flags"]) for r in runs]
         pairs = list(itertools.combinations(sets, 2))
