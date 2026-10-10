@@ -74,6 +74,22 @@ class LLMPath(unittest.TestCase):
             self.run_with("Sorry, I can't help with that.")
 
 
+class Suppression(unittest.TestCase):
+    TABLE = "\nAnnualized net returns: 1 year 11.2%, 5 years 8.4%, 10 years 7.9%."
+
+    def test_cherry_picked_window_not_excused_by_standard_periods(self):
+        from engine.postprocess import suppressed
+        text = "Since the March 2020 market low, our portfolios have gained 151%." + self.TABLE
+        flag = {"category": "UNFAIR_PERFORMANCE_PRESENTATION", "span": "Since the March 2020 market low, our portfolios have gained 151%"}
+        self.assertIsNone(suppressed(text, flag))
+
+    def test_plain_figure_still_excused_by_standard_periods(self):
+        from engine.postprocess import suppressed
+        text = "Our composite returned 11.2% last year." + self.TABLE
+        flag = {"category": "UNFAIR_PERFORMANCE_PRESENTATION", "span": "Our composite returned 11.2% last year"}
+        self.assertEqual(suppressed(text, flag), "1/5/10-year periods shown")
+
+
 class RulesPath(unittest.TestCase):
     def test_realistic_page(self):
         with mock.patch.dict(os.environ, {"DETECT_MODE": "rules"}):

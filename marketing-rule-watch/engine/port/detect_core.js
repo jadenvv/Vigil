@@ -94,6 +94,8 @@ const RX = {
   neg_hypo: /\b(?:do not|don't|does not|never|no)\b[^.!?]{0,25}\b(?:publish|show|present|provide|use|offer)|\b(?:upon|on) request\b/i,
   advice_balanced: /including (?:those|ones|picks|recommendations|positions) that (?:lost|declined|fell|underperformed)|full list of (?:our |all )?(?:recommendations|picks)/i,
   disclaimer: /past performance (?:does not|is not|cannot|may not|is no)|involves? risk|possible loss of principal|risk of loss/i,
+  // a hand-picked start/window: standard periods elsewhere on the page don't excuse it
+  cherry_window: /\b(?:since|from|off) the [^.,;]{0,25}?\b(?:low|lows|bottom|trough)\b|\bbest (?:\d+|two|three|four|five|six|seven|eight|nine|ten) (?:years|quarters|months)\b|\bbest (?:year|quarter|month|day|trade)s?\b/i,
 };
 
 function periods1510(chunk) {
@@ -135,7 +137,8 @@ export function suppressed(chunk, flag) {
   if (cat === "RATING_NO_DISCLOSURE" && RX.rating_method.test(near) && (RX.rating_date.test(near) || RX.rating_paid.test(near)))
     return "rating methodology and date/payment disclosed";
   if (cat === "GROSS_WITHOUT_NET" && RX.net.test(near)) return "net performance shown";
-  if (cat === "UNFAIR_PERFORMANCE_PRESENTATION" && periods1510(near)) return "1/5/10-year periods shown";
+  if (cat === "UNFAIR_PERFORMANCE_PRESENTATION" && periods1510(near) && !RX.cherry_window.test(sent))
+    return "1/5/10-year periods shown";
   if (cat === "BENEFITS_WITHOUT_RISK" && RX.neg_guarantee.test(sent) && !/\bwe guarantee/i.test(sent))
     return "negated guarantee (disclaimer)";
   if (cat === "HYPOTHETICAL_PERFORMANCE" && RX.neg_hypo.test(sent)) return "hypothetical not presented / only on request";
