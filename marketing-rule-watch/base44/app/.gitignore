@@ -1,0 +1,25 @@
+# Dependencies
+node_modules
+
+# Build
+dist
+
+# Environment
+.env
+.env.*
+*.local
+
+# Editor
+.vscode
+.idea
+.DS_Store
+*.swp
+
+# Base44
+# .app.jsonc is committed on purpose: teammates need the app link to deploy
+.types/
+
+# Vendored agent skills (the repo root has its own copies)
+.agents/
+.claude/
+skills-lock.json
