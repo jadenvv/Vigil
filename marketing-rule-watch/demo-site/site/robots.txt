@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://nathanqiu07.github.io/quarrywick-wealth-demo/sitemap.xml
