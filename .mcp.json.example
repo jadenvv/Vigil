@@ -1,0 +1,36 @@
+{
+  "mcpServers": {
+    "sense-check": {
+      "type": "http",
+      "url": "https://check.testwithsenseai.com/mcp",
+      "headers": {
+        "Authorization": "Bearer REPLACE_WITH_TEAM_SENSE_CHECK_TOKEN"
+      }
+    },
+    "base44": {
+      "type": "http",
+      "url": "https://app.base44.com/mcp"
+    },
+    "brightdata": {
+      "type": "http",
+      "url": "https://mcp.brightdata.com/mcp?token=REPLACE_WITH_BRIGHTDATA_API_TOKEN&pro=1"
+    },
+    "mongodb": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "mongodb-mcp-server@latest"
+      ],
+      "env": {
+        "MDB_MCP_CONNECTION_STRING": "REPLACE_WITH_ATLAS_CONNECTION_STRING"
+      }
+    },
+    "daytona": {
+      "command": "daytona",
+      "args": [
+        "mcp",
+        "start"
+      ]
+    }
+  }
+}
