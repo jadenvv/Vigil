@@ -41,14 +41,14 @@ On our fictional demo firm: found 9 of 11 planted issues, we fixed the 2 misses,
 
 | They said | We changed | Measured |
 |---|---|---|
-| "I would be doubting the flag if I found that the tool was repeatedly … having false positives." | Precision first, one-click dismiss | Clean docs wrongly flagged: **28% → 0%** |
-| "people continue to use new words that that aren't part of the the typical lexicon" | An LLM that reads for meaning, not a word list | F1 **0.70 → 0.98**; tester-style issues caught **0/5 → 5/5** |
-| "verify that it was … not a sample of something that somebody was using to illustrate a misleading advertisement" | Don't flag examples or quoted rule text | Example text wrongly flagged **2/2 → 0/2**; the firm's own claim still caught |
-| "actually captured the ad and surfaced it so I could review the ad, but I would still want to independently verify that I could locate the ad" | Every flag shows the exact quote, a full-size screenshot, the capture time and a live link | — |
-| "when the advertising department would identify misleading ads, they would request follow-up information." | Vigil searches the same public pages, including pages about the firm, so the firm sees them first | Pages found: firm's own **10/10**, third-party **7/7** |
-| "it must be overseen. It must be audited, um, and there there must be, um, disclaimer on AI results." | Human decides every flag, audit log, disclaimer on every screen | — |
+| "I would be doubting the flag if I found that the tool was repeatedly … having false positives." | Precision first, one-click dismiss | Clean docs wrongly flagged **28% → 0%** (5/18 → 0/18); flags that were right **15/22 → 21/22** |
+| "people continue to use new words that that aren't part of the the typical lexicon" | An LLM that reads for meaning, not a word list | F1 **0.70 → 0.98**; issues caught **15/21 → 21/21**; tester-style issues **0/5 → 5/5**; vs a plain one-prompt LLM: *pending* |
+| "verify that it was … not a sample of something that somebody was using to illustrate a misleading advertisement" | Don't flag examples or quoted rule text | Example text wrongly flagged **2/2 → 0/2** (live: 0/2); the firm's own claim still caught **1/1** |
+| "actually captured the ad and surfaced it so I could review the ad, but I would still want to independently verify that I could locate the ad" | Every flag shows the exact quote, a full-size screenshot, the capture time, the page fingerprint and a live link; **Re-check now** fetches the page again; page history shows what it said on any date | Not a metric: shown in the demo |
+| "when the advertising department would identify misleading ads, they would request follow-up information." | Vigil searches the same public pages, including pages about the firm, so the firm sees them first | Pages found: firm's own **10/10**, third-party **7/7**, personal **0** |
+| "it must be overseen. It must be audited, um, and there there must be, um, disclaimer on AI results." | Human decides every flag, audit log, disclaimer on every screen; we measured how consistent the AI is | Same page, run twice: identical flags on **2 of 3** pages, same categories **3 of 3** |
 
-Rows 2–3 changed after the calls; rows 1 and 4–6 were already built, and the calls told us to keep them. Keyword baseline → Vigil. One run each, on synthetic test cases we wrote; not reviewed by a compliance professional. Row 5 is a simulated search over 13 pages we labeled.
+Rows 2–3 changed after the calls; rows 1 and 4–6 were already built, and the calls told us to keep them. Keyword baseline → Vigil. One run each, on synthetic test cases we wrote; not reviewed by a compliance professional. Row 5 is a simulated search over 13 pages we labeled. Row 6 is 3 pages × 2 runs, too few for a rate. *Pending* = built, result not in yet.
 
 ---
 
@@ -69,4 +69,4 @@ Order: **Slide 1 → Slide 2 → live demo → Slide 3.** Slide 2 sets up the de
 
 Fallback: a recorded video of the same five steps. Never demo on a real firm.
 
-**Slide 3 (45 s).** Each row is a worry we heard on a call. The biggest was false positives. We'd already built for precision, and the call told us to keep it that way: on 18 test documents with nothing wrong in them, keyword rules raised a false alarm on 5; Vigil on none. A tester assumed AI meant a word list. On issues worded without the usual trigger words, a word list caught 0 of 5 and Vigil caught 5 of 5. A former regulator wanted proof a flag was a real ad, not an example in an article, so we stopped flagging examples, and every flag carries the screenshot and a live link to re-find it. They also told us regulators search public ads and follow up. Vigil searches those same pages first. These are our own synthetic cases, one run each.
+**Slide 3 (45 s).** Each row is a worry we heard on a call. The biggest was false positives. We'd already built for precision, and the call told us to keep it that way: on 18 test documents with nothing wrong in them, keyword rules raised a false alarm on 5; Vigil on none. A former regulator wanted proof a flag was a real ad, not an example in an article, so we stopped flagging examples, and every flag carries the screenshot and a live link to re-find it. They also told us regulators search public ads and follow up. Vigil searches those same pages first. These are our own synthetic cases, one run each.
