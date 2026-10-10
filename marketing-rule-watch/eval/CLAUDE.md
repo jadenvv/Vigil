@@ -7,6 +7,8 @@ Read the root `CLAUDE.md` first. This folder **measures** the detector; it doesn
 - `cases.jsonl`: 37 seeded cases (19 with issues, 18 clean, 8 minimal pairs).
 - `cases_holdout.jsonl`: 19 single-sentence cases (12 issues, 7 clean), written by P4 *before* the rules detector, to check generalization. Run with `--cases eval/cases_holdout.jsonl`.
 - `cases_pages.jsonl`: 9 multi-paragraph pages (10 issues, 2 clean pages) with nav/footer text, disclosed and undisclosed claims side by side, and near-misses. The rules fallback scored **F1 0.29** on these before tuning (`reports/rules_v1_pages.json`) and 1.00 after (`rules_v2_pages.json`). That makes this a **dev set now**, not a test. The 0.29 is the honest "unseen pages" number for keyword rules.
+- `cases_hard.jsonl` (16, 5 clean), `cases_scope.jsonl` (11, 9 clean), `cases_injection.jsonl` (7, 2 clean): **test sets, don't tune on them.** Hard = paraphrase, buried claims, remote/footnote disclosures, star-only ratings. Scope = educational text, quoted bad ads, FAQ denials, other-firm news, job posts (should stay quiet). Injection = page text that tries to steer an LLM detector; only meaningful for LLM mode. All `pattern_synthetic`, `reviewed: false`.
+- `suite.py`: the wider eval suite (see below). Reuses the harness's scoring.
 - `reports/`: JSON output of each run. Commit these; they're the before/after receipts for the pitch. The harness names files `<detector>_<HHMMSS>.json`, so two runs in the same second overwrite each other: rename after each run (`rules_v2_pages.json` etc.).
 
 ## Commands (run from repo root)
@@ -16,6 +18,19 @@ python3 eval/compliance_eval.py --detector engine.detect:detect -v           # l
 python3 eval/compliance_eval.py --detector https://<base44-endpoint>/detect  # live app, if exposed
 python3 eval/compliance_eval.py --compare eval/reports/A.json eval/reports/B.json
 ```
+
+## Eval suite (`suite.py`)
+Offline (no API calls): prefix with `DETECT_MODE=rules LLM_PROVIDER=none`. Without them `.env` routes the engine to the LLM, which spends credits.
+```
+python3 eval/suite.py sets        --detector engine.detect:detect    # one table over every case file
+python3 eval/suite.py site        --detector engine.detect:detect    # sitemap -> fetch -> HTML-to-text -> detect, vs demo-site answer key (--base <url|folder>, max 30 pages)
+python3 eval/suite.py consistency --detector engine.detect:detect --repeat 3   # same input, same flags? (max 10)
+python3 eval/suite.py rewrite     --detector engine.detect:detect    # flags cleared, no new flags, untouched sentences kept, no invented numbers
+python3 eval/suite.py calibration --detector engine.detect:detect    # precision per confidence bucket
+```
+Reports go to `reports/<cmd>_<detector>_<HHMMSS>.json` (`--no-save` to skip). For a live-endpoint consistency check on chosen pages, `consistency.py --ids ... --runs N` does the same job with tighter cost control.
+
+Offline rules-mode numbers (`reports/suite_rules_offline_*.json`): demo_site F1 0.74 · hard F1 0.50, recall 0.36 · scope clean-FP 44% · site end-to-end F1 0.74, 0 clean pages flagged, 11/11 planted spans survive extraction · deterministic 16/16 · rewrite checks pass 19/19 (cases), 6/6 (demo_site). **LLM mode not yet measured on the new sets.**
 
 ## What it reports
 - Precision, recall and F1, overall and per category
