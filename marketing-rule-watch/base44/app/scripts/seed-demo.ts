@@ -39,7 +39,7 @@ Fictional firm for a hackathon demo. Not a real investment adviser.
 
 Hartwell Wealth is the #1 retirement firm in the region, helping more than 400 households plan for the years after work.
 
-Ranked #3 by Bay Area Advisor Monthly.
+Ranked #3 by Quillmark Advisor Review.
 
 We build financial plans around your goals, your timeline and your tolerance for risk. Every client works with a dedicated advisor and a support team.
 
@@ -57,7 +57,7 @@ Investing involves risk, including the possible loss of principal. Past performa
       },
       {
         category: "RATING_NO_DISCLOSURE",
-        span: "Ranked #3 by Bay Area Advisor Monthly.",
+        span: "Ranked #3 by Quillmark Advisor Review.",
         confidence: 0.86,
         why: "The ranking has no date, no criteria, and no note on whether the firm paid to be considered.",
       },
@@ -143,13 +143,13 @@ Contact us to learn how the Momentum Model could work for your portfolio.`,
     ],
   },
   {
-    url: "https://hartwell-wealth.example/blog/how-we-spotted-northline",
+    url: "https://hartwell-wealth.example/blog/how-we-spotted-veltrane",
     channel: "blog",
-    markdown: `# How we spotted Northline Semiconductor early
+    markdown: `# How we spotted Veltrane Semiconductor early
 
 *Posted March 2024 by Jordan Hale*
 
-In 2021 we added Northline Semiconductor to client portfolios. Our 2021 pick, Northline Semiconductor, tripled in under two years.
+In 2021 we added Veltrane Semiconductor to client portfolios. Our 2021 pick, Veltrane Semiconductor, tripled in under two years.
 
 Our research process looks for companies with strong balance sheets and growing demand.
 
@@ -157,7 +157,7 @@ For clients who want certainty, our income portfolios offer guaranteed income fo
     flags: [
       {
         category: "UNBALANCED_SPECIFIC_ADVICE",
-        span: "Our 2021 pick, Northline Semiconductor, tripled in under two years.",
+        span: "Our 2021 pick, Veltrane Semiconductor, tripled in under two years.",
         confidence: 0.84,
         why: "One winning recommendation is highlighted with no mention of picks that lost money in the same period.",
       },
@@ -170,15 +170,15 @@ For clients who want certainty, our income portfolios offer guaranteed income fo
     ],
   },
   {
-    url: "https://advisorstars.example/firms/hartwell-wealth",
+    url: "https://advisorquill.example/firms/hartwell-wealth",
     channel: "review_site",
-    markdown: `# Hartwell Wealth · AdvisorStars profile
+    markdown: `# Hartwell Wealth · AdvisorQuill profile
 
 **Oakland, CA · Fee-only · 4.8 average from 37 reviews**
 
 ## About this firm (provided by the firm)
 
-Hartwell Wealth was named a Top 50 Advisor by Wealth Horizons Magazine. We consistently beat the market because we do the homework other advisors skip.
+Hartwell Wealth was named a Top 50 Advisor by Tidewell Wealth Digest. We consistently beat the market because we do the homework other advisors skip.
 
 ## Recent reviews
 
@@ -186,7 +186,7 @@ Hartwell Wealth was named a Top 50 Advisor by Wealth Horizons Magazine. We consi
     flags: [
       {
         category: "RATING_NO_DISCLOSURE",
-        span: "Hartwell Wealth was named a Top 50 Advisor by Wealth Horizons Magazine.",
+        span: "Hartwell Wealth was named a Top 50 Advisor by Tidewell Wealth Digest.",
         confidence: 0.82,
         why: "The award has no date, no criteria, and no note on who paid for it, and it sits on a third-party page outside the firm's review process.",
       },
