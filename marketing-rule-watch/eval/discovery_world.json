@@ -1,0 +1,59 @@
+{
+  "_about": "Simulated web for eval/discovery_eval.py. Everything here is fictional (Quarrywick Wealth, its staff, AdvisorQuill, the UK namesake). Real platform hosts appear only as URL shapes; nothing is fetched. A doc is 'relevant' when it is a third-party page about OUR firm that a compliance officer would want to review. pattern_synthetic, reviewed: false.",
+  "firm": "Quarrywick Wealth",
+  "scenarios": [
+    {
+      "id": "github_pages_subpath",
+      "note": "How the demo is actually hosted: own site under a GitHub Pages subpath; the AdvisorQuill demo per DEVIN_THIRD_PARTY.md would likely be another repo on a github.io account.",
+      "domain": "https://nathanqiu07.github.io/quarrywick-wealth-demo/",
+      "site_root": "https://nathanqiu07.github.io/quarrywick-wealth-demo/"
+    },
+    {
+      "id": "own_domain_control",
+      "note": "Control: same pages served at the root of their own domain. Isolates the subpath problem from everything else.",
+      "domain": "quarrywick.example",
+      "site_root": "https://quarrywick.example/"
+    }
+  ],
+  "index": [
+    {"url": "https://www.linkedin.com/company/quarrywick-wealth", "title": "Quarrywick Wealth | LinkedIn",
+     "text": "Quarrywick Wealth. Financial services. Our clients have never lost money in a down year.",
+     "relevant": true, "channel": "linkedin", "why": "firm's company page; posts here are firm marketing"},
+    {"url": "https://www.linkedin.com/posts/odile-ketteridge_quarrywick-wealth-activity-7380001", "title": "Odile Ketteridge on LinkedIn: Another year beating the S&P",
+     "text": "Proud of the Quarrywick Wealth team: another year beating the S&P 500 for every client.",
+     "relevant": true, "channel": "linkedin", "why": "advisor post promoting the firm (hypothesis 1: outside the review workflow)"},
+    {"url": "https://www.linkedin.com/in/odile-ketteridge", "title": "Odile Ketteridge - Quarrywick Wealth | LinkedIn",
+     "text": "Odile Ketteridge, CFP. Founder at Quarrywick Wealth.",
+     "relevant": false, "personal": true, "why": "personal profile: business pages only, must be dropped"},
+    {"url": "https://nathanqiu07.github.io/advisorquill-demo/firms/quarrywick-wealth.html", "title": "Quarrywick Wealth reviews | AdvisorQuill",
+     "text": "Quarrywick Wealth reviews. Rated #1 Advisor in the Region. Top advisor for retirees.",
+     "relevant": true, "channel": "review_site", "why": "the planned third-party demo profile, hosted on a github.io account like the firm site"},
+    {"url": "https://www.yelp.com/biz/quarrywick-wealth-springfield", "title": "Quarrywick Wealth - Reviews - Yelp",
+     "text": "Quarrywick Wealth reviews. 5 stars. They doubled my savings!",
+     "relevant": true, "channel": "review_site", "why": "client reviews the firm may be reposting"},
+    {"url": "https://www.yelp.com/biz/quarrywick-wealth-springfield?utm_source=google&osq=quarrywick", "title": "Quarrywick Wealth - Reviews - Yelp",
+     "text": "Quarrywick Wealth reviews (duplicate URL with tracking).",
+     "relevant": true, "channel": "review_site", "duplicate_of": "https://www.yelp.com/biz/quarrywick-wealth-springfield", "why": "same page, must collapse"},
+    {"url": "https://smartasset.com/retirement/top-advisors-springfield", "title": "Top advisor firms in Springfield (2026)",
+     "text": "Our top advisor picks: Quarrywick Wealth, Larkmoor Capital, Fenbridge Advisors.",
+     "relevant": true, "channel": "review_site", "why": "third-party rating the firm may cite"},
+    {"url": "https://www.prnewswire.com/news-releases/quarrywick-wealth-named-five-star-wealth-manager-302000001.html", "title": "Quarrywick Wealth Named a Five Star Wealth Manager",
+     "text": "Quarrywick Wealth announced today it was named a Five Star Wealth Manager for 2026.",
+     "relevant": true, "channel": "press", "why": "paid-placement press release: a rating with no disclosure"},
+    {"url": "https://www.moneywisepodcast.example/episodes/odile-ketteridge-retirement-income", "title": "Ep. 112: Guaranteed retirement income with Odile Ketteridge",
+     "text": "Odile Ketteridge of Quarrywick Wealth explains how her clients get guaranteed retirement income.",
+     "relevant": true, "channel": "other", "why": "advisor appearance making a promissory claim"},
+    {"url": "https://www.trustpilot.com/review/quarrywickwealth.co.uk", "title": "Quarrywick Wealth Partners Ltd reviews | Trustpilot",
+     "text": "Quarrywick Wealth Partners Ltd reviews. UK mortgage broker in Leeds.",
+     "relevant": false, "wrong_firm": true, "why": "different firm with a similar name: noise for the officer"},
+    {"url": "https://www.investopedia.com/how-to-read-financial-advisor-reviews", "title": "How to read financial advisor reviews",
+     "text": "What to look for in reviews of financial advisors.",
+     "relevant": false, "why": "generic article, not about the firm"},
+    {"url": "https://nathanqiu07.github.io/quarrywick-wealth-demo/blog/firm-recognition.html", "title": "Quarrywick Wealth named Top Advisor",
+     "text": "Quarrywick Wealth was named Top Advisor by a regional magazine.",
+     "relevant": false, "own_site": true, "why": "own page surfaced by search: must be counted as own site, not third-party"},
+    {"url": "https://www.google.com/maps/place/Quarrywick+Wealth", "title": "Quarrywick Wealth - Google Maps",
+     "text": "Quarrywick Wealth reviews on Google.",
+     "relevant": false, "why": "Google-internal link, skipped by design"}
+  ]
+}

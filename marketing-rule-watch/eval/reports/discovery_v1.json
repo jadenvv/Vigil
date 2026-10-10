@@ -1,0 +1,252 @@
+[
+  {
+    "scenario": "github_pages_subpath",
+    "domain": "https://nathanqiu07.github.io/quarrywick-wealth-demo/",
+    "urls_returned": 9,
+    "serp_calls": 3,
+    "own_site_recall": [
+      2,
+      10
+    ],
+    "third_party_recall": [
+      5,
+      7
+    ],
+    "third_party_labelled_offsite": [
+      4,
+      5
+    ],
+    "offsite_precision": 0.7142857142857143,
+    "personal_leaks": [],
+    "wrong_firm_returned": [
+      "https://trustpilot.com/review/quarrywickwealth.co.uk"
+    ],
+    "duplicates_returned": [
+      "https://yelp.com/biz/quarrywick-wealth-springfield?osq=quarrywick"
+    ],
+    "channel_accuracy": [
+      4,
+      5
+    ],
+    "missed_third_party": {
+      "https://prnewswire.com/news-releases/quarrywick-wealth-named-five-star-wealth-manager-302000001.html": {
+        "why": "no query matches it",
+        "channel": "press",
+        "note": "paid-placement press release: a rating with no disclosure"
+      },
+      "https://moneywisepodcast.example/episodes/odile-ketteridge-retirement-income": {
+        "why": "no query matches it",
+        "channel": "other",
+        "note": "advisor appearance making a promissory claim"
+      }
+    },
+    "mislabelled_own_site": [
+      "https://nathanqiu07.github.io/advisorquill-demo/firms/quarrywick-wealth.html"
+    ],
+    "channel_errors": {
+      "https://nathanqiu07.github.io/advisorquill-demo/firms/quarrywick-wealth.html": [
+        "website",
+        "review_site"
+      ]
+    },
+    "own_site_missed": [
+      "https://nathanqiu07.github.io/quarrywick-wealth-demo/about.html",
+      "https://nathanqiu07.github.io/quarrywick-wealth-demo/blog",
+      "https://nathanqiu07.github.io/quarrywick-wealth-demo/blog/2025-market-recap.html",
+      "https://nathanqiu07.github.io/quarrywick-wealth-demo/blog/our-best-pick.html",
+      "https://nathanqiu07.github.io/quarrywick-wealth-demo/fees.html",
+      "https://nathanqiu07.github.io/quarrywick-wealth-demo/performance.html",
+      "https://nathanqiu07.github.io/quarrywick-wealth-demo/services.html",
+      "https://nathanqiu07.github.io/quarrywick-wealth-demo/testimonials.html"
+    ],
+    "returned": [
+      {
+        "url": "https://nathanqiu07.github.io/quarrywick-wealth-demo",
+        "channel": "website",
+        "source": "site"
+      },
+      {
+        "url": "https://nathanqiu07.github.io/advisorquill-demo/firms/quarrywick-wealth.html",
+        "channel": "website",
+        "source": "site"
+      },
+      {
+        "url": "https://nathanqiu07.github.io/quarrywick-wealth-demo/blog/firm-recognition.html",
+        "channel": "blog",
+        "source": "site"
+      },
+      {
+        "url": "https://linkedin.com/company/quarrywick-wealth",
+        "channel": "linkedin",
+        "source": "serp"
+      },
+      {
+        "url": "https://linkedin.com/posts/odile-ketteridge_quarrywick-wealth-activity-7380001",
+        "channel": "linkedin",
+        "source": "serp"
+      },
+      {
+        "url": "https://yelp.com/biz/quarrywick-wealth-springfield",
+        "channel": "review_site",
+        "source": "serp"
+      },
+      {
+        "url": "https://yelp.com/biz/quarrywick-wealth-springfield?osq=quarrywick",
+        "channel": "review_site",
+        "source": "serp"
+      },
+      {
+        "url": "https://trustpilot.com/review/quarrywickwealth.co.uk",
+        "channel": "review_site",
+        "source": "serp"
+      },
+      {
+        "url": "https://smartasset.com/retirement/top-advisors-springfield",
+        "channel": "review_site",
+        "source": "serp"
+      }
+    ]
+  },
+  {
+    "scenario": "own_domain_control",
+    "domain": "quarrywick.example",
+    "urls_returned": 18,
+    "serp_calls": 3,
+    "own_site_recall": [
+      10,
+      10
+    ],
+    "third_party_recall": [
+      5,
+      7
+    ],
+    "third_party_labelled_offsite": [
+      5,
+      5
+    ],
+    "offsite_precision": 0.7142857142857143,
+    "personal_leaks": [],
+    "wrong_firm_returned": [
+      "https://trustpilot.com/review/quarrywickwealth.co.uk"
+    ],
+    "duplicates_returned": [
+      "https://yelp.com/biz/quarrywick-wealth-springfield?osq=quarrywick"
+    ],
+    "channel_accuracy": [
+      4,
+      5
+    ],
+    "missed_third_party": {
+      "https://prnewswire.com/news-releases/quarrywick-wealth-named-five-star-wealth-manager-302000001.html": {
+        "why": "no query matches it",
+        "channel": "press",
+        "note": "paid-placement press release: a rating with no disclosure"
+      },
+      "https://moneywisepodcast.example/episodes/odile-ketteridge-retirement-income": {
+        "why": "no query matches it",
+        "channel": "other",
+        "note": "advisor appearance making a promissory claim"
+      }
+    },
+    "mislabelled_own_site": [],
+    "channel_errors": {
+      "https://nathanqiu07.github.io/advisorquill-demo/firms/quarrywick-wealth.html": [
+        "website",
+        "review_site"
+      ]
+    },
+    "own_site_missed": [],
+    "returned": [
+      {
+        "url": "https://quarrywick.example/",
+        "channel": "website",
+        "source": "site"
+      },
+      {
+        "url": "https://quarrywick.example/index.html",
+        "channel": "website",
+        "source": "site"
+      },
+      {
+        "url": "https://quarrywick.example/about.html",
+        "channel": "website",
+        "source": "site"
+      },
+      {
+        "url": "https://quarrywick.example/services.html",
+        "channel": "website",
+        "source": "site"
+      },
+      {
+        "url": "https://quarrywick.example/performance.html",
+        "channel": "website",
+        "source": "site"
+      },
+      {
+        "url": "https://quarrywick.example/testimonials.html",
+        "channel": "website",
+        "source": "site"
+      },
+      {
+        "url": "https://quarrywick.example/blog/index.html",
+        "channel": "blog",
+        "source": "site"
+      },
+      {
+        "url": "https://quarrywick.example/fees.html",
+        "channel": "website",
+        "source": "site"
+      },
+      {
+        "url": "https://quarrywick.example/blog/2025-market-recap.html",
+        "channel": "blog",
+        "source": "site"
+      },
+      {
+        "url": "https://quarrywick.example/blog/our-best-pick.html",
+        "channel": "blog",
+        "source": "site"
+      },
+      {
+        "url": "https://quarrywick.example/blog/firm-recognition.html",
+        "channel": "blog",
+        "source": "site"
+      },
+      {
+        "url": "https://linkedin.com/company/quarrywick-wealth",
+        "channel": "linkedin",
+        "source": "serp"
+      },
+      {
+        "url": "https://linkedin.com/posts/odile-ketteridge_quarrywick-wealth-activity-7380001",
+        "channel": "linkedin",
+        "source": "serp"
+      },
+      {
+        "url": "https://nathanqiu07.github.io/advisorquill-demo/firms/quarrywick-wealth.html",
+        "channel": "website",
+        "source": "serp"
+      },
+      {
+        "url": "https://yelp.com/biz/quarrywick-wealth-springfield",
+        "channel": "review_site",
+        "source": "serp"
+      },
+      {
+        "url": "https://yelp.com/biz/quarrywick-wealth-springfield?osq=quarrywick",
+        "channel": "review_site",
+        "source": "serp"
+      },
+      {
+        "url": "https://trustpilot.com/review/quarrywickwealth.co.uk",
+        "channel": "review_site",
+        "source": "serp"
+      },
+      {
+        "url": "https://smartasset.com/retirement/top-advisors-springfield",
+        "channel": "review_site",
+        "source": "serp"
+      }
+    ]
+  }
+]

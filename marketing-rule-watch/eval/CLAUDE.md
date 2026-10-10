@@ -32,6 +32,18 @@ Reports go to `reports/<cmd>_<detector>_<HHMMSS>.json` (`--no-save` to skip). Fo
 
 Offline rules-mode numbers (`reports/suite_rules_offline_*.json`): demo_site F1 0.74 · hard F1 0.50, recall 0.36 · scope clean-FP 44% · site end-to-end F1 0.74, 0 clean pages flagged, 11/11 planted spans survive extraction · deterministic 16/16 · rewrite checks pass 19/19 (cases), 6/6 (demo_site). **LLM mode not yet measured on the new sets.**
 
+## Discovery eval (`discovery_eval.py`)
+Does `crawl/discover.py` find the firm's own pages and the **third-party pages about it** (hypothesis 1)? It runs the real `discover()` against a simulated web, `discovery_world.json`: the demo site served from `demo-site/site/`, plus a fake Google answering the 3 SERP queries from 13 labelled docs. Those include LinkedIn company and advisor posts, Yelp, smartasset, a press release, a podcast, a UK namesake firm, a personal `/in/` profile, a tracking-param duplicate and the planned AdvisorQuill profile. It's offline with no credits and needs `httpx`. It tests query design and filters, **not** real Google indexing.
+```
+python3 eval/discovery_eval.py -v
+```
+`reports/discovery_v1.json`, with the same result in both scenarios unless noted:
+- **Own-site recall:** 2/10 on the real GitHub Pages subpath (`urljoin(base, "/")` and `"/sitemap.xml"` drop the `/quarrywick-wealth-demo/` path, so it fetches the github.io root, which 404s). 10/10 on its own domain.
+- **Third-party recall:** 5/7. The press release and the podcast match none of the queries (`site:linkedin.com`, `reviews`, `"top advisor"`).
+- **Off-site precision:** 0.71. The UK namesake and the Yelp `?osq=` duplicate get through.
+- **Personal `/in/` leaks:** 0.
+- **AdvisorQuill:** on the subpath it comes back as `source: site`, because `same_site` compares hostnames and both sites are on `nathanqiu07.github.io`. Its channel is `website`, not `review_site`, because `guess_channel` doesn't know the host.
+
 ## What it reports
 - Precision, recall and F1, overall and per category
 - **Clean docs wrongly flagged.** Compliance officers hate noise, so this matters as much as recall.
