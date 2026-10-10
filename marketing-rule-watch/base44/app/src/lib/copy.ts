@@ -28,6 +28,8 @@ export const COPY = {
   backToInbox: "Back to all issues",
   pageTextLabel: "Page text",
   rewriteTitle: "Suggested rewrite",
+  manualRewriteTitle: "Rewrite this quote",
+  yourRewriteLabel: "Your rewrite",
   originalLabel: "Original",
   suggestedLabel: "Suggested",
   rewriteUnavailable: "Suggestions unavailable right now. You can write one with Edit.",

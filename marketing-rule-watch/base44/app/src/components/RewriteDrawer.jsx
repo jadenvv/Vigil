@@ -17,6 +17,8 @@ async function fetchSuggestion(flagId) {
     console.warn("Rewrite unavailable:", httpStatus, error?.response?.data?.error ?? error?.message);
     const message =
       httpStatus === 503 ? COPY.rewriteUnavailable : httpStatus === 502 ? COPY.rewriteNoSuggestion : COPY.rewriteFailed;
+    // 503 means no model is configured at all: show a manual-only drawer instead of an error on every flag.
+    if (httpStatus === 503) return { status: "manual" };
     return { status: "unavailable", message };
   }
 }
@@ -63,16 +65,18 @@ export default function RewriteDrawer({ flag, decision, onDecided }) {
   return (
     <section aria-label={COPY.rewriteTitle} className="rounded-lg border border-slate-200 bg-white p-4 text-sm">
       <div className="flex items-center gap-2">
-        <h2 className="font-semibold">{COPY.rewriteTitle}</h2>
+        <h2 className="font-semibold">{suggestion.status === "manual" ? COPY.manualRewriteTitle : COPY.rewriteTitle}</h2>
         <DecisionBadge decision={decision} />
       </div>
-      <div className="mt-3 grid gap-3 sm:grid-cols-2">
+      <div className={`mt-3 grid gap-3 ${suggestion.status === "manual" && !editing ? "" : "sm:grid-cols-2"}`}>
         <div>
           <h3 className="text-xs font-semibold uppercase tracking-wide text-slate-500">{COPY.originalLabel}</h3>
           <p className="mt-1 rounded bg-amber-50 p-2">{suggestion.original_text ?? flag.span}</p>
         </div>
-        <div>
-          <h3 className="text-xs font-semibold uppercase tracking-wide text-slate-500">{COPY.suggestedLabel}</h3>
+        <div hidden={suggestion.status === "manual" && !editing}>
+          <h3 className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+            {suggestion.status === "manual" ? COPY.yourRewriteLabel : COPY.suggestedLabel}
+          </h3>
           {suggestion.status === "loading" && <div className="mt-1 h-16 animate-pulse rounded bg-slate-200" />}
           {suggestion.status === "unavailable" && !editing && (
             <p className="mt-1 rounded bg-slate-50 p-2 text-slate-500">{suggestion.message}</p>
@@ -105,6 +109,7 @@ export default function RewriteDrawer({ flag, decision, onDecided }) {
       <div className="mt-4 flex flex-wrap gap-2">
         {!editing && (
           <>
+            {suggestion.status !== "manual" && (
             <button
               type="button"
               disabled={saving || suggestion.status !== "ready" || placeholders.length > 0}
@@ -113,6 +118,7 @@ export default function RewriteDrawer({ flag, decision, onDecided }) {
             >
               {COPY.approve}
             </button>
+            )}
             <button
               type="button"
               disabled={saving || suggestion.status === "loading"}
