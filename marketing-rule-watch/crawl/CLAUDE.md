@@ -50,13 +50,13 @@ Crawl from your laptop and give P2 a JSON/CSV of `Page` rows to import. Re-run b
 | P2 | Crawl working inside Base44 | **2:30** |
 | P4 | A few real crawled pages to sanity-check the detector | 2:00 |
 
-## Status and hand-off (updated 2:10 PM)
+## Status and hand-off (updated 3:50 PM; P3's work picked up by Ethan)
 
-### Shipped on `main` (`python3 -m pytest -q crawl/tests`: 41 pass offline, no credits)
+### Shipped on `main` (`python3 -m pytest -q crawl/tests`: 47 pass offline, no credits; the TS parity tests need Node ≥ 22.6)
 | File | What | Live-tested? |
 |---|---|---|
 | `fetch.py` | URL → `Page` JSON (+ PNG screenshot, sha256, UTC `fetched_at`), `chunk()` with char offsets | Via its TS port (below) |
-| `discover.py` | firm + domain → ≤25 deduped, channel-labelled URLs: homepage links + sitemap (free), then Bright Data SERP for LinkedIn / reviews / "top advisor". At least a third of the slots go to off-site hits. Drops personal LinkedIn `/in/` profiles and tracking params. Writes `out/urls.txt` for `fetch.py --urls-file` | **Yes**, 2 runs on a public business (SERP shape `organic[].link` confirmed) |
+| `discover.py` | firm + site → ≤25 deduped, channel-labelled URLs: homepage links + sitemap + robots.txt sitemaps (free), then 5 Bright Data SERP queries: LinkedIn, reviews, "top advisor", **press releases**, **podcasts/interviews**. At least a third of the slots go to off-site hits. A site under a path (`user.github.io/repo`) is scoped to that path, so another repo on the same account counts as third-party. Drops personal profiles (LinkedIn `/in/`, Instagram, Facebook people/posts, Forbes `/profile/`), net-worth spam and tracking params. Same rules as `base44/app/base44/shared/discover.ts` (parity test: `tests/test_discover_ts.py`). Writes `out/urls.txt` for `fetch.py --urls-file` | **Yes**: SERP on a public business earlier (shape `organic[].link`); site-only on the live demo, 10/10 pages (3:50 PM). The 2 new queries are **not** live-tested yet |
 | `snapshot.py` | Version history per URL, `difflib` diff on change, `as_of(url, date)` | Yes (no network) |
 | `base44/brightdata.ts` | TS port of `fetch.py` for Base44, parity-tested against Python. Markdown and screenshot now fetched **in parallel** | **Yes**: example.com in 12.9 s total (7.4 s markdown, 12.8 s screenshot, 89 KB PNG) vs ~20 s back to back |
 | `base44/scan.entry.ts` | `scan` backend function: admin only, ≤25 URLs, sequential URLs, no retries | **Yes, by P2 inside Base44** (2 pages + screenshots, HTTP 200) |
@@ -71,7 +71,8 @@ Zones (both active): Web Unlocker `web_unlocker1`, SERP `serp_api1`. Set in `.en
 ### For P1
 - **Bright Data track:** Bright Data runs **inside Base44** (P2's `scan` run, 2 pages, HTTP 200). Still ask the Bright Data mentor whether that counts, and don't claim more than that.
 - Discovery's off-site search works live, so the "risk lives outside the review workflow" story can be shown with real LinkedIn/review URLs. It's a laptop script today, not in the app.
-- Still need: Devin's demo-site URL. Crawling it is the next P3 step.
+- Demo site: `https://nathanqiu07.github.io/quarrywick-wealth-demo/`. Discovery finds all 10 pages (it found 2 before the subpath fix).
+- Discovery now also searches **press releases** and **podcast/interview appearances** (offline eval: third-party recall 5/7 → 7/7, `eval/reports/discovery_v2.json`). That's a simulated web; say "in our offline test", not "finds every podcast".
 - `.mcp.json` (committed by a teammate) contains the Sense token and a Bright Data token. Rotate both and swap it for `.mcp.json.example`.
 
 ### For P2
@@ -79,8 +80,10 @@ Zones (both active): Web Unlocker `web_unlocker1`, SERP `serp_api1`. Set in `.en
 - `scan` input `{firm_id, urls[], screenshot?=true}` → output `{created, failed: [{url, error}], log[]}`. `screenshot_ref` is the `UploadFile` URL, or `""` if the screenshot or upload failed (show the "screenshot unavailable" placeholder).
 - Keep `SCAN_BATCH_SIZE = 5` until someone confirms Base44's function time limit.
 - Chunk offsets from `chunk()` are UTF-16 units in TS, so they line up with `markdown.indexOf(span)` in the UI.
+- **Redeploy `discover` and `scan`**: `shared/discover.ts` (2 new queries) and `shared/brightdata.ts` (`guessChannel`: podcasts → `other`, AdvisorQuill → `review_site`) changed. A scan with search on now makes 5 SERP calls instead of 3 (about 5 × up to 45 s, sequential), Setup.jsx copy now says "press releases and podcasts" and "about a minute" (estimate from ~13 s per call before; not timed with 5).
 - Snapshots: `snapshot.py` runs on the laptop. A `Snapshot` entity only if the timeline stretch goal gets picked up.
 
 ### Next for P3
-1. Crawl Devin's site when it's live → Page JSON + one screenshot to P2, a few real pages to P4. Then the real scan → detect run replaces the seeded demo data (3:00 goal).
-2. Optional: a `discover` backend function so the app's Setup screen can suggest URLs (Bright Data SERP inside Base44).
+1. Crawl the demo site to Page JSON (needs `.env`, not on this laptop; restore it from the team note after rotating the leaked tokens).
+2. Live-test the press and podcast queries once (2 SERP calls) and note whether real results look like the eval's.
+3. Stretch, first to cut: snapshot timeline in the app.

@@ -3,7 +3,9 @@
 //   deno run base44/shared/discover.ts
 // Fetched HTML, sitemaps and SERP bodies are untrusted: we only ever extract URLs from them.
 
-export const SERP_QUERIES = ['"{firm}" site:linkedin.com', '"{firm}" reviews', '"{firm}" "top advisor"'];
+// Mirrors SERP_QUERIES in crawl/discover.py. Each query is one SERP call per scan; keep this list short.
+export const SERP_QUERIES = ['"{firm}" site:linkedin.com', '"{firm}" reviews', '"{firm}" "top advisor"',
+  '"{firm}" "press release" OR announces OR announced', '"{firm}" podcast OR episode OR interview'];
 const TRACKING_PARAMS = ["utm_", "originalsubdomain=", "trk=", "fbclid=", "gclid="];
 const SKIP_EXT = /\.(pdf|jpe?g|png|gif|svg|webp|css|js|ico|zip|xml|mp4|mp3)$/i;
 const SKIP_HOSTS = ["google.", "gstatic.", "googleusercontent.", "youtube.com", "facebook.com/sharer",

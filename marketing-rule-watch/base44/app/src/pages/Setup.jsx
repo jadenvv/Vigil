@@ -271,7 +271,7 @@ function SetupForm() {
         </details>
         <label className="flex items-center gap-2 text-sm">
           <input type="checkbox" checked={form.includeSearch} onChange={update("includeSearch")} disabled={running} />
-          Also search LinkedIn and review sites (uses search credits)
+          Also search LinkedIn, review sites, press releases and podcasts (uses search credits)
         </label>
         <button type="submit" disabled={running || discovery.status === "loading"} className={primary}>
           {discovery.status === "loading" ? "Finding pages…" : "Find pages"}
@@ -282,7 +282,7 @@ function SetupForm() {
         <div className="space-y-3">
           <p role="status" className="text-sm text-night-600">
             {form.includeSearch
-              ? "Finding pages and searching the web. This takes about 40 seconds."
+              ? "Finding pages and searching the web. This takes about a minute."
               : "Finding pages on the site…"}
           </p>
           <LoadingBlock rows={3} />

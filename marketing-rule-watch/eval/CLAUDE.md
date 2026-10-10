@@ -33,16 +33,16 @@ Reports go to `reports/<cmd>_<detector>_<HHMMSS>.json` (`--no-save` to skip). Fo
 Offline rules-mode numbers (`reports/suite_rules_offline_*.json`): demo_site F1 0.74 · hard F1 0.50, recall 0.36 · scope clean-FP 44% · site end-to-end F1 0.74, 0 clean pages flagged, 11/11 planted spans survive extraction · deterministic 16/16 · rewrite checks pass 19/19 (cases), 6/6 (demo_site). **LLM mode not yet measured on the new sets.**
 
 ## Discovery eval (`discovery_eval.py`)
-Does `crawl/discover.py` find the firm's own pages and the **third-party pages about it** (hypothesis 1)? It runs the real `discover()` against a simulated web, `discovery_world.json`: the demo site served from `demo-site/site/`, plus a fake Google answering the 3 SERP queries from 13 labelled docs. Those include LinkedIn company and advisor posts, Yelp, smartasset, a press release, a podcast, a UK namesake firm, a personal `/in/` profile, a tracking-param duplicate and the planned AdvisorQuill profile. It's offline with no credits and needs `httpx`. It tests query design and filters, **not** real Google indexing.
+Does `crawl/discover.py` find the firm's own pages and the **third-party pages about it** (hypothesis 1)? It runs the real `discover()` against a simulated web, `discovery_world.json`: the demo site served from `demo-site/site/`, plus a fake Google answering each SERP query from 13 labelled docs. Those include LinkedIn company and advisor posts, Yelp, smartasset, a press release, a podcast, a UK namesake firm, a personal `/in/` profile, a tracking-param duplicate and the planned AdvisorQuill profile. It's offline with no credits and needs `httpx`. It tests query design and filters, **not** real Google indexing.
 ```
 python3 eval/discovery_eval.py -v
 ```
-`reports/discovery_v1.json`, with the same result in both scenarios unless noted:
-- **Own-site recall:** 2/10 on the real GitHub Pages subpath (`urljoin(base, "/")` and `"/sitemap.xml"` drop the `/quarrywick-wealth-demo/` path, so it fetches the github.io root, which 404s). 10/10 on its own domain.
-- **Third-party recall:** 5/7. The press release and the podcast match none of the queries (`site:linkedin.com`, `reviews`, `"top advisor"`).
-- **Off-site precision:** 0.71. The UK namesake and the Yelp `?osq=` duplicate get through.
-- **Personal `/in/` leaks:** 0.
-- **AdvisorQuill:** on the subpath it comes back as `source: site`, because `same_site` compares hostnames and both sites are on `nathanqiu07.github.io`. Its channel is `website`, not `review_site`, because `guess_channel` doesn't know the host.
+**v1** (`reports/discovery_v1.json`, 3 queries): own-site recall 2/10 on the GitHub Pages subpath (fetched the 404ing github.io root), 10/10 on its own domain · third-party recall 5/7 (press release and podcast matched no query) · off-site precision 0.71 · AdvisorQuill came back `source: site`, channel `website` · 0 personal leaks.
+
+**v2** (`reports/discovery_v2.json`, 5 queries: added `"press release" OR announces OR announced` and `podcast OR episode OR interview`; path-aware site scoping ported from `shared/discover.ts`; podcast → `other`, AdvisorQuill → `review_site`). Same in both scenarios:
+- Own-site recall **10/10** · third-party recall **7/7**, all labelled off-site · channel accuracy 7/7 · off-site precision 0.78 · 0 personal leaks.
+- **Simulator change, not tuning:** v2's fake Google also matches words in the URL (as Google does) and understands `OR`. Without URL words the podcast is still missed (6/7): its page text never says "podcast", only its URL does.
+- Still through: the UK namesake (Quarrywick Wealth Partners Ltd, same name, different firm) and the Yelp `?osq=` duplicate. Neither is fixed; the namesake needs a human or page-content check.
 
 ## What it reports
 - Precision, recall and F1, overall and per category
