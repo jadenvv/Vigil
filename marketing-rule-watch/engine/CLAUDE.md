@@ -74,5 +74,7 @@ When a prompt changes inside Base44, copy it back to `prompts/` so the repo stay
 - `79da230` eval accepts mode `llm_groq` (Groq fallback behind InvokeLLM), records `provider` (or `provider:model`) per case, and splits the summary by provider when answers are mixed. Slide numbers must name the model(s) that answered.
 - `091f9a1` `eval/cases_demo_site.jsonl`: 16 cases mirroring the Quarrywick demo site (10 page-sized cases incl. 2 clean pages, 11 planted issues, plus 6 answer-key clean items). Keyword baseline F1 0.36, clean flagged 62%.
 - `c1fccd0` firm renamed Hartwell → Quarrywick in eval/engine fixtures (Hartwell is a real adviser); keyword scores unchanged.
+- `2948ba6` postprocess: 1/5/10-year periods on the page no longer suppress a cherry-picked-window flag ("since the … low", "best N years"); JS port mirrored. Fixes demo miss #6.
+- `ac7c18d` detect.md v2 + per-quote hints: each testimonial needs its own disclosure; a neighbour's disclosure doesn't cover it. Fixes demo miss #8 (model-side; verify on the live re-run). Parity now covers tester + demo-site cases + the stored testimonials markdown (90 texts, 0 mismatches).
 - WARNING: this Mac's `.env` has a Groq key, so `--detector engine.detect:detect` is NOT offline. Check `python3 -c "from engine import llm; print(llm.config()['provider'])"` first.
 - Pending: one live run vs `detect-text` after ~4:00 when orchestrator reopens it (one run only, quota is finite), saved as `reports/llm_invokellm_<time>.json` and compared to `baseline_regex_120954.json`.
