@@ -103,7 +103,10 @@ def fetch_page(client: httpx.Client, url: str, channel: str = "", screenshot: bo
             SCREEN_DIR.mkdir(parents=True, exist_ok=True)
             out = SCREEN_DIR / f"{page['sha256'][:16]}.png"
             out.write_bytes(s.content)
-            page["screenshot_ref"] = str(out.relative_to(HERE.parent))
+            try:
+                page["screenshot_ref"] = str(out.relative_to(HERE.parent))
+            except ValueError:  # SCREEN_DIR moved outside the repo (tests, custom --out)
+                page["screenshot_ref"] = str(out)
         else:
             print(f"  ! screenshot failed for {url}: HTTP {s.status_code} {s.text[:120]!r}", file=sys.stderr)
     return page
