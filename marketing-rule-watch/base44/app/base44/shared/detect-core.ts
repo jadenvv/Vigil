@@ -4,7 +4,7 @@ import { buildMessages, chunks, parseFlags, postprocess, ruleCandidates } from "
 import { DETECT_PROMPT, DETECT_SCHEMA } from "./prompts.ts";
 import { callLLM, LLMUnavailable } from "./llm.ts";
 
-// "llm"   = DETECT_PROMPT through Base44 InvokeLLM (shared/llm.ts).
+// "llm"   = DETECT_PROMPT through Groq, or Base44 InvokeLLM if GROQ_API_KEY is unset (shared/llm.ts).
 // "rules" = P4's keyword fallback: free, deterministic, NOT AI. Don't call it AI in UI or pitch.
 // An LLM failure never falls back to rules silently: those chunks yield zero flags and the
 // result reports mode "llm_error", so a partial answer is never passed off as a full one.
