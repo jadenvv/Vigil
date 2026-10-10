@@ -47,3 +47,5 @@ Tester 1: "It's something that you you have to keep an eye on and certainly have
 
 Insight: How issues slip through, in their words: manual review means "shortcuts" and no "global view", and adviser pages plus off-site pages are what a person skips; the value is background coverage and less stress. This supports H1 as an opinion, not an experience (no real example of a miss). The quote snippet and confidence % made flags quick to triage (supports H3's "quote" half). **Not covered:** Sense's interview script did not present the SEC evidence or ask which customer/problem they'd pay for, so we have no demand data from this call. "I can't go beyond this page" may mean the tester didn't find the flag detail view; tell P2.
 Change we made: pending
+
+Check 2 closed (status completed): 1 of 2 target calls counted (4 sends, 3 failed). Final results match the quotes above; nothing new. Demand question (which customer/problem) still unanswered → force it with `team_question` in Check 3.
