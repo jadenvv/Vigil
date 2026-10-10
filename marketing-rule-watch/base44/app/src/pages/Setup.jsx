@@ -57,25 +57,42 @@ function errorText(error) {
   return error?.response?.data?.error ?? error?.message ?? "Unknown error";
 }
 
-// "https://www.Example.com/about/" -> fetch "www.example.com", match "example.com".
-// Matching ignores "www." so the same firm isn't created twice; fetching keeps it because some sites need it.
-function normalizeDomain(raw) {
-  const fetchDomain = raw
-    .trim()
-    .toLowerCase()
-    .replace(/^[a-z]+:\/\//, "")
-    .replace(/[/?#].*$/, "")
-    .replace(/:\d+$/, "")
-    .replace(/\.+$/, "");
-  return { fetchDomain, matchDomain: fetchDomain.replace(/^www\./, "") };
+// "https://www.Example.com/firm/?x=1" -> siteUrl "https://www.example.com/firm/", host "www.example.com",
+// matchKey "example.com/firm". The path is kept because a firm can live under a path (e.g. GitHub Pages),
+// and it is part of the match key so two firms sharing a host never merge. Matching ignores "www.".
+function normalizeSite(raw) {
+  const trimmed = raw.trim();
+  if (!trimmed) return { siteUrl: "", host: "", display: "", matchKey: "" };
+  const withScheme = /^[a-z]+:\/\//i.test(trimmed) ? trimmed : `https://${trimmed}`;
+  let parsed;
+  try {
+    parsed = new URL(withScheme);
+  } catch {
+    return { siteUrl: "", host: "", display: "", matchKey: "" };
+  }
+  const host = parsed.hostname.replace(/\.+$/, "");
+  const port = parsed.port ? `:${parsed.port}` : "";
+  // "/firm" is a directory on static hosts; without the slash, relative links on it resolve one level up.
+  const rawPath = parsed.pathname || "/";
+  const path = rawPath.endsWith("/") || /\.[a-z0-9]+$/i.test(rawPath) ? rawPath : `${rawPath}/`;
+  const pathKey = path.replace(/\/+$/, "");
+  return {
+    siteUrl: `${parsed.protocol}//${host}${port}${path}`,
+    host,
+    display: `${host}${pathKey}`,
+    matchKey: `${host.replace(/^www\./, "")}${pathKey}`,
+  };
 }
 
+const withoutTrailingSlash = (url) => url.replace(/\/+$/, "");
+
 // discover logs "plain_get <status> … <url>", or "plain_get ERR:<name> … <url>" for DNS failures and timeouts.
-// An error or 4xx/5xx on the homepage means the domain didn't resolve or respond.
-function homepageFailed(log) {
+// An error or 4xx/5xx on the site's start URL means it didn't resolve or respond.
+function homepageFailed(log, siteUrl) {
   return log.some((line) => {
-    const match = line.match(/^plain_get (?:(\d{3})|ERR:\S+) .* (https?:\/\/[^/\s]+\/?)$/);
-    return Boolean(match) && (!match[1] || Number(match[1]) >= 400);
+    const match = line.match(/^plain_get (?:(\d{3})|ERR:\S+) .* (https?:\/\/\S+)$/);
+    if (!match || withoutTrailingSlash(match[2]) !== withoutTrailingSlash(siteUrl)) return false;
+    return !match[1] || Number(match[1]) >= 400;
   });
 }
 
@@ -93,7 +110,7 @@ async function findOrCreateFirm({ name, domain, advisorNames }) {
 }
 
 function SetupForm() {
-  const [form, setForm] = useState({ name: "", domain: "", advisors: "", includeSearch: false });
+  const [form, setForm] = useState({ name: "", site: "", advisors: "", includeSearch: false });
   const [discovery, setDiscovery] = useState({ status: "idle" });
   const [selected, setSelected] = useState(() => new Set());
   const [manualText, setManualText] = useState("");
@@ -111,19 +128,20 @@ function SetupForm() {
   const manualUrls = parseList(manualText);
   const toScan = [...new Set([...found.filter((item) => selected.has(item.url)).map((item) => item.url), ...manualUrls])];
   const tooMany = toScan.length > MAX_URLS;
-  const { fetchDomain, matchDomain } = normalizeDomain(form.domain);
+  const { siteUrl, host, display, matchKey } = normalizeSite(form.site);
 
   const handleFind = async (event) => {
     event?.preventDefault();
-    if (!form.name.trim() || !fetchDomain || discovery.status === "loading") return;
-    setForm((f) => ({ ...f, domain: fetchDomain }));
+    if (!form.name.trim() || !siteUrl || discovery.status === "loading") return;
+    setForm((f) => ({ ...f, site: display }));
     setDiscovery({ status: "loading" });
     setOutcome(null);
     setLog([]);
     try {
       const res = await base44.functions.invoke("discover", {
         name: form.name.trim(),
-        domain: fetchDomain,
+        domain: host,
+        site: siteUrl,
         include_search: form.includeSearch,
       });
       const urls = Array.isArray(res.data?.urls) ? res.data.urls : [];
@@ -131,7 +149,7 @@ function SetupForm() {
       // because search can return other firms with similar names.
       setSelected(new Set(urls.filter((item) => item.source === "site").slice(0, MAX_URLS).map((item) => item.url)));
       const log = Array.isArray(res.data?.log) ? res.data.log : [];
-      setDiscovery({ status: "ready", urls, unreachable: homepageFailed(log), searchesUsed: res.data?.searches_used ?? 0 });
+      setDiscovery({ status: "ready", urls, unreachable: homepageFailed(log, siteUrl), searchesUsed: res.data?.searches_used ?? 0 });
     } catch (error) {
       setDiscovery({ status: "error", message: errorText(error) });
     }
@@ -159,7 +177,7 @@ function SetupForm() {
     try {
       const { firm, reused } = await findOrCreateFirm({
         name: form.name.trim(),
-        domain: matchDomain,
+        domain: matchKey,
         advisorNames: parseList(form.advisors),
       });
       append(reused ? `Adding to existing firm ${firm.name}` : `Created firm ${firm.name}`);
@@ -221,18 +239,18 @@ function SetupForm() {
           <input className={input} value={form.name} onChange={update("name")} required disabled={running} />
         </label>
         <label className="block text-sm">
-          Domain
+          Website
           <input
             className={input}
-            value={form.domain}
-            onChange={update("domain")}
-            placeholder="example.com"
+            value={form.site}
+            onChange={update("site")}
+            placeholder="example.com or https://example.com/firm/"
             required
             disabled={running}
           />
-          {form.domain.trim() && fetchDomain !== form.domain.trim() && (
+          {form.site.trim() && display && display !== form.site.trim() && (
             <span data-testid="domain-hint" className="mt-1 block text-xs text-slate-500">
-              Will check {fetchDomain}
+              Will check {display}
             </span>
           )}
         </label>
@@ -273,11 +291,11 @@ function SetupForm() {
         <section className="space-y-4" aria-label="Pages to check">
           {discovery.unreachable && (
             <p role="status" data-testid="unreachable" className="rounded-md bg-amber-50 p-3 text-sm text-amber-900">
-              We couldn't reach {fetchDomain}, so only its homepage is listed. Check the domain, or add URLs manually.
+              We couldn't reach {display}, so only its start page is listed. Check the website, or add URLs manually.
             </p>
           )}
           {found.length === 0 ? (
-            <EmptyBlock title={`No pages found on ${fetchDomain}. Add URLs manually.`} />
+            <EmptyBlock title={`No pages found on ${display}. Add URLs manually.`} />
           ) : (
             <>
               <UrlGroup
