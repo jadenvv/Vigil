@@ -1,0 +1,566 @@
+{
+  "detector": "engine.detect:detect",
+  "timestamp": "2026-10-10 13:28:05",
+  "cases_sha": "f716234a2b",
+  "n_cases": 19,
+  "subsets": {
+    "all": {
+      "n_cases": 19,
+      "n_clean": 7,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "tp": 12,
+      "fp": 0,
+      "fn": 0,
+      "clean_doc_fp_rate": 0.0,
+      "flags_per_clean_doc": 0.0,
+      "grounding_rate": 1.0,
+      "citation_accuracy": 1.0,
+      "per_category": {
+        "BENEFITS_WITHOUT_RISK": {
+          "tp": 2,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "GROSS_WITHOUT_NET": {
+          "tp": 1,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "HYPOTHETICAL_PERFORMANCE": {
+          "tp": 1,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "RATING_NO_DISCLOSURE": {
+          "tp": 1,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "TESTIMONIAL_NO_DISCLOSURE": {
+          "tp": 2,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "UNBALANCED_SPECIFIC_ADVICE": {
+          "tp": 1,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "UNFAIR_PERFORMANCE_PRESENTATION": {
+          "tp": 2,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "UNSUBSTANTIATED_CLAIM": {
+          "tp": 2,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        }
+      }
+    },
+    "reviewed": {
+      "n_cases": 0,
+      "n_clean": 0,
+      "precision": null,
+      "recall": null,
+      "f1": null,
+      "tp": 0,
+      "fp": 0,
+      "fn": 0,
+      "clean_doc_fp_rate": null,
+      "flags_per_clean_doc": null,
+      "grounding_rate": null,
+      "citation_accuracy": null,
+      "per_category": {}
+    },
+    "pattern_synthetic": {
+      "n_cases": 19,
+      "n_clean": 7,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "tp": 12,
+      "fp": 0,
+      "fn": 0,
+      "clean_doc_fp_rate": 0.0,
+      "flags_per_clean_doc": 0.0,
+      "grounding_rate": 1.0,
+      "citation_accuracy": 1.0,
+      "per_category": {
+        "BENEFITS_WITHOUT_RISK": {
+          "tp": 2,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "GROSS_WITHOUT_NET": {
+          "tp": 1,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "HYPOTHETICAL_PERFORMANCE": {
+          "tp": 1,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "RATING_NO_DISCLOSURE": {
+          "tp": 1,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "TESTIMONIAL_NO_DISCLOSURE": {
+          "tp": 2,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "UNBALANCED_SPECIFIC_ADVICE": {
+          "tp": 1,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "UNFAIR_PERFORMANCE_PRESENTATION": {
+          "tp": 2,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "UNSUBSTANTIATED_CLAIM": {
+          "tp": 2,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        }
+      }
+    }
+  },
+  "pairs": {
+    "pairs": 0,
+    "passed": 0,
+    "pass_rate": null,
+    "detail": {}
+  },
+  "rewrite": null,
+  "cases": [
+    {
+      "id": "ho_noloss_promise",
+      "provenance": "pattern_synthetic",
+      "reviewed": false,
+      "clean": false,
+      "tp": [
+        "BENEFITS_WITHOUT_RISK"
+      ],
+      "fp": [],
+      "fn": [],
+      "ungrounded": 0,
+      "cite_ok": 1,
+      "pred_cats": [
+        "BENEFITS_WITHOUT_RISK"
+      ],
+      "status": "ok",
+      "flags": [
+        {
+          "category": "BENEFITS_WITHOUT_RISK",
+          "span": "your principal is fully protected and you will never lose a dime"
+        }
+      ]
+    },
+    {
+      "id": "ho_no_downside",
+      "provenance": "pattern_synthetic",
+      "reviewed": false,
+      "clean": false,
+      "tp": [
+        "BENEFITS_WITHOUT_RISK"
+      ],
+      "fp": [],
+      "fn": [],
+      "ungrounded": 0,
+      "cite_ok": 1,
+      "pred_cats": [
+        "BENEFITS_WITHOUT_RISK"
+      ],
+      "status": "ok",
+      "flags": [
+        {
+          "category": "BENEFITS_WITHOUT_RISK",
+          "span": "Bonds are a safe bet right now: earn 6% with no downside"
+        }
+      ]
+    },
+    {
+      "id": "ho_quote_client",
+      "provenance": "pattern_synthetic",
+      "reviewed": false,
+      "clean": false,
+      "tp": [
+        "TESTIMONIAL_NO_DISCLOSURE"
+      ],
+      "fp": [],
+      "fn": [],
+      "ungrounded": 0,
+      "cite_ok": 1,
+      "pred_cats": [
+        "TESTIMONIAL_NO_DISCLOSURE"
+      ],
+      "status": "ok",
+      "flags": [
+        {
+          "category": "TESTIMONIAL_NO_DISCLOSURE",
+          "span": "\"My advisor at Pine Ridge is the reason I sleep at night.\""
+        }
+      ]
+    },
+    {
+      "id": "ho_yelp",
+      "provenance": "pattern_synthetic",
+      "reviewed": false,
+      "clean": false,
+      "tp": [
+        "TESTIMONIAL_NO_DISCLOSURE"
+      ],
+      "fp": [],
+      "fn": [],
+      "ungrounded": 0,
+      "cite_ok": 1,
+      "pred_cats": [
+        "TESTIMONIAL_NO_DISCLOSURE"
+      ],
+      "status": "ok",
+      "flags": [
+        {
+          "category": "TESTIMONIAL_NO_DISCLOSURE",
+          "span": "Super responsive team, five stars all around!"
+        }
+      ]
+    },
+    {
+      "id": "ho_gross_twelve",
+      "provenance": "pattern_synthetic",
+      "reviewed": false,
+      "clean": false,
+      "tp": [
+        "GROSS_WITHOUT_NET"
+      ],
+      "fp": [],
+      "fn": [],
+      "ungrounded": 0,
+      "cite_ok": 1,
+      "pred_cats": [
+        "GROSS_WITHOUT_NET"
+      ],
+      "status": "ok",
+      "flags": [
+        {
+          "category": "GROSS_WITHOUT_NET",
+          "span": "9.8% gross return for the twelve months ended June 2026"
+        }
+      ]
+    },
+    {
+      "id": "ho_simulated",
+      "provenance": "pattern_synthetic",
+      "reviewed": false,
+      "clean": false,
+      "tp": [
+        "HYPOTHETICAL_PERFORMANCE"
+      ],
+      "fp": [],
+      "fn": [],
+      "ungrounded": 0,
+      "cite_ok": 1,
+      "pred_cats": [
+        "HYPOTHETICAL_PERFORMANCE"
+      ],
+      "status": "ok",
+      "flags": [
+        {
+          "category": "HYPOTHETICAL_PERFORMANCE",
+          "span": "would have avoided 80% of the 2008 drawdown"
+        }
+      ]
+    },
+    {
+      "id": "ho_bottom",
+      "provenance": "pattern_synthetic",
+      "reviewed": false,
+      "clean": false,
+      "tp": [
+        "UNFAIR_PERFORMANCE_PRESENTATION"
+      ],
+      "fp": [],
+      "fn": [],
+      "ungrounded": 0,
+      "cite_ok": 1,
+      "pred_cats": [
+        "UNFAIR_PERFORMANCE_PRESENTATION"
+      ],
+      "status": "ok",
+      "flags": [
+        {
+          "category": "UNFAIR_PERFORMANCE_PRESENTATION",
+          "span": "From the 2022 bottom, our value sleeve has rallied 75%"
+        }
+      ]
+    },
+    {
+      "id": "ho_best_quarter",
+      "provenance": "pattern_synthetic",
+      "reviewed": false,
+      "clean": false,
+      "tp": [
+        "UNFAIR_PERFORMANCE_PRESENTATION"
+      ],
+      "fp": [],
+      "fn": [],
+      "ungrounded": 0,
+      "cite_ok": 1,
+      "pred_cats": [
+        "UNFAIR_PERFORMANCE_PRESENTATION"
+      ],
+      "status": "ok",
+      "flags": [
+        {
+          "category": "UNFAIR_PERFORMANCE_PRESENTATION",
+          "span": "best quarter ever, up 22% in Q4 2023"
+        }
+      ]
+    },
+    {
+      "id": "ho_voted",
+      "provenance": "pattern_synthetic",
+      "reviewed": false,
+      "clean": false,
+      "tp": [
+        "RATING_NO_DISCLOSURE"
+      ],
+      "fp": [],
+      "fn": [],
+      "ungrounded": 0,
+      "cite_ok": 1,
+      "pred_cats": [
+        "RATING_NO_DISCLOSURE"
+      ],
+      "status": "ok",
+      "flags": [
+        {
+          "category": "RATING_NO_DISCLOSURE",
+          "span": "Award-winning wealth management, voted Best Advisor of 2025 by Metro Magazine readers"
+        }
+      ]
+    },
+    {
+      "id": "ho_told_clients",
+      "provenance": "pattern_synthetic",
+      "reviewed": false,
+      "clean": false,
+      "tp": [
+        "UNBALANCED_SPECIFIC_ADVICE"
+      ],
+      "fp": [],
+      "fn": [],
+      "ungrounded": 0,
+      "cite_ok": 1,
+      "pred_cats": [
+        "UNBALANCED_SPECIFIC_ADVICE"
+      ],
+      "status": "ok",
+      "flags": [
+        {
+          "category": "UNBALANCED_SPECIFIC_ADVICE",
+          "span": "Last spring I told clients to buy Zenith Energy, and the shares doubled by December"
+        }
+      ]
+    },
+    {
+      "id": "ho_beat_index",
+      "provenance": "pattern_synthetic",
+      "reviewed": false,
+      "clean": false,
+      "tp": [
+        "UNSUBSTANTIATED_CLAIM"
+      ],
+      "fp": [],
+      "fn": [],
+      "ungrounded": 0,
+      "cite_ok": 1,
+      "pred_cats": [
+        "UNSUBSTANTIATED_CLAIM"
+      ],
+      "status": "ok",
+      "flags": [
+        {
+          "category": "UNSUBSTANTIATED_CLAIM",
+          "span": "Our disciplined process has beaten the S&P 500 every year for a decade"
+        }
+      ]
+    },
+    {
+      "id": "ho_ai_predicts",
+      "provenance": "pattern_synthetic",
+      "reviewed": false,
+      "clean": false,
+      "tp": [
+        "UNSUBSTANTIATED_CLAIM"
+      ],
+      "fp": [],
+      "fn": [],
+      "ungrounded": 0,
+      "cite_ok": 1,
+      "pred_cats": [
+        "UNSUBSTANTIATED_CLAIM"
+      ],
+      "status": "ok",
+      "flags": [
+        {
+          "category": "UNSUBSTANTIATED_CLAIM",
+          "span": "Our machine-learning platform predicts market turns before they happen"
+        }
+      ]
+    },
+    {
+      "id": "ho_clean_values",
+      "provenance": "pattern_synthetic",
+      "reviewed": false,
+      "clean": true,
+      "tp": [],
+      "fp": [],
+      "fn": [],
+      "ungrounded": 0,
+      "cite_ok": 0,
+      "pred_cats": [],
+      "status": "ok",
+      "flags": []
+    },
+    {
+      "id": "ho_clean_no_guarantee",
+      "provenance": "pattern_synthetic",
+      "reviewed": false,
+      "clean": true,
+      "tp": [],
+      "fp": [],
+      "fn": [],
+      "ungrounded": 0,
+      "cite_ok": 0,
+      "pred_cats": [],
+      "status": "ok",
+      "flags": []
+    },
+    {
+      "id": "ho_clean_team",
+      "provenance": "pattern_synthetic",
+      "reviewed": false,
+      "clean": true,
+      "tp": [],
+      "fp": [],
+      "fn": [],
+      "ungrounded": 0,
+      "cite_ok": 0,
+      "pred_cats": [],
+      "status": "ok",
+      "flags": []
+    },
+    {
+      "id": "ho_clean_full_returns",
+      "provenance": "pattern_synthetic",
+      "reviewed": false,
+      "clean": true,
+      "tp": [],
+      "fp": [],
+      "fn": [],
+      "ungrounded": 0,
+      "cite_ok": 0,
+      "pred_cats": [],
+      "status": "ok",
+      "flags": []
+    },
+    {
+      "id": "ho_clean_best_interest",
+      "provenance": "pattern_synthetic",
+      "reviewed": false,
+      "clean": true,
+      "tp": [],
+      "fp": [],
+      "fn": [],
+      "ungrounded": 0,
+      "cite_ok": 0,
+      "pred_cats": [],
+      "status": "ok",
+      "flags": []
+    },
+    {
+      "id": "ho_clean_review_disclosed",
+      "provenance": "pattern_synthetic",
+      "reviewed": false,
+      "clean": true,
+      "tp": [],
+      "fp": [],
+      "fn": [],
+      "ungrounded": 0,
+      "cite_ok": 0,
+      "pred_cats": [],
+      "status": "ok",
+      "flags": []
+    },
+    {
+      "id": "ho_clean_gross_net",
+      "provenance": "pattern_synthetic",
+      "reviewed": false,
+      "clean": true,
+      "tp": [],
+      "fp": [],
+      "fn": [],
+      "ungrounded": 0,
+      "cite_ok": 0,
+      "pred_cats": [],
+      "status": "ok",
+      "flags": []
+    }
+  ]
+}
