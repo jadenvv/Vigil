@@ -59,3 +59,30 @@ Read the root `CLAUDE.md` first. You own **the product people actually see**: th
 
 ## Done means
 A tester opens the link, sees the demo firm's flags, clicks one, and sees the quote highlighted with a screenshot and a plain-English "why". No login, no error, under 10 seconds.
+
+## Reviewer workspace ("My reviews") — added on codex/clerk-reviewer-workspace
+
+An optional Clerk-authenticated area at `/reviews` and `/reviews/flag/:id` where a signed-in
+reviewer's decisions are saved to their account. **The "No Clerk" rule above still holds for the
+demo:** `/demo` and every tester-facing screen stay anonymous and Clerk-free; nothing in the
+tester path requires sign-in. Base44 auth is untouched and still guards admin operations.
+
+- **Entity:** `ReviewerDecision {clerk_user_id, flag_id, action, final_text, original_quote,
+  page_url, decided_at, request_id}` — RLS all-false, so no anonymous or ordinary SDK call can
+  read or write it. Rows are reachable only through the two functions below, via service role,
+  after Clerk verification. The shared `Decision` entity and its session-scoped demo behavior
+  are unchanged.
+- **Functions:** `reviewer-decision-list` returns the caller's own history;
+  `reviewer-decision-create` stores one decision (idempotent on `request_id`, rejects non-demo
+  flags). Both verify `body.clerk_token` — signature, exp, `iss`, and `azp` when
+  `CLERK_AUTHORIZED_PARTIES` is set — with `shared/clerk-auth.ts`; the reviewer identity is the
+  verified JWT `sub`, never anything in the request body.
+- **Secrets (Base44 → env vars):** `CLERK_JWT_ISSUER` (required unless `CLERK_JWT_KEY`),
+  `CLERK_JWT_KEY` (optional PEM public key for networkless verify),
+  `CLERK_AUTHORIZED_PARTIES` (optional comma-separated origins). Frontend:
+  `VITE_CLERK_PUBLISHABLE_KEY` in `base44/app/.env.local`; without it the app renders exactly
+  as before and `/reviews` shows "not configured".
+- **Self-checks:** `deno run base44/app/base44/shared/clerk-auth.ts` and
+  `deno run --allow-read=base44/app/base44/entities base44/app/base44/shared/reviewer-core.ts`
+  (the second asserts the entity RLS stays all-false). Both run in `verify.sh`; frontend tests
+  via `npm test` in `base44/app`.

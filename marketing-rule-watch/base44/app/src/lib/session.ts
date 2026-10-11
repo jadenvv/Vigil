@@ -14,6 +14,12 @@ function newId(): string {
   return `s-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 10)}`;
 }
 
+// Idempotency key for one reviewer decision intent: double clicks and retried submits share it,
+// a fresh decision gets a new one. Server-side dedupe uses it; it is not a session identifier.
+export function newRequestId(): string {
+  return newId();
+}
+
 export function getSessionId(): string {
   try {
     const existing = window.localStorage.getItem(STORAGE_KEY);
