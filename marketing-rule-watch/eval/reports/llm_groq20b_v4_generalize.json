@@ -1,0 +1,509 @@
+{
+  "detector": "engine.detect:detect",
+  "timestamp": "2026-10-10 18:27:40",
+  "cases_sha": "d5a22079f0",
+  "n_cases": 14,
+  "subsets": {
+    "all": {
+      "n_cases": 14,
+      "n_clean": 3,
+      "precision": 0.875,
+      "recall": 0.5833333333333334,
+      "f1": 0.7000000000000001,
+      "tp": 7,
+      "fp": 1,
+      "fn": 5,
+      "clean_doc_fp_rate": 0.0,
+      "flags_per_clean_doc": 0.0,
+      "grounding_rate": 1.0,
+      "citation_accuracy": 1.0,
+      "per_category": {
+        "RATING_NO_DISCLOSURE": {
+          "tp": 3,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "TESTIMONIAL_NO_DISCLOSURE": {
+          "tp": 0,
+          "fp": 0,
+          "fn": 2,
+          "precision": null,
+          "recall": 0.0,
+          "f1": null
+        },
+        "UNFAIR_PERFORMANCE_PRESENTATION": {
+          "tp": 0,
+          "fp": 0,
+          "fn": 1,
+          "precision": null,
+          "recall": 0.0,
+          "f1": null
+        },
+        "UNSUBSTANTIATED_CLAIM": {
+          "tp": 4,
+          "fp": 1,
+          "fn": 2,
+          "precision": 0.8,
+          "recall": 0.6666666666666666,
+          "f1": 0.7272727272727272
+        }
+      }
+    },
+    "reviewed": {
+      "n_cases": 0,
+      "n_clean": 0,
+      "precision": null,
+      "recall": null,
+      "f1": null,
+      "tp": 0,
+      "fp": 0,
+      "fn": 0,
+      "clean_doc_fp_rate": null,
+      "flags_per_clean_doc": null,
+      "grounding_rate": null,
+      "citation_accuracy": null,
+      "per_category": {}
+    },
+    "pattern_synthetic": {
+      "n_cases": 14,
+      "n_clean": 3,
+      "precision": 0.875,
+      "recall": 0.5833333333333334,
+      "f1": 0.7000000000000001,
+      "tp": 7,
+      "fp": 1,
+      "fn": 5,
+      "clean_doc_fp_rate": 0.0,
+      "flags_per_clean_doc": 0.0,
+      "grounding_rate": 1.0,
+      "citation_accuracy": 1.0,
+      "per_category": {
+        "RATING_NO_DISCLOSURE": {
+          "tp": 3,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "TESTIMONIAL_NO_DISCLOSURE": {
+          "tp": 0,
+          "fp": 0,
+          "fn": 2,
+          "precision": null,
+          "recall": 0.0,
+          "f1": null
+        },
+        "UNFAIR_PERFORMANCE_PRESENTATION": {
+          "tp": 0,
+          "fp": 0,
+          "fn": 1,
+          "precision": null,
+          "recall": 0.0,
+          "f1": null
+        },
+        "UNSUBSTANTIATED_CLAIM": {
+          "tp": 4,
+          "fp": 1,
+          "fn": 2,
+          "precision": 0.8,
+          "recall": 0.6666666666666666,
+          "f1": 0.7272727272727272
+        }
+      }
+    },
+    "provider=error": {
+      "n_cases": 3,
+      "n_clean": 0,
+      "precision": null,
+      "recall": 0.0,
+      "f1": null,
+      "tp": 0,
+      "fp": 0,
+      "fn": 3,
+      "clean_doc_fp_rate": null,
+      "flags_per_clean_doc": null,
+      "grounding_rate": null,
+      "citation_accuracy": null,
+      "per_category": {
+        "TESTIMONIAL_NO_DISCLOSURE": {
+          "tp": 0,
+          "fp": 0,
+          "fn": 1,
+          "precision": null,
+          "recall": 0.0,
+          "f1": null
+        },
+        "UNFAIR_PERFORMANCE_PRESENTATION": {
+          "tp": 0,
+          "fp": 0,
+          "fn": 1,
+          "precision": null,
+          "recall": 0.0,
+          "f1": null
+        },
+        "UNSUBSTANTIATED_CLAIM": {
+          "tp": 0,
+          "fp": 0,
+          "fn": 1,
+          "precision": null,
+          "recall": 0.0,
+          "f1": null
+        }
+      }
+    },
+    "provider=local": {
+      "n_cases": 11,
+      "n_clean": 3,
+      "precision": 0.875,
+      "recall": 0.7777777777777778,
+      "f1": 0.823529411764706,
+      "tp": 7,
+      "fp": 1,
+      "fn": 2,
+      "clean_doc_fp_rate": 0.0,
+      "flags_per_clean_doc": 0.0,
+      "grounding_rate": 1.0,
+      "citation_accuracy": 1.0,
+      "per_category": {
+        "RATING_NO_DISCLOSURE": {
+          "tp": 3,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "TESTIMONIAL_NO_DISCLOSURE": {
+          "tp": 0,
+          "fp": 0,
+          "fn": 1,
+          "precision": null,
+          "recall": 0.0,
+          "f1": null
+        },
+        "UNSUBSTANTIATED_CLAIM": {
+          "tp": 4,
+          "fp": 1,
+          "fn": 1,
+          "precision": 0.8,
+          "recall": 0.8,
+          "f1": 0.8000000000000002
+        }
+      }
+    }
+  },
+  "providers": {
+    "error": 3,
+    "local": 11
+  },
+  "pairs": {
+    "pairs": 0,
+    "passed": 0,
+    "pass_rate": null,
+    "detail": {}
+  },
+  "rewrite": {
+    "tried": 7,
+    "passed": 0,
+    "pass_rate": 0.0,
+    "note": "necessary, not sufficient: also have a human rate rewrite quality"
+  },
+  "cases": [
+    {
+      "id": "gen_conflict_free_about",
+      "provenance": "pattern_synthetic",
+      "reviewed": false,
+      "clean": false,
+      "tp": [
+        "UNSUBSTANTIATED_CLAIM"
+      ],
+      "fp": [],
+      "fn": [],
+      "ungrounded": 0,
+      "cite_ok": 1,
+      "pred_cats": [
+        "UNSUBSTANTIATED_CLAIM"
+      ],
+      "status": "ok",
+      "flags": [
+        {
+          "category": "UNSUBSTANTIATED_CLAIM",
+          "span": "Because we are fee-only, our advice is completely free of conflicts of interest."
+        }
+      ],
+      "provider": null
+    },
+    {
+      "id": "gen_conflict_none_faq",
+      "provenance": "pattern_synthetic",
+      "reviewed": false,
+      "clean": false,
+      "tp": [
+        "UNSUBSTANTIATED_CLAIM"
+      ],
+      "fp": [],
+      "fn": [],
+      "ungrounded": 0,
+      "cite_ok": 1,
+      "pred_cats": [
+        "UNSUBSTANTIATED_CLAIM"
+      ],
+      "status": "ok",
+      "flags": [
+        {
+          "category": "UNSUBSTANTIATED_CLAIM",
+          "span": "None. Unlike brokers, we have zero conflicts with our clients."
+        }
+      ],
+      "provider": null
+    },
+    {
+      "id": "gen_conflict_disclosed_clean",
+      "provenance": "pattern_synthetic",
+      "reviewed": false,
+      "clean": true,
+      "tp": [],
+      "fp": [],
+      "fn": [],
+      "ungrounded": 0,
+      "cite_ok": 0,
+      "pred_cats": [],
+      "status": "ok",
+      "flags": [],
+      "provider": null
+    },
+    {
+      "id": "gen_ai_first",
+      "provenance": "pattern_synthetic",
+      "reviewed": false,
+      "clean": false,
+      "tp": [
+        "UNSUBSTANTIATED_CLAIM"
+      ],
+      "fp": [],
+      "fn": [
+        "UNSUBSTANTIATED_CLAIM"
+      ],
+      "ungrounded": 0,
+      "cite_ok": 1,
+      "pred_cats": [
+        "UNSUBSTANTIATED_CLAIM"
+      ],
+      "status": "miss",
+      "flags": [
+        {
+          "category": "UNSUBSTANTIATED_CLAIM",
+          "span": "nation's first fully autonomous AI wealth manager"
+        }
+      ],
+      "provider": null
+    },
+    {
+      "id": "gen_ai_edge",
+      "provenance": "pattern_synthetic",
+      "reviewed": false,
+      "clean": false,
+      "tp": [
+        "UNSUBSTANTIATED_CLAIM"
+      ],
+      "fp": [],
+      "fn": [],
+      "ungrounded": 0,
+      "cite_ok": 1,
+      "pred_cats": [
+        "UNSUBSTANTIATED_CLAIM"
+      ],
+      "status": "ok",
+      "flags": [
+        {
+          "category": "UNSUBSTANTIATED_CLAIM",
+          "span": "proprietary artificial intelligence that gives our clients an edge no human team can match"
+        }
+      ],
+      "provider": null
+    },
+    {
+      "id": "gen_ai_plain_clean",
+      "provenance": "pattern_synthetic",
+      "reviewed": false,
+      "clean": true,
+      "tp": [],
+      "fp": [],
+      "fn": [],
+      "ungrounded": 0,
+      "cite_ok": 0,
+      "pred_cats": [],
+      "status": "ok",
+      "flags": [],
+      "provider": null
+    },
+    {
+      "id": "gen_award_passing_bio",
+      "provenance": "pattern_synthetic",
+      "reviewed": false,
+      "clean": false,
+      "tp": [
+        "RATING_NO_DISCLOSURE"
+      ],
+      "fp": [],
+      "fn": [],
+      "ungrounded": 0,
+      "cite_ok": 1,
+      "pred_cats": [
+        "RATING_NO_DISCLOSURE"
+      ],
+      "status": "ok",
+      "flags": [
+        {
+          "category": "RATING_NO_DISCLOSURE",
+          "span": "A three-time Forbes Best-in-State Wealth Advisor"
+        }
+      ],
+      "provider": null
+    },
+    {
+      "id": "gen_award_list_mention",
+      "provenance": "pattern_synthetic",
+      "reviewed": false,
+      "clean": false,
+      "tp": [
+        "RATING_NO_DISCLOSURE"
+      ],
+      "fp": [],
+      "fn": [],
+      "ungrounded": 0,
+      "cite_ok": 1,
+      "pred_cats": [
+        "RATING_NO_DISCLOSURE"
+      ],
+      "status": "ok",
+      "flags": [
+        {
+          "category": "RATING_NO_DISCLOSURE",
+          "span": "Consistently recognized on InvestmentNews' list of top RIAs"
+        }
+      ],
+      "provider": null
+    },
+    {
+      "id": "gen_award_featured",
+      "provenance": "pattern_synthetic",
+      "reviewed": false,
+      "clean": false,
+      "tp": [
+        "RATING_NO_DISCLOSURE"
+      ],
+      "fp": [],
+      "fn": [],
+      "ungrounded": 0,
+      "cite_ok": 1,
+      "pred_cats": [
+        "RATING_NO_DISCLOSURE"
+      ],
+      "status": "ok",
+      "flags": [
+        {
+          "category": "RATING_NO_DISCLOSURE",
+          "span": "as featured among the Financial Times top 300 advisers"
+        }
+      ],
+      "provider": null
+    },
+    {
+      "id": "gen_award_full_clean",
+      "provenance": "pattern_synthetic",
+      "reviewed": false,
+      "clean": true,
+      "tp": [],
+      "fp": [],
+      "fn": [],
+      "ungrounded": 0,
+      "cite_ok": 0,
+      "pred_cats": [],
+      "status": "ok",
+      "flags": [],
+      "provider": null
+    },
+    {
+      "id": "gen_partner_designation",
+      "provenance": "pattern_synthetic",
+      "reviewed": false,
+      "clean": false,
+      "tp": [],
+      "fp": [
+        "UNSUBSTANTIATED_CLAIM"
+      ],
+      "fn": [
+        "TESTIMONIAL_NO_DISCLOSURE"
+      ],
+      "ungrounded": 0,
+      "cite_ok": 0,
+      "pred_cats": [
+        "UNSUBSTANTIATED_CLAIM"
+      ],
+      "status": "miss+fp",
+      "flags": [
+        {
+          "category": "UNSUBSTANTIATED_CLAIM",
+          "span": "official retirement planning partner"
+        }
+      ],
+      "provider": null
+    },
+    {
+      "id": "gen_testimonial_link_only",
+      "provenance": "pattern_synthetic",
+      "reviewed": false,
+      "clean": false,
+      "tp": [],
+      "fp": [],
+      "fn": [
+        "TESTIMONIAL_NO_DISCLOSURE"
+      ],
+      "ungrounded": 0,
+      "cite_ok": 0,
+      "pred_cats": [],
+      "status": "miss",
+      "flags": [],
+      "provider": "error"
+    },
+    {
+      "id": "gen_credentials_claim",
+      "provenance": "pattern_synthetic",
+      "reviewed": false,
+      "clean": false,
+      "tp": [],
+      "fp": [],
+      "fn": [
+        "UNSUBSTANTIATED_CLAIM"
+      ],
+      "ungrounded": 0,
+      "cite_ok": 0,
+      "pred_cats": [],
+      "status": "miss",
+      "flags": [],
+      "provider": "error"
+    },
+    {
+      "id": "gen_benchmark_unnamed",
+      "provenance": "pattern_synthetic",
+      "reviewed": false,
+      "clean": false,
+      "tp": [],
+      "fp": [],
+      "fn": [
+        "UNFAIR_PERFORMANCE_PRESENTATION"
+      ],
+      "ungrounded": 0,
+      "cite_ok": 0,
+      "pred_cats": [],
+      "status": "miss",
+      "flags": [],
+      "provider": "error"
+    }
+  ]
+}
