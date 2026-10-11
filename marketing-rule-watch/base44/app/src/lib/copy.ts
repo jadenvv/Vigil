@@ -123,6 +123,13 @@ export const COPY = {
   calcCooldown: "Too many checks just now. Try again shortly.",
   calcServiceError: "The calculation service isn't reachable right now. Try again later.",
   calcNote: "Checks arithmetic only; does not verify actual investment performance.",
+  // /setup: the card shown once pages are found or a scan finishes. Counts come from data already on the page.
+  readyEyebrow: "Results ready",
+  readyPagesFound: (n: number) => (n === 1 ? "page found" : "pages found"),
+  readyPagesStored: (n: number) => (n === 1 ? "page captured" : "pages captured"),
+  readyIssues: (n: number) => `potential ${n === 1 ? "issue" : "issues"} for review`,
+  readyNotFetched: (n: number) => `${n} ${n === 1 ? "page" : "pages"} couldn't be fetched`,
+  openFindings: "Open the findings",
 };
 
 // Phase 5 rewrite drawer stays off until after Sense Check 2.

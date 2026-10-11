@@ -1,6 +1,7 @@
 // Team-only screen: find a firm's pages with `discover`, pick which to check, then `scan` and `detect` them.
 // Testers never see this; /demo reads stored rows only.
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { flushSync } from "react-dom";
 import { base44 } from "@/api/base44Client";
 import { appParams } from "@/lib/app-params";
 import { ChannelChip } from "@/components/Badges";
@@ -8,7 +9,7 @@ import { EmptyBlock, ErrorBlock, LoadingBlock, Shell } from "@/components/Chrome
 import { COPY, SHOW_PAGE_VIEW } from "@/lib/copy";
 import { findDemoFirm } from "@/lib/data";
 import { UrlText } from "@/components/UrlText";
-import { Link } from "@/lib/router";
+import { Link, navigate } from "@/lib/router";
 
 const MAX_URLS = 25;
 const SCAN_BATCH_SIZE = 5;
@@ -284,7 +285,7 @@ function SetupForm({ signedIn }) {
         }
       }
       append(`Done: ${flagTotal} potential ${flagTotal === 1 ? "issue" : "issues"} for review`);
-      setOutcome({ created, failed, firmId: firm.id });
+      setOutcome({ created, failed, firmId: firm.id, flags: flagTotal });
     } catch (error) {
       append(`Stopped: ${errorText(error)}`);
     } finally {
@@ -377,23 +378,25 @@ function SetupForm({ signedIn }) {
       {discovery.status === "ready" && (
         <section className="space-y-4" aria-label="Pages to check">
           {existing && (
-            <div data-testid="existing-firm" className="flex flex-wrap items-center gap-3 rounded-[10px] border border-paper-200 bg-white p-4 text-sm">
-              <p className="min-w-0 flex-1 text-night-950">
-                {isDemoSite ? (
-                  <>
-                    <span className="font-medium">{existing.name}</span> is our demo firm; results are already captured.
-                  </>
-                ) : (
-                  <>
-                    Vigil already has results for <span className="font-medium">{existing.name}</span>. Open them, or scan
-                    the pages below again.
-                  </>
-                )}
-              </p>
-              <Link to={existing.is_demo ? "/demo" : `/firm/${existing.id}`} className={primary}>
-                Open results
-              </Link>
-            </div>
+            <ReadyCard
+              testId="existing-firm"
+              firmName={existing.name}
+              stats={discovery.limited ? [] : [{ value: found.length, label: COPY.readyPagesFound(found.length) }]}
+              to={existing.is_demo ? "/demo" : `/firm/${existing.id}`}
+              linkLabel="Open results"
+              linkClassName={primary}
+            >
+              {isDemoSite ? (
+                <>
+                  <span className="font-medium">{existing.name}</span> is our demo firm; results are already captured.
+                </>
+              ) : (
+                <>
+                  Vigil already has results for <span className="font-medium">{existing.name}</span>. Open them, or scan
+                  the pages below again.
+                </>
+              )}
+            </ReadyCard>
           )}
           {!discovery.limited && (
             <>
@@ -484,10 +487,126 @@ function SetupForm({ signedIn }) {
         </div>
       )}
       {outcome?.firmId && (
-        <Link to={`/firm/${outcome.firmId}`} className="inline-block text-sm underline">
-          Open the findings
-        </Link>
+        <ReadyCard
+          firmName={form.name.trim() || display}
+          stats={[
+            { value: outcome.created, label: COPY.readyPagesStored(outcome.created) },
+            ...(typeof outcome.flags === "number" ? [{ value: outcome.flags, label: COPY.readyIssues(outcome.flags), signal: outcome.flags > 0 }] : []),
+          ]}
+          to={`/firm/${outcome.firmId}`}
+          linkLabel={COPY.openFindings}
+          linkClassName={primary}
+          arrow
+        >
+          {outcome.failed.length > 0 ? COPY.readyNotFetched(outcome.failed.length) : null}
+        </ReadyCard>
       )}
+    </div>
+  );
+}
+
+const REVEAL_MS = 280;
+const COUNT_MS = 600;
+
+function prefersReducedMotion() {
+  try {
+    return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  } catch {
+    return false;
+  }
+}
+
+// Counts tick up once from 0; with reduced motion they appear at their final value.
+function useCountUp(target) {
+  const [value, setValue] = useState(() => (prefersReducedMotion() ? target : 0));
+  useEffect(() => {
+    if (prefersReducedMotion() || target <= 0) {
+      setValue(target);
+      return undefined;
+    }
+    let frame;
+    const start = performance.now();
+    const tick = (now) => {
+      const progress = Math.min(1, (now - start) / COUNT_MS);
+      setValue(Math.round(target * (1 - (1 - progress) ** 3)));
+      if (progress < 1) frame = requestAnimationFrame(tick);
+    };
+    frame = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(frame);
+  }, [target]);
+  return value;
+}
+
+function Stat({ value, label, signal }) {
+  const shown = useCountUp(value);
+  return (
+    <div className="min-w-0">
+      <dt className="sr-only">{label}</dt>
+      <dd className="flex items-baseline gap-1.5">
+        <span className={`text-2xl font-semibold tabular-nums ${signal ? "text-lamp-700" : "text-night-950"}`}>{shown}</span>
+        <span className="text-sm text-night-600" aria-hidden="true">
+          {label}
+        </span>
+      </dd>
+    </div>
+  );
+}
+
+// Page transition to the results: a cross-fade via the View Transitions API where supported,
+// a plain navigation otherwise or when the visitor prefers reduced motion.
+function navigateWithTransition(event, to) {
+  if (typeof document.startViewTransition !== "function" || prefersReducedMotion()) return;
+  const isModified = event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || event.button !== 0;
+  if (isModified) return;
+  event.preventDefault();
+  // flushSync renders the new route inside the transition callback, so the browser snapshots the right DOM.
+  document.startViewTransition(() => flushSync(() => navigate(to)));
+}
+
+// Shown once results can be opened: a short reveal, counts from data already on the page, then focus
+// moves to the button so keyboard users can continue with Enter.
+function ReadyCard({ testId, firmName, stats, to, linkLabel, linkClassName, arrow = false, children }) {
+  const [shown, setShown] = useState(false);
+  // The router's Link doesn't forward refs, so the button is found through a wrapper.
+  const actionsRef = useRef(null);
+  useEffect(() => {
+    const frame = requestAnimationFrame(() => setShown(true));
+    const timer = setTimeout(() => actionsRef.current?.querySelector("a")?.focus(), prefersReducedMotion() ? 0 : REVEAL_MS);
+    return () => {
+      cancelAnimationFrame(frame);
+      clearTimeout(timer);
+    };
+  }, []);
+  return (
+    <div
+      data-testid={testId}
+      role="status"
+      className={`space-y-3 rounded-[10px] border border-paper-200 bg-white p-4 text-sm transition-[opacity,transform] duration-[280ms] ease-out motion-reduce:transition-none ${
+        shown ? "translate-y-0 opacity-100" : "translate-y-2 opacity-0"
+      }`}
+    >
+      <div className="min-w-0">
+        <p className="text-xs font-medium uppercase tracking-wide text-night-600">{COPY.readyEyebrow}</p>
+        {firmName && <p className="mt-0.5 truncate text-base font-semibold text-night-950">{firmName}</p>}
+      </div>
+      {stats.length > 0 && (
+        <dl className="flex flex-wrap gap-x-6 gap-y-1">
+          {stats.map((stat) => (
+            <Stat key={stat.label} {...stat} />
+          ))}
+        </dl>
+      )}
+      <div ref={actionsRef} className="flex flex-wrap items-center gap-3">
+        {children && <p className="min-w-0 flex-1 basis-56 text-night-950">{children}</p>}
+        <Link
+          to={to}
+          onClick={(event) => navigateWithTransition(event, to)}
+          className={`${linkClassName} inline-flex items-center gap-1.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-dusk-500 focus-visible:ring-offset-2`}
+        >
+          {linkLabel}
+          {arrow && <span aria-hidden="true">→</span>}
+        </Link>
+      </div>
     </div>
   );
 }
