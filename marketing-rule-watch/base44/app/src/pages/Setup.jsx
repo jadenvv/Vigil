@@ -2,9 +2,11 @@
 // Testers never see this; /demo reads stored rows only.
 import { useEffect, useState } from "react";
 import { base44 } from "@/api/base44Client";
+import { appParams } from "@/lib/app-params";
 import { ChannelChip } from "@/components/Badges";
 import { EmptyBlock, ErrorBlock, LoadingBlock, Shell } from "@/components/Chrome";
 import { COPY, SHOW_PAGE_VIEW } from "@/lib/copy";
+import { findDemoFirm } from "@/lib/data";
 import { UrlText } from "@/components/UrlText";
 import { Link } from "@/lib/router";
 
@@ -22,6 +24,11 @@ export default function Setup() {
   const [auth, setAuth] = useState("checking");
 
   useEffect(() => {
+    // No token means signed out: skip the user lookup, which would log a 401 for every visitor.
+    if (!appParams.token) {
+      setAuth("out");
+      return;
+    }
     base44.auth
       .isAuthenticated()
       .then((isLoggedIn) => setAuth(isLoggedIn ? "in" : "out"))
@@ -31,26 +38,9 @@ export default function Setup() {
   return (
     <Shell>
       {auth === "checking" && <LoadingBlock rows={2} />}
-      {auth === "out" && (
-        <>
-          <EmptyBlock
-            title="Sign in to scan a firm"
-            detail={
-              <button
-                type="button"
-                onClick={() => base44.auth.loginWithProvider("google", window.location.href)}
-                className="mt-2 rounded-md bg-night-950 px-4 py-2 text-white hover:bg-night-800"
-              >
-                Sign in with Google
-              </button>
-            }
-          />
-          <p className="mt-3 text-center text-xs text-night-600">
-            For the team only. If sign-in fails, Google login isn't enabled in the app's auth settings yet.
-          </p>
-        </>
-      )}
-      {auth === "in" && <SetupForm />}
+      {/* Signed out, only the demo firm's site is looked up: `discover` allows that site alone and answers
+          401 for any other, and `scan` is admin-only. Other sites get a sign-in prompt instead. */}
+      {auth !== "checking" && <SetupForm signedIn={auth === "in"} />}
     </Shell>
   );
 }
@@ -140,7 +130,9 @@ function siteFromQuery() {
   }
 }
 
-function SetupForm() {
+const signIn = () => base44.auth.loginWithProvider("google", window.location.href);
+
+function SetupForm({ signedIn }) {
   const [form, setForm] = useState(() => ({ name: "", site: siteFromQuery(), advisors: "", includeSearch: false }));
   const [existing, setExisting] = useState(null);
   const [discovery, setDiscovery] = useState({ status: "idle" });
@@ -164,23 +156,27 @@ function SetupForm() {
 
   const runDiscovery = async ({ name, site, includeSearch }) => {
     const target = normalizeSite(site);
-    if (!name.trim() || !target.siteUrl || discovery.status === "loading") return;
-    setForm((f) => ({ ...f, name, site: target.display }));
+    if (!target.siteUrl || discovery.status === "loading") return;
+    if (signedIn && !name.trim()) return;
     setDiscovery({ status: "loading" });
     setExisting(null);
     setOutcome(null);
     setLog([]);
+    const firm = await findExistingFirm(target.matchKey).catch(() => null);
+    const firmName = name.trim() || firm?.name || guessFirmName(target);
+    setForm((f) => ({ ...f, name: firmName, site: target.display }));
+    setExisting(firm);
+    if (!signedIn && !firm?.is_demo) {
+      setDiscovery({ status: "signin" });
+      return;
+    }
     try {
-      const [res, firm] = await Promise.all([
-        base44.functions.invoke("discover", {
-          name: name.trim(),
-          domain: target.host,
-          site: target.siteUrl,
-          include_search: includeSearch,
-        }),
-        findExistingFirm(target.matchKey).catch(() => null),
-      ]);
-      setExisting(firm);
+      const res = await base44.functions.invoke("discover", {
+        name: firmName,
+        domain: target.host,
+        site: target.siteUrl,
+        include_search: signedIn && includeSearch,
+      });
       const urls = Array.isArray(res.data?.urls) ? res.data.urls : [];
       // Own-site pages start checked (up to the scan limit); pages found elsewhere start unchecked
       // because search can return other firms with similar names.
@@ -188,8 +184,15 @@ function SetupForm() {
       const log = Array.isArray(res.data?.log) ? res.data.log : [];
       setDiscovery({ status: "ready", urls, unreachable: homepageFailed(log, target.siteUrl), searchesUsed: res.data?.searches_used ?? 0 });
     } catch (error) {
-      setDiscovery({ status: "error", message: errorText(error) });
+      // Signed out, the demo firm's results can still be opened even if discover refuses (401).
+      if (!signedIn && firm) setDiscovery({ status: "ready", urls: [], limited: true });
+      else setDiscovery({ status: "error", message: errorText(error) });
     }
+  };
+
+  const tryDemo = async () => {
+    const demo = await findDemoFirm().catch(() => null);
+    if (demo) runDiscovery({ name: demo.name, site: demo.domain, includeSearch: false });
   };
 
   const handleFind = (event) => {
@@ -201,18 +204,7 @@ function SetupForm() {
   // straight away. Discovery only reads the site; nothing is crawled or stored until Scan.
   useEffect(() => {
     const site = siteFromQuery();
-    const target = normalizeSite(site);
-    if (!target.siteUrl) return;
-    let cancelled = false;
-    findExistingFirm(target.matchKey)
-      .catch(() => null)
-      .then((firm) => {
-        if (cancelled) return;
-        runDiscovery({ name: firm?.name ?? guessFirmName(target), site, includeSearch: false });
-      });
-    return () => {
-      cancelled = true;
-    };
+    if (normalizeSite(site).siteUrl) runDiscovery({ name: "", site, includeSearch: false });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -310,10 +302,12 @@ function SetupForm() {
         <p data-testid="scope-note" className="text-sm text-night-600">
           {COPY.scopeNote}
         </p>
-        <label className="block text-sm">
-          Firm name
-          <input className={input} value={form.name} onChange={update("name")} required disabled={running} />
-        </label>
+        {signedIn && (
+          <label className="block text-sm">
+            Firm name
+            <input className={input} value={form.name} onChange={update("name")} required disabled={running} />
+          </label>
+        )}
         <label className="block text-sm">
           Website
           <input
@@ -330,20 +324,24 @@ function SetupForm() {
             </span>
           )}
         </label>
-        <details className="text-sm">
-          <summary className="cursor-pointer text-night-600">Advisor names (optional)</summary>
-          <input
-            className={input}
-            value={form.advisors}
-            onChange={update("advisors")}
-            placeholder="Comma or line separated"
-            disabled={running}
-          />
-        </details>
-        <label className="flex items-center gap-2 text-sm">
-          <input type="checkbox" checked={form.includeSearch} onChange={update("includeSearch")} disabled={running} />
-          Also search LinkedIn, review sites, press releases and podcasts (uses search credits)
-        </label>
+        {signedIn && (
+          <>
+            <details className="text-sm">
+              <summary className="cursor-pointer text-night-600">Advisor names (optional)</summary>
+              <input
+                className={input}
+                value={form.advisors}
+                onChange={update("advisors")}
+                placeholder="Comma or line separated"
+                disabled={running}
+              />
+            </details>
+            <label className="flex items-center gap-2 text-sm">
+              <input type="checkbox" checked={form.includeSearch} onChange={update("includeSearch")} disabled={running} />
+              Also search LinkedIn, review sites, press releases and podcasts (uses search credits)
+            </label>
+          </>
+        )}
         <button type="submit" disabled={running || discovery.status === "loading"} className={primary}>
           {discovery.status === "loading" ? "Finding pages…" : "Find pages"}
         </button>
@@ -361,6 +359,19 @@ function SetupForm() {
       )}
       {discovery.status === "error" && (
         <ErrorBlock message={`We couldn't find pages: ${discovery.message}`} onRetry={() => handleFind()} />
+      )}
+      {discovery.status === "signin" && (
+        <div data-testid="signin-needed" className="space-y-3 rounded-[10px] border border-paper-200 bg-white p-4 text-sm">
+          <p className="font-medium text-night-950">Sign in to scan your firm</p>
+          <div className="flex flex-wrap items-center gap-3">
+            <button type="button" onClick={signIn} className={primary}>
+              Sign in with Google
+            </button>
+            <button type="button" onClick={tryDemo} className={secondary}>
+              Try it on our demo firm
+            </button>
+          </div>
+        </div>
       )}
 
       {discovery.status === "ready" && (
@@ -384,6 +395,8 @@ function SetupForm() {
               </Link>
             </div>
           )}
+          {!discovery.limited && (
+            <>
           {discovery.unreachable && (
             <p role="status" data-testid="unreachable" className="rounded-md bg-lamp-100 p-3 text-sm text-lamp-700">
               We couldn't reach {display}, so only its start page is listed. Check the website, or add URLs manually.
@@ -412,6 +425,8 @@ function SetupForm() {
               />
             </>
           )}
+          {signedIn && (
+            <>
           <details className="text-sm" open={found.length === 0}>
             <summary className="cursor-pointer text-night-600">Add a URL manually</summary>
             <textarea
@@ -442,6 +457,10 @@ function SetupForm() {
               </span>
             )}
           </div>
+            </>
+          )}
+            </>
+          )}
         </section>
       )}
 
