@@ -2,16 +2,38 @@
 
 **Vigil scans what your firm has published online and flags anything that may conflict with your compliance policy, with the exact quote, for a human to review.**
 
+### ▶ Try it live: **[marketing-rule-watch-a0747dd2.base44.app](https://marketing-rule-watch-a0747dd2.base44.app/)**
+
+| | |
+|---|---|
+| **Live app** | https://marketing-rule-watch-a0747dd2.base44.app/ |
+| **Findings, no sign-in** | https://marketing-rule-watch-a0747dd2.base44.app/demo |
+| **Demo firm site (fictional)** | https://nathanqiu07.github.io/quarrywick-wealth-demo/ |
+| **Third-party review site (fictional, built by Devin)** | https://nathanqiu07.github.io/advisorquill/ |
+| **Code** | https://github.com/jadenvv/talktousers-Group3 |
+| **Pitch deck** | [`Vigil Pitch.pdf`](Vigil%20Pitch.pdf) |
+| **Silent demo clips** | [`marketing-rule-watch/research/screenshots/clips/`](marketing-rule-watch/research/screenshots/clips/) |
+
 Built at the Talk to Users hackathon (SF Tech Week, 10 Oct 2026) for **compliance officers at small SEC-registered investment advisers**. The policy it checks against today is the SEC Marketing Rule (Rule 206(4)-1).
 
-> Not legal advice. All flags require human review.
+> Not legal advice. All flags require human review. Vigil says "potential issue for review", never "violation".
 
-Vigil says "potential issue for review", never "violation".
+![How Vigil works: crawl, check, suggest, decide](marketing-rule-watch/research/screenshots/slides/02-workflow-steps.png)
 
-**Live app:** https://marketing-rule-watch-a0747dd2.base44.app/
-**No-sign-in fallback:** https://marketing-rule-watch-a0747dd2.base44.app/demo
+The demo firm, **Quarrywick Wealth**, is fictional. Its site was built for this demo with 11 planted issues and an answer key (`marketing-rule-watch/demo-site/ANSWER_KEY.md`). Vigil makes no claims about any real firm.
 
-The demo firm, **Quarrywick Wealth**, is fictional. Its site (https://nathanqiu07.github.io/quarrywick-wealth-demo/) was built for this demo with 11 planted issues and an answer key (`marketing-rule-watch/demo-site/ANSWER_KEY.md`). Vigil makes no claims about any real firm.
+## Try it in a minute
+
+1. Open the [live app](https://marketing-rule-watch-a0747dd2.base44.app/) and type `nathanqiu07.github.io/quarrywick-wealth-demo` into the Scan box.
+2. Vigil finds the firm's pages. Click **Open results**.
+3. Open any flag to see the exact quote highlighted on the page as captured, why it was flagged, the capture time and the page fingerprint.
+4. Click **Suggest a rewrite**, then approve, edit or dismiss it.
+
+No sign-in needed. To skip the scan, go straight to [`/demo`](https://marketing-rule-watch-a0747dd2.base44.app/demo).
+
+| Every flag shows its evidence | A person approves the rewrite |
+|---|---|
+| ![Flag detail with the quote highlighted on the captured page](marketing-rule-watch/research/screenshots/slides/05-flag-evidence.png) | ![Suggested rewrite, before and after, approved](marketing-rule-watch/research/screenshots/slides/07-rewrite-approved.png) |
 
 ## Demo flow
 
