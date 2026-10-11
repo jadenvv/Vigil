@@ -75,3 +75,9 @@ Each span is a character-exact substring of the page's raw HTML/visible text, pl
 - The three basic listings (`/firms/sorrelwood-wealth.html`, `/firms/tarnworth-advisory.html`, `/firms/vellbrook-capital.html`), the directory home (`/index.html`) and the article (`/articles/quarrywick-retirement-income.html`) contain no planted issues.
 
 These labels are intended test expectations, not a guarantee of what the current detector returns. Note for P4: `eval/cases_demo_site.jsonl` is not extended with these cases — `suite.py site` keys gold by page path, so a third-party `/index.html` case would collide with the firm site's. A separate case file would be needed to eval this origin.
+
+## Cross-document contradictions
+
+Fixtures for the cross-reference detector live in `demo-site/docs/` (all fictional; not on the live site): a Form ADV Part 2A brochure (`form_adv_part2a.md`) and an archived 2021 blog post (`blog_2021_archive.md`). `docs/load.py` (`load_demo_docs()`) returns the site pages plus both documents as `{"url", "channel", "markdown"}`.
+
+Eight planted contradictions pair a site claim with document evidence: "never lost money in a down year" (2 rows: the ADV's 2022 composite loss and the 2021 blog's 2018 losses), "consistently beats the market", "guaranteed income for life" (2 rows), "We do not sell insurance products or earn commissions", "We are fee-only..." and "We do not share in any of these fees." The exact quotes, plus 12 deliberate near-misses that must not fire, are in `docs/README.md`. The home page's "most trusted retirement firm" claim has no contradicting document on purpose.
