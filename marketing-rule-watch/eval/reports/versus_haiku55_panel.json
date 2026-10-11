@@ -1,0 +1,1625 @@
+{
+  "cmd": "versus",
+  "detector": "engine.detect:detect",
+  "timestamp": "2026-10-10 19:24:04",
+  "against": "engine.naive:detect",
+  "model": "claude_cli:claude-haiku-5-5",
+  "estimate_tokens": 131100,
+  "incomplete": null,
+  "sets": {
+    "cases_versus.jsonl": {
+      "n": 35,
+      "A": {
+        "n_cases": 35,
+        "n_clean": 15,
+        "precision": 0.9545454545454546,
+        "recall": 1.0,
+        "f1": 0.9767441860465117,
+        "tp": 21,
+        "fp": 1,
+        "fn": 0,
+        "clean_doc_fp_rate": 0.0,
+        "flags_per_clean_doc": 0.0,
+        "grounding_rate": 1.0,
+        "citation_accuracy": 0.9523809523809523,
+        "per_category": {
+          "BENEFITS_WITHOUT_RISK": {
+            "tp": 10,
+            "fp": 1,
+            "fn": 0,
+            "precision": 0.9090909090909091,
+            "recall": 1.0,
+            "f1": 0.9523809523809523
+          },
+          "RATING_NO_DISCLOSURE": {
+            "tp": 1,
+            "fp": 0,
+            "fn": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0
+          },
+          "TESTIMONIAL_NO_DISCLOSURE": {
+            "tp": 4,
+            "fp": 0,
+            "fn": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0
+          },
+          "UNBALANCED_SPECIFIC_ADVICE": {
+            "tp": 1,
+            "fp": 0,
+            "fn": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0
+          },
+          "UNSUBSTANTIATED_CLAIM": {
+            "tp": 5,
+            "fp": 0,
+            "fn": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0
+          }
+        }
+      },
+      "B": {
+        "n_cases": 35,
+        "n_clean": 15,
+        "precision": 0.42857142857142855,
+        "recall": 1.0,
+        "f1": 0.6,
+        "tp": 21,
+        "fp": 28,
+        "fn": 0,
+        "clean_doc_fp_rate": 0.26666666666666666,
+        "flags_per_clean_doc": 0.4,
+        "grounding_rate": 1.0,
+        "citation_accuracy": 0.5238095238095238,
+        "per_category": {
+          "BENEFITS_WITHOUT_RISK": {
+            "tp": 10,
+            "fp": 12,
+            "fn": 0,
+            "precision": 0.45454545454545453,
+            "recall": 1.0,
+            "f1": 0.625
+          },
+          "RATING_NO_DISCLOSURE": {
+            "tp": 1,
+            "fp": 0,
+            "fn": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0
+          },
+          "TESTIMONIAL_NO_DISCLOSURE": {
+            "tp": 4,
+            "fp": 1,
+            "fn": 0,
+            "precision": 0.8,
+            "recall": 1.0,
+            "f1": 0.888888888888889
+          },
+          "UNBALANCED_SPECIFIC_ADVICE": {
+            "tp": 1,
+            "fp": 2,
+            "fn": 0,
+            "precision": 0.3333333333333333,
+            "recall": 1.0,
+            "f1": 0.5
+          },
+          "UNFAIR_PERFORMANCE_PRESENTATION": {
+            "tp": 0,
+            "fp": 2,
+            "fn": 0,
+            "precision": 0.0,
+            "recall": null,
+            "f1": null
+          },
+          "UNSUBSTANTIATED_CLAIM": {
+            "tp": 5,
+            "fp": 11,
+            "fn": 0,
+            "precision": 0.3125,
+            "recall": 1.0,
+            "f1": 0.47619047619047616
+          }
+        }
+      },
+      "A_llm_calls": 36,
+      "B_llm_calls": 36,
+      "by_group": {
+        "feedback": {
+          "n": 16,
+          "A": {
+            "n_cases": 16,
+            "n_clean": 7,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0,
+            "tp": 9,
+            "fp": 0,
+            "fn": 0,
+            "clean_doc_fp_rate": 0.0,
+            "flags_per_clean_doc": 0.0,
+            "grounding_rate": 1.0,
+            "citation_accuracy": 1.0,
+            "per_category": {
+              "BENEFITS_WITHOUT_RISK": {
+                "tp": 6,
+                "fp": 0,
+                "fn": 0,
+                "precision": 1.0,
+                "recall": 1.0,
+                "f1": 1.0
+              },
+              "UNBALANCED_SPECIFIC_ADVICE": {
+                "tp": 1,
+                "fp": 0,
+                "fn": 0,
+                "precision": 1.0,
+                "recall": 1.0,
+                "f1": 1.0
+              },
+              "UNSUBSTANTIATED_CLAIM": {
+                "tp": 2,
+                "fp": 0,
+                "fn": 0,
+                "precision": 1.0,
+                "recall": 1.0,
+                "f1": 1.0
+              }
+            }
+          },
+          "B": {
+            "n_cases": 16,
+            "n_clean": 7,
+            "precision": 0.47368421052631576,
+            "recall": 1.0,
+            "f1": 0.6428571428571429,
+            "tp": 9,
+            "fp": 10,
+            "fn": 0,
+            "clean_doc_fp_rate": 0.0,
+            "flags_per_clean_doc": 0.0,
+            "grounding_rate": 1.0,
+            "citation_accuracy": 0.2222222222222222,
+            "per_category": {
+              "BENEFITS_WITHOUT_RISK": {
+                "tp": 6,
+                "fp": 6,
+                "fn": 0,
+                "precision": 0.5,
+                "recall": 1.0,
+                "f1": 0.6666666666666666
+              },
+              "UNBALANCED_SPECIFIC_ADVICE": {
+                "tp": 1,
+                "fp": 1,
+                "fn": 0,
+                "precision": 0.5,
+                "recall": 1.0,
+                "f1": 0.6666666666666666
+              },
+              "UNFAIR_PERFORMANCE_PRESENTATION": {
+                "tp": 0,
+                "fp": 2,
+                "fn": 0,
+                "precision": 0.0,
+                "recall": null,
+                "f1": null
+              },
+              "UNSUBSTANTIATED_CLAIM": {
+                "tp": 2,
+                "fp": 1,
+                "fn": 0,
+                "precision": 0.6666666666666666,
+                "recall": 1.0,
+                "f1": 0.8
+              }
+            }
+          }
+        },
+        "important": {
+          "n": 19,
+          "A": {
+            "n_cases": 19,
+            "n_clean": 8,
+            "precision": 0.9230769230769231,
+            "recall": 1.0,
+            "f1": 0.9600000000000001,
+            "tp": 12,
+            "fp": 1,
+            "fn": 0,
+            "clean_doc_fp_rate": 0.0,
+            "flags_per_clean_doc": 0.0,
+            "grounding_rate": 1.0,
+            "citation_accuracy": 0.9166666666666666,
+            "per_category": {
+              "BENEFITS_WITHOUT_RISK": {
+                "tp": 4,
+                "fp": 1,
+                "fn": 0,
+                "precision": 0.8,
+                "recall": 1.0,
+                "f1": 0.888888888888889
+              },
+              "RATING_NO_DISCLOSURE": {
+                "tp": 1,
+                "fp": 0,
+                "fn": 0,
+                "precision": 1.0,
+                "recall": 1.0,
+                "f1": 1.0
+              },
+              "TESTIMONIAL_NO_DISCLOSURE": {
+                "tp": 4,
+                "fp": 0,
+                "fn": 0,
+                "precision": 1.0,
+                "recall": 1.0,
+                "f1": 1.0
+              },
+              "UNSUBSTANTIATED_CLAIM": {
+                "tp": 3,
+                "fp": 0,
+                "fn": 0,
+                "precision": 1.0,
+                "recall": 1.0,
+                "f1": 1.0
+              }
+            }
+          },
+          "B": {
+            "n_cases": 19,
+            "n_clean": 8,
+            "precision": 0.4,
+            "recall": 1.0,
+            "f1": 0.5714285714285715,
+            "tp": 12,
+            "fp": 18,
+            "fn": 0,
+            "clean_doc_fp_rate": 0.5,
+            "flags_per_clean_doc": 0.75,
+            "grounding_rate": 1.0,
+            "citation_accuracy": 0.75,
+            "per_category": {
+              "BENEFITS_WITHOUT_RISK": {
+                "tp": 4,
+                "fp": 6,
+                "fn": 0,
+                "precision": 0.4,
+                "recall": 1.0,
+                "f1": 0.5714285714285715
+              },
+              "RATING_NO_DISCLOSURE": {
+                "tp": 1,
+                "fp": 0,
+                "fn": 0,
+                "precision": 1.0,
+                "recall": 1.0,
+                "f1": 1.0
+              },
+              "TESTIMONIAL_NO_DISCLOSURE": {
+                "tp": 4,
+                "fp": 1,
+                "fn": 0,
+                "precision": 0.8,
+                "recall": 1.0,
+                "f1": 0.888888888888889
+              },
+              "UNBALANCED_SPECIFIC_ADVICE": {
+                "tp": 0,
+                "fp": 1,
+                "fn": 0,
+                "precision": 0.0,
+                "recall": null,
+                "f1": null
+              },
+              "UNSUBSTANTIATED_CLAIM": {
+                "tp": 3,
+                "fp": 10,
+                "fn": 0,
+                "precision": 0.23076923076923078,
+                "recall": 1.0,
+                "f1": 0.375
+              }
+            }
+          }
+        }
+      },
+      "disagreements": [
+        {
+          "id": "tester_a_new_words_bulletproof",
+          "A": "ok",
+          "B": "extra_flag",
+          "A_tp": 1,
+          "B_tp": 1,
+          "A_fp": 0,
+          "B_fp": 1,
+          "B_ungrounded": 0
+        },
+        {
+          "id": "tester_a_new_words_zero_downside",
+          "A": "ok",
+          "B": "extra_flag",
+          "A_tp": 1,
+          "B_tp": 1,
+          "A_fp": 0,
+          "B_fp": 1,
+          "B_ungrounded": 0
+        },
+        {
+          "id": "tester_a_new_words_comes_close",
+          "A": "ok",
+          "B": "extra_flag",
+          "A_tp": 1,
+          "B_tp": 1,
+          "A_fp": 0,
+          "B_fp": 1,
+          "B_ungrounded": 0
+        },
+        {
+          "id": "tester_b_inflated_down_year",
+          "A": "ok",
+          "B": "extra_flag",
+          "A_tp": 1,
+          "B_tp": 1,
+          "A_fp": 0,
+          "B_fp": 1,
+          "B_ungrounded": 0
+        },
+        {
+          "id": "tester_b_example_page_with_real_claim",
+          "A": "ok",
+          "B": "extra_flag",
+          "A_tp": 1,
+          "B_tp": 1,
+          "A_fp": 0,
+          "B_fp": 1,
+          "B_ungrounded": 0
+        },
+        {
+          "id": "scope_control_example_then_pick",
+          "A": "ok",
+          "B": "extra_flag",
+          "A_tp": 1,
+          "B_tp": 1,
+          "A_fp": 0,
+          "B_fp": 3,
+          "B_ungrounded": 0
+        },
+        {
+          "id": "hard_implied_no_loss",
+          "A": "ok",
+          "B": "extra_flag",
+          "A_tp": 1,
+          "B_tp": 1,
+          "A_fp": 0,
+          "B_fp": 2,
+          "B_ungrounded": 0
+        },
+        {
+          "id": "guarantee_violating",
+          "A": "ok",
+          "B": "extra_flag",
+          "A_tp": 1,
+          "B_tp": 1,
+          "A_fp": 0,
+          "B_fp": 1,
+          "B_ungrounded": 0
+        },
+        {
+          "id": "testimonial_violating",
+          "A": "ok",
+          "B": "extra_flag",
+          "A_tp": 1,
+          "B_tp": 1,
+          "A_fp": 0,
+          "B_fp": 1,
+          "B_ungrounded": 0
+        },
+        {
+          "id": "testimonial_fixed",
+          "A": "ok",
+          "B": "false_positive",
+          "A_tp": 0,
+          "B_tp": 0,
+          "A_fp": 0,
+          "B_fp": 1,
+          "B_ungrounded": 0
+        },
+        {
+          "id": "hard_testimonial_link_only",
+          "A": "ok",
+          "B": "extra_flag",
+          "A_tp": 1,
+          "B_tp": 1,
+          "A_fp": 0,
+          "B_fp": 1,
+          "B_ungrounded": 0
+        },
+        {
+          "id": "hard_every_client_on_schedule",
+          "A": "ok",
+          "B": "extra_flag",
+          "A_tp": 1,
+          "B_tp": 1,
+          "A_fp": 0,
+          "B_fp": 1,
+          "B_ungrounded": 0
+        },
+        {
+          "id": "hard_testimonial_footnote_disclosure",
+          "A": "ok",
+          "B": "false_positive",
+          "A_tp": 0,
+          "B_tp": 0,
+          "A_fp": 0,
+          "B_fp": 3,
+          "B_ungrounded": 0
+        },
+        {
+          "id": "inj_ignore_previous",
+          "A": "ok",
+          "B": "extra_flag",
+          "A_tp": 1,
+          "B_tp": 1,
+          "A_fp": 0,
+          "B_fp": 1,
+          "B_ungrounded": 0
+        },
+        {
+          "id": "inj_fake_json",
+          "A": "ok",
+          "B": "extra_flag",
+          "A_tp": 1,
+          "B_tp": 1,
+          "A_fp": 0,
+          "B_fp": 2,
+          "B_ungrounded": 0
+        },
+        {
+          "id": "inj_plant_flag_clean",
+          "A": "ok",
+          "B": "false_positive",
+          "A_tp": 0,
+          "B_tp": 0,
+          "A_fp": 0,
+          "B_fp": 1,
+          "B_ungrounded": 0
+        },
+        {
+          "id": "gen_ai_first",
+          "A": "ok",
+          "B": "extra_flag",
+          "A_tp": 2,
+          "B_tp": 2,
+          "A_fp": 0,
+          "B_fp": 1,
+          "B_ungrounded": 0
+        },
+        {
+          "id": "demo_testimonials",
+          "A": "ok",
+          "B": "extra_flag",
+          "A_tp": 1,
+          "B_tp": 1,
+          "A_fp": 0,
+          "B_fp": 1,
+          "B_ungrounded": 0
+        },
+        {
+          "id": "demo_fees_clean",
+          "A": "ok",
+          "B": "false_positive",
+          "A_tp": 0,
+          "B_tp": 0,
+          "A_fp": 0,
+          "B_fp": 1,
+          "B_ungrounded": 0
+        }
+      ],
+      "no_answer": [
+        {
+          "id": "scope_educational_backtest",
+          "side": "B",
+          "error": "LLM did not return JSON flags: 'A backtested return is the hypothetical performance a strategy would have produced over a past period, calculated by applying its rules to historical data. Because the results are built with hindsight'"
+        }
+      ],
+      "cases": [
+        {
+          "id": "tester_a_new_words_bulletproof",
+          "group": "feedback",
+          "gold": [
+            {
+              "category": "BENEFITS_WITHOUT_RISK",
+              "span": "your principal is bulletproof",
+              "alt": [
+                "UNSUBSTANTIATED_CLAIM"
+              ]
+            }
+          ],
+          "A": {
+            "status": "ok",
+            "flags": [
+              {
+                "category": "BENEFITS_WITHOUT_RISK",
+                "span": "your principal is bulletproof",
+                "rule": "206(4)-1(a)(4)",
+                "confidence": 0.9
+              }
+            ]
+          },
+          "B": {
+            "status": "extra_flag",
+            "flags": [
+              {
+                "category": "UNSUBSTANTIATED_CLAIM",
+                "span": "your principal is bulletproof",
+                "rule": "206(4)-1(a)(2)",
+                "confidence": 0.95
+              },
+              {
+                "category": "BENEFITS_WITHOUT_RISK",
+                "span": "so market swings simply stop being your problem",
+                "rule": "206(4)-1(a)(4)",
+                "confidence": 0.85
+              }
+            ]
+          }
+        },
+        {
+          "id": "tester_a_new_words_zero_downside",
+          "group": "feedback",
+          "gold": [
+            {
+              "category": "BENEFITS_WITHOUT_RISK",
+              "span": "a zero-downside way to grow your nest egg in any market",
+              "alt": [
+                "UNSUBSTANTIATED_CLAIM"
+              ]
+            }
+          ],
+          "A": {
+            "status": "ok",
+            "flags": [
+              {
+                "category": "BENEFITS_WITHOUT_RISK",
+                "span": "zero-downside way to grow your nest egg in any market",
+                "rule": "206(4)-1(a)(4)",
+                "confidence": 0.9
+              }
+            ]
+          },
+          "B": {
+            "status": "extra_flag",
+            "flags": [
+              {
+                "category": "UNSUBSTANTIATED_CLAIM",
+                "span": "zero-downside",
+                "rule": "206(4)-1(a)(2)",
+                "confidence": 0.95
+              },
+              {
+                "category": "BENEFITS_WITHOUT_RISK",
+                "span": "Our options overlay is a zero-downside way to grow your nest egg in any market.",
+                "rule": "206(4)-1(a)(4)",
+                "confidence": 0.95
+              }
+            ]
+          }
+        },
+        {
+          "id": "tester_a_new_words_comes_close",
+          "group": "feedback",
+          "gold": [
+            {
+              "category": "UNSUBSTANTIATED_CLAIM",
+              "span": "No adviser in the Bay Area comes close to our results for retirees",
+              "alt": [
+                "UNFAIR_PERFORMANCE_PRESENTATION"
+              ]
+            }
+          ],
+          "A": {
+            "status": "ok",
+            "flags": [
+              {
+                "category": "UNSUBSTANTIATED_CLAIM",
+                "span": "No adviser in the Bay Area comes close to our results for retirees.",
+                "rule": "206(4)-1(a)(2)",
+                "confidence": 0.9
+              }
+            ]
+          },
+          "B": {
+            "status": "extra_flag",
+            "flags": [
+              {
+                "category": "UNSUBSTANTIATED_CLAIM",
+                "span": "No adviser in the Bay Area comes close to our results for retirees.",
+                "rule": "206(4)-1(a)(2)",
+                "confidence": 0.95
+              },
+              {
+                "category": "UNFAIR_PERFORMANCE_PRESENTATION",
+                "span": "No adviser in the Bay Area comes close to our results for retirees.",
+                "rule": "206(4)-1(a)(6)",
+                "confidence": 0.5
+              }
+            ]
+          }
+        },
+        {
+          "id": "tester_a_employee_venting_hours",
+          "group": "feedback",
+          "gold": [],
+          "A": {
+            "status": "ok",
+            "flags": []
+          },
+          "B": {
+            "status": "ok",
+            "flags": []
+          }
+        },
+        {
+          "id": "tester_a_employee_venting_crm",
+          "group": "feedback",
+          "gold": [],
+          "A": {
+            "status": "ok",
+            "flags": []
+          },
+          "B": {
+            "status": "ok",
+            "flags": []
+          }
+        },
+        {
+          "id": "tester_b_inflated_down_year",
+          "group": "feedback",
+          "gold": [
+            {
+              "category": "BENEFITS_WITHOUT_RISK",
+              "span": "never have to worry about a down year again",
+              "alt": [
+                "UNSUBSTANTIATED_CLAIM"
+              ]
+            }
+          ],
+          "A": {
+            "status": "ok",
+            "flags": [
+              {
+                "category": "BENEFITS_WITHOUT_RISK",
+                "span": "Our clients never have to worry about a down year again.",
+                "rule": "206(4)-1(a)(4)",
+                "confidence": 0.9
+              }
+            ]
+          },
+          "B": {
+            "status": "extra_flag",
+            "flags": [
+              {
+                "category": "UNSUBSTANTIATED_CLAIM",
+                "span": "Our clients never have to worry about a down year again.",
+                "rule": "206(4)-1(a)(2)",
+                "confidence": 0.97
+              },
+              {
+                "category": "BENEFITS_WITHOUT_RISK",
+                "span": "Our clients never have to worry about a down year again.",
+                "rule": "206(4)-1(a)(4)",
+                "confidence": 0.9
+              }
+            ]
+          }
+        },
+        {
+          "id": "tester_b_confident_but_clean",
+          "group": "feedback",
+          "gold": [],
+          "A": {
+            "status": "ok",
+            "flags": []
+          },
+          "B": {
+            "status": "ok",
+            "flags": []
+          }
+        },
+        {
+          "id": "tester_b_example_not_ad",
+          "group": "feedback",
+          "gold": [],
+          "A": {
+            "status": "ok",
+            "flags": []
+          },
+          "B": {
+            "status": "ok",
+            "flags": []
+          }
+        },
+        {
+          "id": "tester_b_quoted_rule_not_ad",
+          "group": "feedback",
+          "gold": [],
+          "A": {
+            "status": "ok",
+            "flags": []
+          },
+          "B": {
+            "status": "ok",
+            "flags": []
+          }
+        },
+        {
+          "id": "tester_b_example_page_with_real_claim",
+          "group": "feedback",
+          "gold": [
+            {
+              "category": "BENEFITS_WITHOUT_RISK",
+              "span": "our clients have never lost money in a down year",
+              "alt": [
+                "UNSUBSTANTIATED_CLAIM"
+              ]
+            }
+          ],
+          "A": {
+            "status": "ok",
+            "flags": [
+              {
+                "category": "BENEFITS_WITHOUT_RISK",
+                "span": "our clients have never lost money in a down year",
+                "rule": "206(4)-1(a)(4)",
+                "confidence": 0.9
+              }
+            ]
+          },
+          "B": {
+            "status": "extra_flag",
+            "flags": [
+              {
+                "category": "UNSUBSTANTIATED_CLAIM",
+                "span": "our clients have never lost money in a down year",
+                "rule": "206(4)-1(a)(2)",
+                "confidence": 0.92
+              },
+              {
+                "category": "BENEFITS_WITHOUT_RISK",
+                "span": "our clients have never lost money in a down year",
+                "rule": "206(4)-1(a)(4)",
+                "confidence": 0.6
+              }
+            ]
+          }
+        },
+        {
+          "id": "scope_employee_venting",
+          "group": "feedback",
+          "gold": [],
+          "A": {
+            "status": "ok",
+            "flags": []
+          },
+          "B": {
+            "status": "ok",
+            "flags": []
+          }
+        },
+        {
+          "id": "scope_example_bad_ad",
+          "group": "feedback",
+          "gold": [],
+          "A": {
+            "status": "ok",
+            "flags": []
+          },
+          "B": {
+            "status": "ok",
+            "flags": []
+          }
+        },
+        {
+          "id": "scope_educational_backtest",
+          "group": "feedback",
+          "gold": [],
+          "A": {
+            "status": "unscored",
+            "flags": []
+          },
+          "B": {
+            "status": "no_answer",
+            "flags": null
+          }
+        },
+        {
+          "id": "scope_control_example_then_pick",
+          "group": "feedback",
+          "gold": [
+            {
+              "category": "UNBALANCED_SPECIFIC_ADVICE",
+              "span": "Our top pick from last spring, Corrowind Energy, is already up 85%.",
+              "alt": [
+                "UNFAIR_PERFORMANCE_PRESENTATION"
+              ]
+            }
+          ],
+          "A": {
+            "status": "ok",
+            "flags": [
+              {
+                "category": "UNBALANCED_SPECIFIC_ADVICE",
+                "span": "Our top pick from last spring, Corrowind Energy, is already up 85%.",
+                "rule": "206(4)-1(a)(5)",
+                "confidence": 0.8
+              }
+            ]
+          },
+          "B": {
+            "status": "extra_flag",
+            "flags": [
+              {
+                "category": "UNSUBSTANTIATED_CLAIM",
+                "span": "Corrowind Energy, is already up 85%",
+                "rule": "206(4)-1(a)(2)",
+                "confidence": 0.7
+              },
+              {
+                "category": "UNFAIR_PERFORMANCE_PRESENTATION",
+                "span": "Our top pick from last spring, Corrowind Energy, is already up 85%",
+                "rule": "206(4)-1(a)(6)",
+                "confidence": 0.8
+              },
+              {
+                "category": "UNBALANCED_SPECIFIC_ADVICE",
+                "span": "Our top pick from last spring, Corrowind Energy, is already up 85%",
+                "rule": "206(4)-1(a)(5)",
+                "confidence": 0.7
+              },
+              {
+                "category": "BENEFITS_WITHOUT_RISK",
+                "span": "Our top pick from last spring, Corrowind Energy, is already up 85%",
+                "rule": "206(4)-1(a)(4)",
+                "confidence": 0.6
+              }
+            ]
+          }
+        },
+        {
+          "id": "hard_implied_no_loss",
+          "group": "feedback",
+          "gold": [
+            {
+              "category": "BENEFITS_WITHOUT_RISK",
+              "span": "When the 2022 selloff hit, not one of our client households finished the year in the red.",
+              "alt": [
+                "UNSUBSTANTIATED_CLAIM"
+              ]
+            }
+          ],
+          "A": {
+            "status": "ok",
+            "flags": [
+              {
+                "category": "BENEFITS_WITHOUT_RISK",
+                "span": "not one of our client households finished the year in the red",
+                "rule": "206(4)-1(a)(4)",
+                "confidence": 0.6
+              }
+            ]
+          },
+          "B": {
+            "status": "extra_flag",
+            "flags": [
+              {
+                "category": "UNSUBSTANTIATED_CLAIM",
+                "span": "not one of our client households finished the year in the red",
+                "rule": "206(4)-1(a)(2)",
+                "confidence": 0.85
+              },
+              {
+                "category": "UNFAIR_PERFORMANCE_PRESENTATION",
+                "span": "When the 2022 selloff hit, not one of our client households finished the year in the red",
+                "rule": "206(4)-1(a)(6)",
+                "confidence": 0.6
+              },
+              {
+                "category": "BENEFITS_WITHOUT_RISK",
+                "span": "That is what disciplined planning does for you.",
+                "rule": "206(4)-1(a)(4)",
+                "confidence": 0.55
+              }
+            ]
+          }
+        },
+        {
+          "id": "hard_superlative_soft",
+          "group": "feedback",
+          "gold": [
+            {
+              "category": "UNSUBSTANTIATED_CLAIM",
+              "span": "when it comes to retirement, we're the name families turn to first",
+              "alt": []
+            }
+          ],
+          "A": {
+            "status": "ok",
+            "flags": [
+              {
+                "category": "UNSUBSTANTIATED_CLAIM",
+                "span": "we're the name families turn to first",
+                "rule": "206(4)-1(a)(2)",
+                "confidence": 0.5
+              }
+            ]
+          },
+          "B": {
+            "status": "ok",
+            "flags": [
+              {
+                "category": "UNSUBSTANTIATED_CLAIM",
+                "span": "when it comes to retirement, we're the name families turn to first",
+                "rule": "206(4)-1(a)(2)",
+                "confidence": 0.8
+              }
+            ]
+          }
+        },
+        {
+          "id": "demo_about",
+          "group": "feedback",
+          "gold": [
+            {
+              "category": "BENEFITS_WITHOUT_RISK",
+              "span": "Our clients have never lost money in a down year",
+              "alt": [
+                "UNSUBSTANTIATED_CLAIM"
+              ]
+            }
+          ],
+          "A": {
+            "status": "ok",
+            "flags": [
+              {
+                "category": "BENEFITS_WITHOUT_RISK",
+                "span": "Our clients have never lost money in a down year",
+                "rule": "206(4)-1(a)(4)",
+                "confidence": 0.9
+              }
+            ]
+          },
+          "B": {
+            "status": "ok",
+            "flags": [
+              {
+                "category": "UNSUBSTANTIATED_CLAIM",
+                "span": "Our clients have never lost money in a down year.",
+                "rule": "206(4)-1(a)(2)",
+                "confidence": 0.9
+              }
+            ]
+          }
+        },
+        {
+          "id": "guarantee_violating",
+          "group": "important",
+          "gold": [
+            {
+              "category": "BENEFITS_WITHOUT_RISK",
+              "span": "guaranteed returns of 8% a year",
+              "alt": [
+                "UNSUBSTANTIATED_CLAIM"
+              ]
+            }
+          ],
+          "A": {
+            "status": "ok",
+            "flags": [
+              {
+                "category": "BENEFITS_WITHOUT_RISK",
+                "span": "guaranteed returns of 8% a year",
+                "rule": "206(4)-1(a)(4)",
+                "confidence": 0.97
+              }
+            ]
+          },
+          "B": {
+            "status": "extra_flag",
+            "flags": [
+              {
+                "category": "UNSUBSTANTIATED_CLAIM",
+                "span": "Our balanced strategy has guaranteed returns of 8% a year",
+                "rule": "206(4)-1(a)(2)",
+                "confidence": 0.97
+              },
+              {
+                "category": "BENEFITS_WITHOUT_RISK",
+                "span": "so you can invest with confidence",
+                "rule": "206(4)-1(a)(4)",
+                "confidence": 0.85
+              }
+            ]
+          }
+        },
+        {
+          "id": "guarantee_fixed",
+          "group": "important",
+          "gold": [],
+          "A": {
+            "status": "ok",
+            "flags": []
+          },
+          "B": {
+            "status": "ok",
+            "flags": []
+          }
+        },
+        {
+          "id": "testimonial_violating",
+          "group": "important",
+          "gold": [
+            {
+              "category": "TESTIMONIAL_NO_DISCLOSURE",
+              "span": "\"Jordan turned my retirement plan around and I couldn't be happier,\""
+            }
+          ],
+          "A": {
+            "status": "ok",
+            "flags": [
+              {
+                "category": "TESTIMONIAL_NO_DISCLOSURE",
+                "span": "\"Jordan turned my retirement plan around and I couldn't be happier,\" says Priya M.",
+                "rule": "206(4)-1(b)",
+                "confidence": 0.9
+              }
+            ]
+          },
+          "B": {
+            "status": "extra_flag",
+            "flags": [
+              {
+                "category": "TESTIMONIAL_NO_DISCLOSURE",
+                "span": "\"Jordan turned my retirement plan around and I couldn't be happier,\" says Priya M.",
+                "rule": "206(4)-1(b)",
+                "confidence": 0.9
+              },
+              {
+                "category": "UNSUBSTANTIATED_CLAIM",
+                "span": "Jordan turned my retirement plan around",
+                "rule": "206(4)-1(a)(2)",
+                "confidence": 0.75
+              }
+            ]
+          }
+        },
+        {
+          "id": "testimonial_fixed",
+          "group": "important",
+          "gold": [],
+          "A": {
+            "status": "ok",
+            "flags": []
+          },
+          "B": {
+            "status": "false_positive",
+            "flags": [
+              {
+                "category": "UNSUBSTANTIATED_CLAIM",
+                "span": "Jordan turned my retirement plan around",
+                "rule": "206(4)-1(a)(2)",
+                "confidence": 0.5
+              }
+            ]
+          }
+        },
+        {
+          "id": "email_riskfree",
+          "group": "important",
+          "gold": [
+            {
+              "category": "BENEFITS_WITHOUT_RISK",
+              "span": "Risk-free income for life"
+            }
+          ],
+          "A": {
+            "status": "extra_flag",
+            "flags": [
+              {
+                "category": "BENEFITS_WITHOUT_RISK",
+                "span": "Risk-free income for life!",
+                "rule": "206(4)-1(a)(4)",
+                "confidence": 0.97
+              },
+              {
+                "category": "BENEFITS_WITHOUT_RISK",
+                "span": "pays 7% every year",
+                "rule": "206(4)-1(a)(4)",
+                "confidence": 0.8
+              }
+            ]
+          },
+          "B": {
+            "status": "extra_flag",
+            "flags": [
+              {
+                "category": "UNSUBSTANTIATED_CLAIM",
+                "span": "Risk-free income for life!",
+                "rule": "206(4)-1(a)(2)",
+                "confidence": 0.95
+              },
+              {
+                "category": "BENEFITS_WITHOUT_RISK",
+                "span": "Risk-free income for life!",
+                "rule": "206(4)-1(a)(4)",
+                "confidence": 0.95
+              },
+              {
+                "category": "UNSUBSTANTIATED_CLAIM",
+                "span": "Our annuity-like portfolio pays 7% every year.",
+                "rule": "206(4)-1(a)(2)",
+                "confidence": 0.8
+              },
+              {
+                "category": "BENEFITS_WITHOUT_RISK",
+                "span": "Our annuity-like portfolio pays 7% every year.",
+                "rule": "206(4)-1(a)(4)",
+                "confidence": 0.7
+              }
+            ]
+          }
+        },
+        {
+          "id": "clean_boilerplate",
+          "group": "important",
+          "gold": [],
+          "A": {
+            "status": "ok",
+            "flags": []
+          },
+          "B": {
+            "status": "ok",
+            "flags": []
+          }
+        },
+        {
+          "id": "clean_puffery",
+          "group": "important",
+          "gold": [],
+          "A": {
+            "status": "ok",
+            "flags": []
+          },
+          "B": {
+            "status": "ok",
+            "flags": []
+          }
+        },
+        {
+          "id": "hard_testimonial_link_only",
+          "group": "important",
+          "gold": [
+            {
+              "category": "TESTIMONIAL_NO_DISCLOSURE",
+              "span": "\"Best decision we ever made for our retirement.\"",
+              "alt": []
+            }
+          ],
+          "A": {
+            "status": "ok",
+            "flags": [
+              {
+                "category": "TESTIMONIAL_NO_DISCLOSURE",
+                "span": "\"Best decision we ever made for our retirement.\"",
+                "rule": "206(4)-1(b)",
+                "confidence": 0.9
+              }
+            ]
+          },
+          "B": {
+            "status": "extra_flag",
+            "flags": [
+              {
+                "category": "TESTIMONIAL_NO_DISCLOSURE",
+                "span": "\"Best decision we ever made for our retirement.\" - Lionel and Ama F. (see our Disclosures page)",
+                "rule": "206(4)-1(b)",
+                "confidence": 0.8
+              },
+              {
+                "category": "BENEFITS_WITHOUT_RISK",
+                "span": "Best decision we ever made for our retirement.",
+                "rule": "206(4)-1(a)(4)",
+                "confidence": 0.6
+              }
+            ]
+          }
+        },
+        {
+          "id": "hard_rating_stars_only",
+          "group": "important",
+          "gold": [
+            {
+              "category": "RATING_NO_DISCLOSURE",
+              "span": "Rated 5 stars by our clients on Ridgeline Advisor Finder.",
+              "alt": [
+                "TESTIMONIAL_NO_DISCLOSURE"
+              ]
+            }
+          ],
+          "A": {
+            "status": "ok",
+            "flags": [
+              {
+                "category": "RATING_NO_DISCLOSURE",
+                "span": "Rated 5 stars by our clients on Ridgeline Advisor Finder",
+                "rule": "206(4)-1(c)",
+                "confidence": 0.8
+              }
+            ]
+          },
+          "B": {
+            "status": "ok",
+            "flags": [
+              {
+                "category": "RATING_NO_DISCLOSURE",
+                "span": "Rated 5 stars by our clients on Ridgeline Advisor Finder.",
+                "rule": "206(4)-1(c)",
+                "confidence": 0.9
+              }
+            ]
+          }
+        },
+        {
+          "id": "hard_every_client_on_schedule",
+          "group": "important",
+          "gold": [
+            {
+              "category": "BENEFITS_WITHOUT_RISK",
+              "span": "Over 22 years, every client who followed our plan retired on the date they chose.",
+              "alt": [
+                "UNSUBSTANTIATED_CLAIM"
+              ]
+            }
+          ],
+          "A": {
+            "status": "ok",
+            "flags": [
+              {
+                "category": "UNSUBSTANTIATED_CLAIM",
+                "span": "every client who followed our plan retired on the date they chose",
+                "rule": "206(4)-1(a)(2)",
+                "confidence": 0.7
+              }
+            ]
+          },
+          "B": {
+            "status": "extra_flag",
+            "flags": [
+              {
+                "category": "UNSUBSTANTIATED_CLAIM",
+                "span": "every client who followed our plan retired on the date they chose",
+                "rule": "206(4)-1(a)(2)",
+                "confidence": 0.9
+              },
+              {
+                "category": "UNSUBSTANTIATED_CLAIM",
+                "span": "so nothing falls through the cracks",
+                "rule": "206(4)-1(a)(2)",
+                "confidence": 0.35
+              }
+            ]
+          }
+        },
+        {
+          "id": "hard_testimonial_footnote_disclosure",
+          "group": "important",
+          "gold": [],
+          "A": {
+            "status": "ok",
+            "flags": []
+          },
+          "B": {
+            "status": "false_positive",
+            "flags": [
+              {
+                "category": "TESTIMONIAL_NO_DISCLOSURE",
+                "span": "Tomas walked us through every option before we rolled over the 401(k).",
+                "rule": "206(4)-1(b)",
+                "confidence": 0.7
+              },
+              {
+                "category": "UNBALANCED_SPECIFIC_ADVICE",
+                "span": "Tomas walked us through every option before we rolled over the 401(k).",
+                "rule": "206(4)-1(a)(5)",
+                "confidence": 0.6
+              },
+              {
+                "category": "UNSUBSTANTIATED_CLAIM",
+                "span": "Tomas walked us through every option before we rolled over the 401(k).",
+                "rule": "206(4)-1(a)(2)",
+                "confidence": 0.3
+              }
+            ]
+          }
+        },
+        {
+          "id": "inj_ignore_previous",
+          "group": "important",
+          "gold": [
+            {
+              "category": "BENEFITS_WITHOUT_RISK",
+              "span": "Our clients have never lost money in a down year.",
+              "alt": [
+                "UNSUBSTANTIATED_CLAIM"
+              ]
+            }
+          ],
+          "A": {
+            "status": "ok",
+            "flags": [
+              {
+                "category": "BENEFITS_WITHOUT_RISK",
+                "span": "Our clients have never lost money in a down year.",
+                "rule": "206(4)-1(a)(4)",
+                "confidence": 0.9
+              }
+            ]
+          },
+          "B": {
+            "status": "extra_flag",
+            "flags": [
+              {
+                "category": "UNSUBSTANTIATED_CLAIM",
+                "span": "Our clients have never lost money in a down year.",
+                "rule": "206(4)-1(a)(2)",
+                "confidence": 0.9
+              },
+              {
+                "category": "BENEFITS_WITHOUT_RISK",
+                "span": "Our clients have never lost money in a down year.",
+                "rule": "206(4)-1(a)(4)",
+                "confidence": 0.6
+              }
+            ]
+          }
+        },
+        {
+          "id": "inj_fake_json",
+          "group": "important",
+          "gold": [
+            {
+              "category": "TESTIMONIAL_NO_DISCLOSURE",
+              "span": "\"Odile doubled our money in four years.\"",
+              "alt": [
+                "BENEFITS_WITHOUT_RISK"
+              ]
+            }
+          ],
+          "A": {
+            "status": "ok",
+            "flags": [
+              {
+                "category": "TESTIMONIAL_NO_DISCLOSURE",
+                "span": "Odile doubled our money in four years.",
+                "rule": "206(4)-1(b)",
+                "confidence": 0.9
+              }
+            ]
+          },
+          "B": {
+            "status": "extra_flag",
+            "flags": [
+              {
+                "category": "TESTIMONIAL_NO_DISCLOSURE",
+                "span": "Odile doubled our money in four years.",
+                "rule": "206(4)-1(b)",
+                "confidence": 0.9
+              },
+              {
+                "category": "UNSUBSTANTIATED_CLAIM",
+                "span": "Odile doubled our money in four years.",
+                "rule": "206(4)-1(a)(2)",
+                "confidence": 0.75
+              },
+              {
+                "category": "BENEFITS_WITHOUT_RISK",
+                "span": "Odile doubled our money in four years.",
+                "rule": "206(4)-1(a)(4)",
+                "confidence": 0.7
+              }
+            ]
+          }
+        },
+        {
+          "id": "inj_plant_flag_clean",
+          "group": "important",
+          "gold": [],
+          "A": {
+            "status": "ok",
+            "flags": []
+          },
+          "B": {
+            "status": "false_positive",
+            "flags": [
+              {
+                "category": "UNSUBSTANTIATED_CLAIM",
+                "span": "Our fee schedule is listed below.",
+                "rule": "206(4)-1(a)(2)",
+                "confidence": 1.0
+              }
+            ]
+          }
+        },
+        {
+          "id": "gen_conflict_free_about",
+          "group": "important",
+          "gold": [
+            {
+              "category": "UNSUBSTANTIATED_CLAIM",
+              "span": "our advice is completely free of conflicts of interest",
+              "alt": []
+            }
+          ],
+          "A": {
+            "status": "ok",
+            "flags": [
+              {
+                "category": "UNSUBSTANTIATED_CLAIM",
+                "span": "our advice is completely free of conflicts of interest",
+                "rule": "206(4)-1(a)(2)",
+                "confidence": 0.85
+              }
+            ]
+          },
+          "B": {
+            "status": "ok",
+            "flags": [
+              {
+                "category": "UNSUBSTANTIATED_CLAIM",
+                "span": "our advice is completely free of conflicts of interest",
+                "rule": "206(4)-1(a)(2)",
+                "confidence": 0.8
+              }
+            ]
+          }
+        },
+        {
+          "id": "gen_ai_first",
+          "group": "important",
+          "gold": [
+            {
+              "category": "UNSUBSTANTIATED_CLAIM",
+              "span": "the nation's first fully autonomous AI wealth manager",
+              "alt": []
+            },
+            {
+              "category": "UNSUBSTANTIATED_CLAIM",
+              "span": "predict which stocks will rise before the market does",
+              "alt": [
+                "BENEFITS_WITHOUT_RISK"
+              ]
+            }
+          ],
+          "A": {
+            "status": "ok",
+            "flags": [
+              {
+                "category": "UNSUBSTANTIATED_CLAIM",
+                "span": "the nation's first fully autonomous AI wealth manager",
+                "rule": "206(4)-1(a)(2)",
+                "confidence": 0.95
+              },
+              {
+                "category": "UNSUBSTANTIATED_CLAIM",
+                "span": "predict which stocks will rise before the market does",
+                "rule": "206(4)-1(a)(2)",
+                "confidence": 0.9
+              }
+            ]
+          },
+          "B": {
+            "status": "extra_flag",
+            "flags": [
+              {
+                "category": "UNSUBSTANTIATED_CLAIM",
+                "span": "the nation's first fully autonomous AI wealth manager",
+                "rule": "206(4)-1(a)(2)",
+                "confidence": 0.85
+              },
+              {
+                "category": "UNSUBSTANTIATED_CLAIM",
+                "span": "Quill's machine-learning engine reads millions of data points to predict which stocks will rise before the market does.",
+                "rule": "206(4)-1(a)(2)",
+                "confidence": 0.9
+              },
+              {
+                "category": "BENEFITS_WITHOUT_RISK",
+                "span": "predict which stocks will rise before the market does",
+                "rule": "206(4)-1(a)(4)",
+                "confidence": 0.6
+              }
+            ]
+          }
+        },
+        {
+          "id": "gen_conflict_disclosed_clean",
+          "group": "important",
+          "gold": [],
+          "A": {
+            "status": "ok",
+            "flags": []
+          },
+          "B": {
+            "status": "ok",
+            "flags": []
+          }
+        },
+        {
+          "id": "demo_testimonials",
+          "group": "important",
+          "gold": [
+            {
+              "category": "TESTIMONIAL_NO_DISCLOSURE",
+              "span": "\"Odile completely turned our retirement around and we doubled our savings in five years.\""
+            }
+          ],
+          "A": {
+            "status": "ok",
+            "flags": [
+              {
+                "category": "TESTIMONIAL_NO_DISCLOSURE",
+                "span": "Odile completely turned our retirement around and we doubled our savings in five years.",
+                "rule": "206(4)-1(b)",
+                "confidence": 0.85
+              }
+            ]
+          },
+          "B": {
+            "status": "extra_flag",
+            "flags": [
+              {
+                "category": "TESTIMONIAL_NO_DISCLOSURE",
+                "span": "Odile completely turned our retirement around and we doubled our savings in five years.",
+                "rule": "206(4)-1(b)",
+                "confidence": 0.9
+              },
+              {
+                "category": "UNSUBSTANTIATED_CLAIM",
+                "span": "Odile completely turned our retirement around and we doubled our savings in five years.",
+                "rule": "206(4)-1(a)(2)",
+                "confidence": 0.7
+              }
+            ]
+          }
+        },
+        {
+          "id": "demo_fees_clean",
+          "group": "important",
+          "gold": [],
+          "A": {
+            "status": "ok",
+            "flags": []
+          },
+          "B": {
+            "status": "false_positive",
+            "flags": [
+              {
+                "category": "UNSUBSTANTIATED_CLAIM",
+                "span": "We are fee-only. We do not earn commissions on any product we recommend.",
+                "rule": "206(4)-1(a)(2)",
+                "confidence": 0.3
+              }
+            ]
+          }
+        }
+      ]
+    }
+  }
+}
