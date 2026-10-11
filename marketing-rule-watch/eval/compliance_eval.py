@@ -48,7 +48,7 @@ from collections import Counter, defaultdict
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
-IOU_MIN = 0.3  # a flag matches a gold span if same category and character IoU >= this
+IOU_MIN = 0.3  # a flag matches a gold span if same category and (character IoU >= this, or it lies inside the gold span)
 
 TAXONOMY = {
     "UNSUBSTANTIATED_CLAIM": {"rule": "206(4)-1(a)(2)", "desc": "Material claim with no reasonable basis to substantiate"},
@@ -260,7 +260,10 @@ def score_case(c: dict, preds: list[dict]) -> dict:
         for gi, (gcat, galt, gloc) in enumerate(gold):
             if gi in used or (p["category"] != gcat and p["category"] not in galt):
                 continue
-            if iou(loc, gloc) >= IOU_MIN:
+            # A shorter quote that falls wholly inside the gold span still points at the right claim
+            # ("zero-downside" inside "a zero-downside way to grow your nest egg…"): count it.
+            inside = loc[1] > loc[0] and gloc[0] <= loc[0] and loc[1] <= gloc[1]
+            if inside or iou(loc, gloc) >= IOU_MIN:
                 hit = gi
                 break
         if hit is None:
