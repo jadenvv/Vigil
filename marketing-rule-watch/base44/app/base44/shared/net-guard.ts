@@ -10,7 +10,8 @@ function v4Blocked(ip: string): boolean {
   if (p.length !== 4 || p.some((n) => !Number.isInteger(n) || n < 0 || n > 255)) return true;
   const [a, b] = p;
   return a === 0 || a === 10 || a === 127 || (a === 169 && b === 254) || (a === 172 && b >= 16 && b <= 31) ||
-    (a === 192 && b === 168) || (a === 100 && b >= 64 && b <= 127) || a >= 224; // + CGNAT, multicast, reserved
+    (a === 192 && b === 168) || (a === 100 && b >= 64 && b <= 127) || (a === 198 && (b === 18 || b === 19)) ||
+    (a === 192 && b === 0 && p[2] === 0) || a >= 224; // + CGNAT, benchmark, IETF, multicast, reserved
 }
 
 /** True for loopback, private, link-local, metadata, CGNAT, multicast/reserved, unparseable. */
@@ -20,9 +21,12 @@ export function ipBlocked(raw: string): boolean {
   if (!ip.includes(":")) return true;
   const mapped = ip.match(/^::ffff:(\d+\.\d+\.\d+\.\d+)$/);
   if (mapped) return v4Blocked(mapped[1]);
-  if (ip === "::" || ip === "::1" || ip.startsWith("::ffff:")) return true;
-  const first = parseInt(ip.split(":")[0] || "0", 16);
-  return (first & 0xfe00) === 0xfc00 || (first & 0xffc0) === 0xfe80 || (first & 0xff00) === 0xff00; // ULA, link-local, multicast
+  const groups = ip.split(":");
+  const first = parseInt(groups[0] || "0", 16);
+  // First group 0 covers ::, ::1, IPv4-compatible ::/96 and ::ffff: forms; 64:ff9b:: is NAT64, 2002:: is 6to4.
+  if (first === 0 || first === 0x2002 || (first === 0x64 && parseInt(groups[1] || "0", 16) === 0xff9b)) return true;
+  return (first & 0xfe00) === 0xfc00 || (first & 0xffc0) === 0xfe80 || (first & 0xffc0) === 0xfec0 ||
+    (first & 0xff00) === 0xff00; // ULA, link-local, site-local, multicast
 }
 
 /** null when the URL is safe to GET, else a short reason. Resolves the host (A + AAAA). */
@@ -54,7 +58,8 @@ if (import.meta.main) {
     if (JSON.stringify(a) !== JSON.stringify(b)) throw new Error(`${what}: ${JSON.stringify(a)} !== ${JSON.stringify(b)}`);
   };
   for (const ip of ["10.0.0.1", "172.16.5.4", "172.31.255.255", "192.168.1.1", "127.0.0.1", "169.254.169.254", "0.0.0.0",
-    "100.64.0.1", "::1", "::", "fc00::1", "fd12::3", "fe80::1", "::ffff:127.0.0.1", "::ffff:10.1.2.3", "999.1.1.1", "nonsense"]) {
+    "100.64.0.1", "198.18.0.1", "192.0.0.8", "::1", "::", "fc00::1", "fd12::3", "fe80::1", "fec0::1", "::ffff:127.0.0.1",
+    "::ffff:10.1.2.3", "::7f00:1", "::127.0.0.1", "64:ff9b::7f00:1", "2002:7f00:1::", "999.1.1.1", "nonsense"]) {
     eq(ipBlocked(ip), true, `blocked ${ip}`);
   }
   for (const ip of ["8.8.8.8", "172.32.0.1", "185.199.108.153", "2606:50c0:8000::153", "::ffff:8.8.8.8"]) eq(ipBlocked(ip), false, `public ${ip}`);
