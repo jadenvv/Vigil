@@ -96,6 +96,12 @@ export default async function (req: Request): Promise<Response> {
     rows = flags.map((f) => ({ flag_id: f.id, page_id: page.id, checked_at, error: message }));
   }
 
-  await db.Recheck.bulkCreate(rows).catch((e: Error) => console.log(`recheck ${flag_id}: Recheck write failed: ${e.message}`));
+  // Fail closed like the read path above: if the audit rows can't be written, the 10-minute
+  // credit cap can't hold for the next caller — report failure rather than silently returning.
+  const wrote = await db.Recheck.bulkCreate(rows).then(() => true).catch((e: Error) => {
+    console.log(`recheck ${flag_id}: Recheck write failed: ${e.message}`);
+    return false;
+  });
+  if (!wrote) return Response.json({ error: "recheck_unavailable" }, { status: 503 });
   return toResponse(rows[0], page.url, false);
 }

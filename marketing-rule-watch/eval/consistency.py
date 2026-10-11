@@ -37,6 +37,10 @@ def main() -> None:
     ap.add_argument("--out", default=str(HERE / "reports"))
     ap.add_argument("--expect-provider", metavar="NAME", help="stop (no report) if another provider answers")
     a = ap.parse_args()
+    if a.runs < 2:
+        ap.error("--runs must be at least 2 (a single run has nothing to compare with)")
+    if a.runs > 10:
+        ap.error("--runs is capped at 10 (LLM quota)")
 
     wanted = a.ids.split(",")
     cases = {c["id"]: c for c in map(json.loads, Path(a.cases).read_text().splitlines()) if c["id"] in wanted}

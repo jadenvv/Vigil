@@ -1,0 +1,19 @@
+{
+  "cmd": "calibration",
+  "detector": "engine.detect:detect",
+  "timestamp": "2026-10-10 16:39:45",
+  "buckets": {
+    "0.6-0.7": {
+      "flags": 8,
+      "precision": 1.0
+    },
+    "0.7-0.8": {
+      "flags": 43,
+      "precision": 0.8604651162790697
+    },
+    "0.8-0.9": {
+      "flags": 17,
+      "precision": 0.9411764705882353
+    }
+  }
+}

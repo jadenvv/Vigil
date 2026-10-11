@@ -24,5 +24,7 @@ export default async function (req: Request): Promise<Response> {
   if (text.length > MAX_CHARS) return Response.json({ error: `text over ${MAX_CHARS} chars` }, { status: 400 });
 
   const { flags, mode, provider, model } = await detectText(base44, text, channel);
+  // llm_error means some chunks were never analyzed: a partial list is not the full answer.
+  if (mode === "llm_error") return Response.json({ flags: [], mode, provider, model });
   return Response.json({ flags, mode, provider, model });
 }

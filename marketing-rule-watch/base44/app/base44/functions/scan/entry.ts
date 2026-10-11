@@ -49,7 +49,7 @@ export default async function (req: Request): Promise<Response> {
       if (!r.page.markdown) throw new Error("page has no readable text after cleaning");
       if (r.screenshot) {
         try {
-          const file = new File([r.screenshot], `${r.page.sha256.slice(0, 16)}.png`, { type: "image/png" });
+          const file = new File([new Uint8Array(r.screenshot)], `${r.page.sha256.slice(0, 16)}.png`, { type: "image/png" });
           const { file_url } = await base44.asServiceRole.integrations.Core.UploadFile({ file });
           r.page.screenshot_ref = file_url;
         } catch (e) {

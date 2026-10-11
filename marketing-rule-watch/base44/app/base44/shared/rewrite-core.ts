@@ -26,10 +26,12 @@ interface Applied {
 function buildMessages(text: string, flags: Flag[]) {
   const { system, user } = splitPrompt(REWRITE_PROMPT);
   const listing = flags.map((f, k) => `${k}: ${f.category} | "${f.span}" | ${f.why ?? ""}`).join("\n");
-  const page = text.split("</page_content>").join("</page_content_>"); // page can't close our delimiter
+  // page can't close our delimiter — exact tag or case/spacing variants (Python parity below)
+  const page = text.replace(/<\/?\s*page_content\s*>/gi, (m) => m.replace(/page_content/i, "page_content_"));
   return {
     system,
-    user: user.replace("{{flags}}", () => listing).replace("{{page}}", () => page),
+    // replaceAll: a {{page}} inside an untrusted flag span/why must not win the page slot
+    user: user.replaceAll("{{flags}}", () => listing).replaceAll("{{page}}", () => page),
   };
 }
 

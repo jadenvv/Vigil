@@ -1,0 +1,357 @@
+{
+  "detector": "baseline_regex",
+  "timestamp": "2026-10-10 16:39:27",
+  "cases_sha": "ea0001d727",
+  "n_cases": 11,
+  "subsets": {
+    "all": {
+      "n_cases": 11,
+      "n_clean": 9,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "tp": 0,
+      "fp": 7,
+      "fn": 2,
+      "clean_doc_fp_rate": 0.3333333333333333,
+      "flags_per_clean_doc": 0.6666666666666666,
+      "grounding_rate": 1.0,
+      "citation_accuracy": null,
+      "per_category": {
+        "BENEFITS_WITHOUT_RISK": {
+          "tp": 0,
+          "fp": 5,
+          "fn": 1,
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0
+        },
+        "HYPOTHETICAL_PERFORMANCE": {
+          "tp": 0,
+          "fp": 1,
+          "fn": 0,
+          "precision": 0.0,
+          "recall": null,
+          "f1": null
+        },
+        "TESTIMONIAL_NO_DISCLOSURE": {
+          "tp": 0,
+          "fp": 1,
+          "fn": 0,
+          "precision": 0.0,
+          "recall": null,
+          "f1": null
+        },
+        "UNBALANCED_SPECIFIC_ADVICE": {
+          "tp": 0,
+          "fp": 0,
+          "fn": 1,
+          "precision": null,
+          "recall": 0.0,
+          "f1": null
+        }
+      }
+    },
+    "reviewed": {
+      "n_cases": 0,
+      "n_clean": 0,
+      "precision": null,
+      "recall": null,
+      "f1": null,
+      "tp": 0,
+      "fp": 0,
+      "fn": 0,
+      "clean_doc_fp_rate": null,
+      "flags_per_clean_doc": null,
+      "grounding_rate": null,
+      "citation_accuracy": null,
+      "per_category": {}
+    },
+    "pattern_synthetic": {
+      "n_cases": 11,
+      "n_clean": 9,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "tp": 0,
+      "fp": 7,
+      "fn": 2,
+      "clean_doc_fp_rate": 0.3333333333333333,
+      "flags_per_clean_doc": 0.6666666666666666,
+      "grounding_rate": 1.0,
+      "citation_accuracy": null,
+      "per_category": {
+        "BENEFITS_WITHOUT_RISK": {
+          "tp": 0,
+          "fp": 5,
+          "fn": 1,
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0
+        },
+        "HYPOTHETICAL_PERFORMANCE": {
+          "tp": 0,
+          "fp": 1,
+          "fn": 0,
+          "precision": 0.0,
+          "recall": null,
+          "f1": null
+        },
+        "TESTIMONIAL_NO_DISCLOSURE": {
+          "tp": 0,
+          "fp": 1,
+          "fn": 0,
+          "precision": 0.0,
+          "recall": null,
+          "f1": null
+        },
+        "UNBALANCED_SPECIFIC_ADVICE": {
+          "tp": 0,
+          "fp": 0,
+          "fn": 1,
+          "precision": null,
+          "recall": 0.0,
+          "f1": null
+        }
+      }
+    }
+  },
+  "providers": {
+    "local": 11
+  },
+  "pairs": {
+    "pairs": 0,
+    "passed": 0,
+    "pass_rate": null,
+    "detail": {}
+  },
+  "rewrite": {
+    "tried": 0,
+    "passed": 0,
+    "pass_rate": null,
+    "note": "necessary, not sufficient: also have a human rate rewrite quality"
+  },
+  "cases": [
+    {
+      "id": "scope_educational_backtest",
+      "provenance": "pattern_synthetic",
+      "reviewed": false,
+      "clean": true,
+      "tp": [],
+      "fp": [
+        "HYPOTHETICAL_PERFORMANCE"
+      ],
+      "fn": [],
+      "ungrounded": 0,
+      "cite_ok": 0,
+      "pred_cats": [
+        "HYPOTHETICAL_PERFORMANCE"
+      ],
+      "status": "false_positive",
+      "flags": [
+        {
+          "category": "HYPOTHETICAL_PERFORMANCE",
+          "span": "back-tested return? It shows how a strategy would have performed if someone had used it in the past"
+        }
+      ],
+      "provider": null
+    },
+    {
+      "id": "scope_example_bad_ad",
+      "provenance": "pattern_synthetic",
+      "reviewed": false,
+      "clean": true,
+      "tp": [],
+      "fp": [
+        "BENEFITS_WITHOUT_RISK",
+        "BENEFITS_WITHOUT_RISK",
+        "TESTIMONIAL_NO_DISCLOSURE"
+      ],
+      "fn": [],
+      "ungrounded": 0,
+      "cite_ok": 0,
+      "pred_cats": [
+        "BENEFITS_WITHOUT_RISK",
+        "TESTIMONIAL_NO_DISCLOSURE"
+      ],
+      "status": "false_positive",
+      "flags": [
+        {
+          "category": "BENEFITS_WITHOUT_RISK",
+          "span": "guaranteed 12% returns with"
+        },
+        {
+          "category": "BENEFITS_WITHOUT_RISK",
+          "span": "no risk"
+        },
+        {
+          "category": "TESTIMONIAL_NO_DISCLOSURE",
+          "span": "\"guaranteed 12% returns with no risk.\""
+        }
+      ],
+      "provider": null
+    },
+    {
+      "id": "scope_rule_quote",
+      "provenance": "pattern_synthetic",
+      "reviewed": false,
+      "clean": true,
+      "tp": [],
+      "fp": [],
+      "fn": [],
+      "ungrounded": 0,
+      "cite_ok": 0,
+      "pred_cats": [],
+      "status": "ok",
+      "flags": [],
+      "provider": null
+    },
+    {
+      "id": "scope_index_fact",
+      "provenance": "pattern_synthetic",
+      "reviewed": false,
+      "clean": true,
+      "tp": [],
+      "fp": [],
+      "fn": [],
+      "ungrounded": 0,
+      "cite_ok": 0,
+      "pred_cats": [],
+      "status": "ok",
+      "flags": [],
+      "provider": null
+    },
+    {
+      "id": "scope_compound_illustration",
+      "provenance": "pattern_synthetic",
+      "reviewed": false,
+      "clean": true,
+      "tp": [],
+      "fp": [],
+      "fn": [],
+      "ungrounded": 0,
+      "cite_ok": 0,
+      "pred_cats": [],
+      "status": "ok",
+      "flags": [],
+      "provider": null
+    },
+    {
+      "id": "scope_client_faq",
+      "provenance": "pattern_synthetic",
+      "reviewed": false,
+      "clean": true,
+      "tp": [],
+      "fp": [
+        "BENEFITS_WITHOUT_RISK",
+        "BENEFITS_WITHOUT_RISK"
+      ],
+      "fn": [],
+      "ungrounded": 0,
+      "cite_ok": 0,
+      "pred_cats": [
+        "BENEFITS_WITHOUT_RISK"
+      ],
+      "status": "false_positive",
+      "flags": [
+        {
+          "category": "BENEFITS_WITHOUT_RISK",
+          "span": "guarantee my retirement income"
+        },
+        {
+          "category": "BENEFITS_WITHOUT_RISK",
+          "span": "guarantee returns. We build"
+        }
+      ],
+      "provider": null
+    },
+    {
+      "id": "scope_news_other_firm",
+      "provenance": "pattern_synthetic",
+      "reviewed": false,
+      "clean": true,
+      "tp": [],
+      "fp": [],
+      "fn": [],
+      "ungrounded": 0,
+      "cite_ok": 0,
+      "pred_cats": [],
+      "status": "ok",
+      "flags": [],
+      "provider": null
+    },
+    {
+      "id": "scope_employee_venting",
+      "provenance": "pattern_synthetic",
+      "reviewed": false,
+      "clean": true,
+      "tp": [],
+      "fp": [],
+      "fn": [],
+      "ungrounded": 0,
+      "cite_ok": 0,
+      "pred_cats": [],
+      "status": "ok",
+      "flags": [],
+      "provider": null
+    },
+    {
+      "id": "scope_job_post",
+      "provenance": "pattern_synthetic",
+      "reviewed": false,
+      "clean": true,
+      "tp": [],
+      "fp": [],
+      "fn": [],
+      "ungrounded": 0,
+      "cite_ok": 0,
+      "pred_cats": [],
+      "status": "ok",
+      "flags": [],
+      "provider": null
+    },
+    {
+      "id": "scope_control_contrast_claim",
+      "provenance": "pattern_synthetic",
+      "reviewed": false,
+      "clean": false,
+      "tp": [],
+      "fp": [
+        "BENEFITS_WITHOUT_RISK"
+      ],
+      "fn": [
+        "BENEFITS_WITHOUT_RISK"
+      ],
+      "ungrounded": 0,
+      "cite_ok": 0,
+      "pred_cats": [
+        "BENEFITS_WITHOUT_RISK"
+      ],
+      "status": "miss+fp",
+      "flags": [
+        {
+          "category": "BENEFITS_WITHOUT_RISK",
+          "span": "guaranteed returns. We"
+        }
+      ],
+      "provider": null
+    },
+    {
+      "id": "scope_control_example_then_pick",
+      "provenance": "pattern_synthetic",
+      "reviewed": false,
+      "clean": false,
+      "tp": [],
+      "fp": [],
+      "fn": [
+        "UNBALANCED_SPECIFIC_ADVICE"
+      ],
+      "ungrounded": 0,
+      "cite_ok": 0,
+      "pred_cats": [],
+      "status": "miss",
+      "flags": [],
+      "provider": null
+    }
+  ]
+}

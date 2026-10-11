@@ -1,0 +1,282 @@
+{
+  "cmd": "rewrite",
+  "detector": "engine.detect:detect",
+  "timestamp": "2026-10-10 16:25:24",
+  "n": 19,
+  "totals": {
+    "changed": 19,
+    "flags_cleared": 19,
+    "no_new_flags": 19,
+    "untouched_kept": 19,
+    "no_invented_numbers": 19,
+    "length_ok": 19,
+    "n": 19
+  },
+  "per_case": [
+    {
+      "id": "guarantee_violating",
+      "changed": true,
+      "flags_cleared": true,
+      "no_new_flags": true,
+      "untouched_kept": true,
+      "no_invented_numbers": true,
+      "length_ok": true,
+      "invented": [],
+      "placeholders": [],
+      "rewrite": "[REVISE: state the goal, not a promise]; returns are not guaranteed and you can lose money, so you can invest with confidence."
+    },
+    {
+      "id": "testimonial_violating",
+      "changed": true,
+      "flags_cleared": true,
+      "no_new_flags": true,
+      "untouched_kept": true,
+      "no_invented_numbers": true,
+      "length_ok": true,
+      "invented": [],
+      "placeholders": [
+        "[NAME]",
+        "[CURRENT CLIENT / NOT A CLIENT]",
+        "[WAS NOT COMPENSATED / RECEIVED COMPENSATION]"
+      ],
+      "rewrite": "\"Jordan turned my retirement plan around and I couldn't be happier,\" says Priya M. [NAME] is a [CURRENT CLIENT / NOT A CLIENT] and [WAS NOT COMPENSATED / RECEIVED COMPENSATION] for this statement."
+    },
+    {
+      "id": "grossnet_violating",
+      "changed": true,
+      "flags_cleared": true,
+      "no_new_flags": true,
+      "untouched_kept": true,
+      "no_invented_numbers": true,
+      "length_ok": true,
+      "invented": [],
+      "placeholders": [
+        "[NET]"
+      ],
+      "rewrite": "Our growth composite returned 14.2% gross annualized over the past five years ([NET]% net of fees)."
+    },
+    {
+      "id": "hypothetical_violating",
+      "changed": true,
+      "flags_cleared": true,
+      "no_new_flags": true,
+      "untouched_kept": true,
+      "no_invented_numbers": true,
+      "length_ok": true,
+      "invented": [],
+      "placeholders": [],
+      "rewrite": "Hypothetical results are available on request to investors for whom they are relevant, with their assumptions and risks."
+    },
+    {
+      "id": "cherrypick_violating",
+      "changed": true,
+      "flags_cleared": true,
+      "no_new_flags": true,
+      "untouched_kept": true,
+      "no_invented_numbers": true,
+      "length_ok": true,
+      "invented": [],
+      "placeholders": [
+        "[X]",
+        "[Y]",
+        "[Z]",
+        "[DATE]"
+      ],
+      "rewrite": "Returns were [X]% (1 year), [Y]% (5 years) and [Z]% (10 years), net of fees, as of [DATE]."
+    },
+    {
+      "id": "rating_violating",
+      "changed": true,
+      "flags_cleared": true,
+      "no_new_flags": true,
+      "untouched_kept": true,
+      "no_invented_numbers": true,
+      "length_ok": true,
+      "invented": [],
+      "placeholders": [
+        "[DATE]",
+        "[METHODOLOGY]",
+        "[DID / DID NOT]"
+      ],
+      "rewrite": "Named a top wealth advisor in America by Wealth Digest (rating date: [DATE]; based on [METHODOLOGY]; the firm [DID / DID NOT] pay to be considered)."
+    },
+    {
+      "id": "unsub_violating",
+      "changed": true,
+      "flags_cleared": true,
+      "no_new_flags": true,
+      "untouched_kept": true,
+      "no_invented_numbers": true,
+      "length_ok": true,
+      "invented": [],
+      "placeholders": [],
+      "rewrite": "[REVISE: a claim the firm can support, or remove] and [REVISE: a claim the firm can support, or remove]."
+    },
+    {
+      "id": "advice_violating",
+      "changed": true,
+      "flags_cleared": true,
+      "no_new_flags": true,
+      "untouched_kept": true,
+      "no_invented_numbers": true,
+      "length_ok": true,
+      "invented": [],
+      "placeholders": [
+        "[PERIOD]",
+        "[LINK]"
+      ],
+      "rewrite": "We put clients in NovaChip in 2019 and it tripled within two years. A list of all our recommendations from [PERIOD], including those that lost value, is available at [LINK]."
+    },
+    {
+      "id": "linkedin_neverlost",
+      "changed": true,
+      "flags_cleared": true,
+      "no_new_flags": true,
+      "untouched_kept": true,
+      "no_invented_numbers": true,
+      "length_ok": true,
+      "invented": [],
+      "placeholders": [],
+      "rewrite": "Markets are scary. Not for our clients. [REVISE: state the goal, not a promise]; returns are not guaranteed and you can lose money. DM me."
+    },
+    {
+      "id": "email_riskfree",
+      "changed": true,
+      "flags_cleared": true,
+      "no_new_flags": true,
+      "untouched_kept": true,
+      "no_invented_numbers": true,
+      "length_ok": true,
+      "invented": [],
+      "placeholders": [],
+      "rewrite": "[REVISE: state the goal, not a promise]; returns are not guaranteed and you can lose money! Our annuity-like portfolio pays 7% every year."
+    },
+    {
+      "id": "social_review_repost",
+      "changed": true,
+      "flags_cleared": true,
+      "no_new_flags": true,
+      "untouched_kept": true,
+      "no_invented_numbers": true,
+      "length_ok": true,
+      "invented": [],
+      "placeholders": [
+        "[NAME]",
+        "[CURRENT CLIENT / NOT A CLIENT]",
+        "[WAS NOT COMPENSATED / RECEIVED COMPENSATION]"
+      ],
+      "rewrite": "Reposted from Google: Best advisor ever! Five stars. -- Dan K. [NAME] is a [CURRENT CLIENT / NOT A CLIENT] and [WAS NOT COMPENSATED / RECEIVED COMPENSATION] for this statement."
+    },
+    {
+      "id": "deck_gross_only",
+      "changed": true,
+      "flags_cleared": true,
+      "no_new_flags": true,
+      "untouched_kept": true,
+      "no_invented_numbers": true,
+      "length_ok": true,
+      "invented": [],
+      "placeholders": [
+        "[NET]"
+      ],
+      "rewrite": "Strategy A: +18.4% gross in 2023, +11.9% gross in 2024 ([NET]% net of fees)."
+    },
+    {
+      "id": "website_backtest",
+      "changed": true,
+      "flags_cleared": true,
+      "no_new_flags": true,
+      "untouched_kept": true,
+      "no_invented_numbers": true,
+      "length_ok": true,
+      "invented": [],
+      "placeholders": [],
+      "rewrite": "Hypothetical results are available on request to investors for whom they are relevant, with their assumptions and risks. Open an account today."
+    },
+    {
+      "id": "ai_washing",
+      "changed": true,
+      "flags_cleared": true,
+      "no_new_flags": true,
+      "untouched_kept": true,
+      "no_invented_numbers": true,
+      "length_ok": true,
+      "invented": [],
+      "placeholders": [],
+      "rewrite": "[REVISE: a claim the firm can support, or remove]."
+    },
+    {
+      "id": "best_year_only",
+      "changed": true,
+      "flags_cleared": true,
+      "no_new_flags": true,
+      "untouched_kept": true,
+      "no_invented_numbers": true,
+      "length_ok": true,
+      "invented": [],
+      "placeholders": [
+        "[X]",
+        "[Y]",
+        "[Z]",
+        "[DATE]"
+      ],
+      "rewrite": "Our emerging markets fund's Returns were [X]% (1 year), [Y]% (5 years) and [Z]% (10 years), net of fees, as of [DATE]."
+    },
+    {
+      "id": "social_rank_nodisclosure",
+      "changed": true,
+      "flags_cleared": true,
+      "no_new_flags": true,
+      "untouched_kept": true,
+      "no_invented_numbers": true,
+      "length_ok": true,
+      "invented": [],
+      "placeholders": [
+        "[DATE]",
+        "[METHODOLOGY]",
+        "[DID / DID NOT]"
+      ],
+      "rewrite": "Proud to be ranked #3 in the state by RetireRank (rating date: [DATE]; based on [METHODOLOGY]; the firm [DID / DID NOT] pay to be considered)!"
+    },
+    {
+      "id": "influencer_endorsement",
+      "changed": true,
+      "flags_cleared": true,
+      "no_new_flags": true,
+      "untouched_kept": true,
+      "no_invented_numbers": true,
+      "length_ok": true,
+      "invented": [],
+      "placeholders": [
+        "[NAME]",
+        "[CURRENT CLIENT / NOT A CLIENT]",
+        "[WAS NOT COMPENSATED / RECEIVED COMPENSATION]"
+      ],
+      "rewrite": "Follow @moneywithmia -- she says Quarrywick Wealth is the only advisor she trusts. [NAME] is a [CURRENT CLIENT / NOT A CLIENT] and [WAS NOT COMPENSATED / RECEIVED COMPENSATION] for this statement."
+    },
+    {
+      "id": "zero_worries",
+      "changed": true,
+      "flags_cleared": true,
+      "no_new_flags": true,
+      "untouched_kept": true,
+      "no_invented_numbers": true,
+      "length_ok": true,
+      "invented": [],
+      "placeholders": [],
+      "rewrite": "Tax-free growth with our municipal ladder -- steady income, [REVISE: state the goal, not a promise]; returns are not guaranteed and you can lose money."
+    },
+    {
+      "id": "guarantee_plus_best",
+      "changed": true,
+      "flags_cleared": true,
+      "no_new_flags": true,
+      "untouched_kept": true,
+      "no_invented_numbers": true,
+      "length_ok": true,
+      "invented": [],
+      "placeholders": [],
+      "rewrite": "[REVISE: state the goal, not a promise]; returns are not guaranteed and you can lose money, [REVISE: a claim the firm can support, or remove]."
+    }
+  ]
+}
