@@ -92,8 +92,9 @@ def _post(url: str, headers: dict, body: dict, timeout: int = 90) -> dict:
             time.sleep(min(max(float(e.headers.get("retry-after") or 20), 15), 60) + 1)
 
 
-def complete(system: str, user: str, max_tokens: int = 2000) -> str:
-    """Return the model's text reply. Raises if no provider is configured."""
+def complete(system: str, user: str, max_tokens: int = 2000, reasoning_effort: str | None = None) -> str:
+    """Return the model's text reply. Raises if no provider is configured.
+    reasoning_effort (low|medium|high) is sent only to reasoning models that take it (gpt-oss, o-series)."""
     cfg = config()
     if cfg["provider"] == "anthropic":
         out = _post("https://api.anthropic.com/v1/messages",
@@ -102,10 +103,10 @@ def complete(system: str, user: str, max_tokens: int = 2000) -> str:
                      "system": system, "messages": [{"role": "user", "content": user}]})
         return "".join(b.get("text", "") for b in out.get("content", []) if b.get("type") == "text")
     if cfg["provider"] in ("openai", "groq"):
-        out = _post(f"{cfg['base_url']}/chat/completions",
-                    {"Authorization": f"Bearer {cfg['key']}"},
-                    {"model": cfg["model"], "max_tokens": max_tokens, "temperature": 0,
-                     "messages": [{"role": "system", "content": system},
-                                  {"role": "user", "content": user}]})
+        body = {"model": cfg["model"], "max_tokens": max_tokens, "temperature": 0,
+                "messages": [{"role": "system", "content": system}, {"role": "user", "content": user}]}
+        if reasoning_effort and ("gpt-oss" in cfg["model"] or cfg["model"].startswith("o")):
+            body["reasoning_effort"] = reasoning_effort
+        out = _post(f"{cfg['base_url']}/chat/completions", {"Authorization": f"Bearer {cfg['key']}"}, body)
         return out["choices"][0]["message"]["content"] or ""
     raise RuntimeError("No LLM configured (set LLM_PROVIDER + key in .env). Use DETECT_MODE=rules.")

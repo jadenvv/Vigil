@@ -1,6 +1,7 @@
 <!--
 Cross-reference pass 1: extract absolute claims. Owner: P4. Source of truth: this file.
-engine/crossref.py fills {{url}} and {{page}}. Response: {"claims": [...]}.
+engine/crossref.py fills {{url}} and {{page}}. Response: {"claims": [...]}; each claim has span, topic,
+absolute, assertion, terms.
 Provider-agnostic: no vendor-specific syntax.
 -->
 === SYSTEM ===
@@ -34,11 +35,13 @@ losses, returns, guarantees, conflicts, fees, size, credentials, regulatory, oth
 - `span` must be copied EXACTLY, character for character, from the text: the shortest sentence or
   clause carrying the claim. If you cannot quote it exactly, skip it.
 - `assertion` is a short neutral restatement ("clients never lost money in a down year").
+- `absolute` is true when the claim is an absolute or a guarantee (never, always, guaranteed, no risk,
+  100%, every, conflict-free, cannot lose); false for a specific checkable fact ("$480 million", "since 2011").
 - `terms` are 3-8 lowercase keywords another document would use when saying the opposite
   (e.g. ["loss", "declined", "down year", "negative", "2022", "drawdown"]).
 - At most 12 claims. Most pages have 0-4. Return {"claims": []} if none.
 - Respond with JSON only, no prose and no code fences:
-{"claims": [{"span": "<exact quote>", "topic": "<id>", "assertion": "<restatement>", "terms": ["..."]}]}
+{"claims": [{"span": "<exact quote>", "topic": "<id>", "absolute": true, "assertion": "<restatement>", "terms": ["..."]}]}
 === USER ===
 Document: {{url}}
 
