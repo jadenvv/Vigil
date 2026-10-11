@@ -3,6 +3,7 @@ import { Link, useParams } from "@/lib/router";
 import { ChannelChip, Confidence, SeverityBadge } from "@/components/Badges";
 import { ErrorBlock, LoadingBlock, Shell } from "@/components/Chrome";
 import { base44 } from "@/api/base44Client";
+import { appParams } from "@/lib/app-params";
 import RewriteDrawer from "@/components/RewriteDrawer";
 import CalcCheck from "@/components/CalcCheck";
 import { COPY, SHOW_CALC_CHECK, SHOW_PAGE_VIEW, SHOW_RECHECK, SHOW_REWRITE, SHOW_RULE_REFS } from "@/lib/copy";
@@ -25,9 +26,24 @@ export default function FlagDetail() {
   );
 }
 
+// Only admins can run a calculation check, so only they see the panel. Without a token nobody is signed in,
+// so no user lookup (and no 401 in the console) happens for testers and judges.
+function useIsAdmin() {
+  const [isAdmin, setIsAdmin] = useState(false);
+  useEffect(() => {
+    if (!appParams.token) return;
+    base44.auth
+      .me()
+      .then((user) => setIsAdmin(user?.role === "admin"))
+      .catch(() => setIsAdmin(false));
+  }, []);
+  return isAdmin;
+}
+
 function FlagDetailBody({ flag, page, firm }) {
   const inboxPath = firm.is_demo ? "/demo" : `/firm/${firm.id}`;
   const [decision, setDecision] = useState(null);
+  const isAdmin = useIsAdmin();
 
   useEffect(() => {
     if (!SHOW_REWRITE) return;
@@ -54,7 +70,7 @@ function FlagDetailBody({ flag, page, firm }) {
               <RewriteDrawer flag={flag} decision={decision} onDecided={setDecision} />
             </div>
           )}
-          {SHOW_CALC_CHECK && (
+          {SHOW_CALC_CHECK && isAdmin && (
             <div className="mt-6">
               <CalcCheck flag={flag} />
             </div>
@@ -457,6 +473,7 @@ function Screenshot({ page }) {
 }
 
 function formatDate(value) {
+  if (value == null) return "";
   const date = new Date(value);
   if (Number.isNaN(date.getTime())) return value;
   return date.toLocaleString(undefined, { dateStyle: "medium", timeStyle: "short" });
