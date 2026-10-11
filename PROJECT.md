@@ -57,10 +57,11 @@ Last updated: **7:05 PM**
 
 ### Final state: live and FROZEN (deployed 7:01 PM)
 
-**Live:** https://marketing-rule-watch-a0747dd2.base44.app/ is built from **`a394224`** on branch `deploy/wave2-live`, deployed at 7:14. That's `bab4d6d` plus:
+**Live:** https://marketing-rule-watch-a0747dd2.base44.app/ is built from **`dc8002f`** on branch `deploy/wave2-live`, deployed at 7:20 (the final deploy). That's `bab4d6d` plus:
   - the dusk-night theme (`5b6ef7c`)
   - two `dusk.css` fixes: card contrast (`5fa661a`) and the amber chart value for AA contrast (`a25519f`)
   - `/evals` additions (`a394224`): the AdvisorQuill third-party result (4 of 4, 0 clean flagged, live v3) and Ethan's incomplete versus run, labelled "Incomplete run, not live"
+  - a background dot grid with an amber wash and stronger card highlights (`dc8002f`, `dusk.css` only)
 
 - **Live has:**
   - nav: Home · Live demo · Dashboard · Evals · About
@@ -71,7 +72,7 @@ Last updated: **7:05 PM**
   - Page-as-captured as the default tab on flag detail
   - AdvisorQuill on the demo firm (11 pages, 15 flags)
 - **Not live:** PR #5 Clerk `/reviews`, the Form ADV lookup (`2c38377`, which replaced the crossref function and UI on `main`), and detector v4. Backend functions are unchanged; the detector is v3.
-- **`main` vs live:** the theme is on `main` as `35f8196`; live `5b6ef7c` is the same overlay on the deploy branch. The deploy-branch commits are cherry-picked onto `main`: `5fa661a` → `a20e19d`, `a25519f` → `0818c68`, `a394224` → `4cf5bd4`. `main` matches live except for PR #5 (Clerk `/reviews` routes and the `ClerkProvider` wrapper in `main.jsx`) and the Form ADV lookup.
+- **`main` vs live:** the theme is on `main` as `35f8196`; live `5b6ef7c` is the same overlay on the deploy branch. The deploy-branch commits are cherry-picked onto `main`: `5fa661a` → `a20e19d`, `a25519f` → `0818c68`, `a394224` → `4cf5bd4`, `dc8002f` → `6f52b5f`. `main` matches live except for PR #5 (Clerk `/reviews` routes and the `ClerkProvider` wrapper in `main.jsx`) and the Form ADV lookup.
 
 **Follow-ups after the event:**
 - Real-firm rows are readable through public RLS. The dashboard only filters them client-side.
