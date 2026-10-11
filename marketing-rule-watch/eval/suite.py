@@ -68,7 +68,7 @@ def _run(detect, text, channel):
 def _save(out: str | None, name: str, rep: dict) -> None:
     if not out:
         return
-    p = Path(out) / f"{name}_{time.strftime('%H%M%S')}.json"
+    p = Path(out) / (name if name.endswith(".json") else f"{name}_{time.strftime('%H%M%S')}.json")
     p.parent.mkdir(parents=True, exist_ok=True)
     p.write_text(json.dumps(rep, indent=2))
     print(f"\nsaved {p}")
@@ -340,45 +340,130 @@ class _CallCounter:
         return n
 
 
+def _versus_estimate(paths, limit, detector_specs):
+    """Rough tokens: chars/4 of prompt + text per call, plus ~700 output/reasoning. Mirrors run_all.py."""
+    from engine.detect import CHUNK_CHARS, build_messages
+    from engine.naive import SYSTEM as NAIVE
+    pipe = len(build_messages("", "website")[0]) + 200
+    sizes = {"engine.naive:detect": len(NAIVE)}
+    toks = 0
+    for path in paths:
+        cases = load_cases(path)[:limit or None]
+        for spec in detector_specs:
+            if spec.startswith("http") or spec == "baseline_regex":
+                continue
+            p = sizes.get(spec, pipe)
+            for c in cases:
+                n = max(1, -(-len(c["text"]) // CHUNK_CHARS))
+                toks += n * ((p + min(len(c["text"]), CHUNK_CHARS)) // 4 + 700)
+    return toks
+
+
+def _versus_table(name, n, ga, gb, ca, cb):
+    d = None if ga["f1"] is None or gb["f1"] is None else ga["f1"] - gb["f1"]
+    print(f"{name[:24]:24} {n:3} | {_f(ga['precision'])} {_f(ga['recall'])} {_f(ga['f1'])} "
+          f"{_f(ga['clean_doc_fp_rate'], True):>7} {_f(ga['grounding_rate'], True):>5} {ca:5} | "
+          f"{_f(gb['precision'])} {_f(gb['recall'])} {_f(gb['f1'])} {_f(gb['clean_doc_fp_rate'], True):>7} "
+          f"{_f(gb['grounding_rate'], True):>5} {cb:5} | {'  -  ' if d is None else f'{d:+5.2f}'}")
+
+
 def cmd_versus(a, detect, rewrite):
     other, _ = load_detector(a.against)
-    calls = _CallCounter()
     paths = [Path(a.cases)] if a.cases else [HERE / n for n in SETS if (HERE / n).exists()]
-    print(f"\nVersus  A = {a.detector}   B = {a.against}")
+    try:
+        from engine import llm
+        model = f"{llm.config()['provider']}:{llm.config()['model']}"
+    except Exception:  # noqa: BLE001
+        model = "unknown"
+    est = _versus_estimate(paths, a.limit, [a.detector, a.against])
+    print(f"\nVersus  A = {a.detector}   B = {a.against}   model {model}   ~{est:,} tokens (rough)")
+    if est > a.budget:
+        sys.exit(f"Estimate ~{est:,} is over --budget {a.budget:,}. Use --limit or --cases, or raise --budget.")
+    calls = _CallCounter()
     print(f"{'set':24} {'n':>3} | {'P':>5} {'R':>5} {'F1':>5} {'cleanFP':>7} {'grnd':>5} {'calls':>5} |"
           f" {'P':>5} {'R':>5} {'F1':>5} {'cleanFP':>7} {'grnd':>5} {'calls':>5} | {'dF1':>5}")
-    out = {}
+    out, stopped, reuse = {}, None, {}
+    if a.resume:  # reuse per-case flags from a cut-off run of the same A/B/model; nothing is re-scored differently
+        prev = json.loads(Path(a.resume).read_text())
+        if (prev.get("model"), prev.get("against")) != (model, a.against):
+            sys.exit(f"--resume: {a.resume} was {prev.get('model')} vs {prev.get('against')}, not {model} vs {a.against}")
+        for st in prev["sets"].values():
+            for pc in st["cases"]:
+                if pc["A"]["flags"] is not None and pc["B"]["flags"] is not None:
+                    reuse[pc["id"]] = {"A": pc["A"]["flags"], "B": pc["B"]["flags"]}
+        print(f"resume: reusing {len(reuse)} answered cases from {a.resume}")
     for path in paths:
         cases = load_cases(path)
         if a.limit:
             cases = cases[:a.limit]
-        ra, rb, diffs, ca, cb = [], [], [], 0, 0
+        ra, rb, diffs, per_case, no_answer, ca, cb = [], [], [], [], [], 0, 0
+        groups = defaultdict(lambda: ([], []))
         for c in cases:
-            pa = _run(detect, c["text"], c.get("channel", ""))
-            ca += calls.take()
-            pb = _run(other, c["text"], c.get("channel", ""))
-            cb += calls.take()
+            # A non-JSON reply (ValueError from parse_flags, after detect's one retry) is the detector's own
+            # failure: recorded per side as no_answer, and the case is left out of BOTH sides' scores so the
+            # comparison stays paired. Any other error (Groq 429/daily cap, HTTP) stops the run: a failed call
+            # must never be scored as a clean page or a miss. Cases finished so far are kept, marked incomplete.
+            res = {}
+            if c["id"] in reuse:  # --resume: both sides already answered in an earlier, cut-off run
+                res = reuse[c["id"]]
+            try:
+                for side, fn in (("A", detect), ("B", other)):
+                    if side in res:
+                        continue
+                    try:
+                        res[side] = _run(fn, c["text"], c.get("channel", ""))
+                    except ValueError as e:
+                        res[side] = None
+                        no_answer.append({"id": c["id"], "side": side, "error": str(e)[:300]})
+                    if side == "A":
+                        ca += calls.take()
+                    else:
+                        cb += calls.take()
+            except Exception as e:  # noqa: BLE001
+                stopped = f"{c['id']}: {type(e).__name__}: {str(e)[:200]}"
+                break
+            pa, pb = res["A"], res["B"]
+            if pa is None or pb is None:
+                per_case.append({"id": c["id"], "group": c.get("panel_group"), "gold": c["gold"],
+                                 "A": {"status": "no_answer" if pa is None else "unscored", "flags": pa},
+                                 "B": {"status": "no_answer" if pb is None else "unscored", "flags": pb}})
+                continue
             sa, sb = score_case(c, pa), score_case(c, pb)
             ra.append(sa)
             rb.append(sb)
+            g = groups[c.get("panel_group", "all")]
+            g[0].append(sa)
+            g[1].append(sb)
+            per_case.append({"id": c["id"], "group": c.get("panel_group"), "gold": c["gold"],
+                             "A": {"status": sa["status"], "flags": pa}, "B": {"status": sb["status"], "flags": pb}})
             if sa["status"] != sb["status"] or len(sa["tp"]) != len(sb["tp"]):
                 diffs.append({"id": c["id"], "A": sa["status"], "B": sb["status"], "A_tp": len(sa["tp"]),
                               "B_tp": len(sb["tp"]), "A_fp": len(sa["fp"]), "B_fp": len(sb["fp"]),
                               "B_ungrounded": sb["ungrounded"]})
+        if not ra:
+            break
         ga, gb = aggregate(ra), aggregate(rb)
-        d = None if ga["f1"] is None or gb["f1"] is None else ga["f1"] - gb["f1"]
-        print(f"{path.name[:24]:24} {len(cases):3} | {_f(ga['precision'])} {_f(ga['recall'])} {_f(ga['f1'])} "
-              f"{_f(ga['clean_doc_fp_rate'], True):>7} {_f(ga['grounding_rate'], True):>5} {ca:5} | "
-              f"{_f(gb['precision'])} {_f(gb['recall'])} {_f(gb['f1'])} {_f(gb['clean_doc_fp_rate'], True):>7} "
-              f"{_f(gb['grounding_rate'], True):>5} {cb:5} | {'  -  ' if d is None else f'{d:+5.2f}'}")
-        out[path.name] = {"A": ga, "B": gb, "A_llm_calls": ca, "B_llm_calls": cb, "disagreements": diffs}
+        _versus_table(path.name, len(ra), ga, gb, ca, cb)
+        by_group = {}
+        if len(groups) > 1:
+            for gname, (xa, xb) in sorted(groups.items()):
+                by_group[gname] = {"n": len(xa), "A": aggregate(xa), "B": aggregate(xb)}
+                _versus_table(f"  {gname}", len(xa), by_group[gname]["A"], by_group[gname]["B"], 0, 0)
+        out[path.name] = {"n": len(ra), "A": ga, "B": gb, "A_llm_calls": ca, "B_llm_calls": cb,
+                          "by_group": by_group, "disagreements": diffs, "no_answer": no_answer, "cases": per_case}
+        for x in no_answer:
+            print(f"    NO ANSWER ({x['side']}) {x['id']}: non-JSON reply; case left out of both sides' scores")
         if a.verbose:
             for x in diffs:
                 print(f"    {x['id']:36} A={x['A']:14} B={x['B']:14} tp {x['A_tp']}/{x['B_tp']} "
                       f"fp {x['A_fp']}/{x['B_fp']}")
+        if stopped:
+            break
     print("  calls = engine.llm.complete calls (0 for an HTTP or regex detector). "
           "Same model on both sides only if both run locally.")
-    return {"against": a.against, "sets": out}
+    if stopped:
+        print(f"\nSTOPPED at {stopped}\nScores above cover only the cases before it; the report is marked incomplete.")
+    return {"against": a.against, "model": model, "estimate_tokens": est, "incomplete": stopped, "sets": out}
 
 
 def main():
@@ -390,7 +475,10 @@ def main():
     ap.add_argument("--base", default=LIVE_SITE, help="site root URL or local folder (site)")
     ap.add_argument("--repeat", type=int, default=3)
     ap.add_argument("--limit", type=int, default=0, help="only the first N cases (saves LLM quota)")
+    ap.add_argument("--budget", type=int, default=150_000, help="versus: refuse to start over this many est. tokens")
     ap.add_argument("--out", default=str(HERE / "reports"))
+    ap.add_argument("--resume", help="versus: reuse answered cases from a cut-off report (same model and B)")
+    ap.add_argument("--name", help="report basename instead of <cmd>_<detector>_<HHMMSS>")
     ap.add_argument("--no-save", action="store_true")
     ap.add_argument("-v", "--verbose", action="store_true")
     a = ap.parse_args()
@@ -401,7 +489,10 @@ def main():
     detect, rewrite = load_detector(a.detector)
     rep = globals()[f"cmd_{a.cmd}"](a, detect, rewrite)
     rep = {"cmd": a.cmd, "detector": a.detector, "timestamp": time.strftime("%Y-%m-%d %H:%M:%S"), **rep}
-    _save(None if a.no_save else a.out, f"{a.cmd}_{re.sub(r'[^A-Za-z0-9]+', '_', a.detector)[:40]}", rep)
+    name = f"{a.name}.json" if a.name else f"{a.cmd}_{re.sub(r'[^A-Za-z0-9]+', '_', a.detector)[:40]}"
+    _save(None if a.no_save else a.out, name, rep)
+    if rep.get("incomplete"):
+        sys.exit(1)
 
 
 if __name__ == "__main__":

@@ -31,6 +31,12 @@ python3 eval/suite.py calibration --detector engine.detect:detect    # precision
 python3 eval/suite.py versus      --detector engine.detect:detect --against engine.naive:detect -v   # our pipeline vs a naive wrapper
 ```
 `versus` puts two detectors side by side (P/R/F1, clean FP, grounding, LLM calls, ΔF1; `-v` lists cases where they disagree). `--cases <file>` for one file, else every set. The default B, `engine/naive.py`, is the afternoon-build baseline: same `llm.complete` (same provider, model, temperature) but one call per page, a bare category list, no examples, hints, delimiters, grounding, suppression or threshold. Its ungrounded spans score as FPs, as they would mislead an officer. Both sides use the LLM, so this spends credits; the naive side needs a key (it raises with `LLM_PROVIDER=none`).
+**Versus panel** `cases_versus.jsonl` (36 cases, 16 clean; built by `build_versus_panel.py`, copied verbatim from other sets): 17 trace to tester feedback (`panel_group: feedback`), 19 are our picks (minimal pairs, never-flag, hard, injection, generalize, demo). Contains test-set cases: don't tune on it. A non-JSON reply from one side is recorded as `no_answer` and the case is dropped from both sides' scores; other errors stop the run. `--resume <report>` reuses cases both sides answered (same model and B only).
+```
+LLM_PROVIDER=openai LLM_MODEL=<model> python3 eval/suite.py versus --detector engine.detect:detect --against engine.naive:detect --cases eval/cases_versus.jsonl --name versus_<tag>_panel -v
+```
+Partial only (`reports/versus_groq120b_panel.json`, gpt-oss-120b, **12/36 cases, incomplete**, all feedback group): pipeline P 0.80 R 0.80 F1 0.80, clean flagged 0% · naive P 0.45 R 1.00 F1 0.62, clean flagged 14%. Stopped when the pipeline got prose instead of JSON on `scope_educational_backtest` (now a `no_answer`). Weak evidence: 12 cases, one run, unreviewed labels.
+
 HTTPS calls (LLM, live endpoint, demo site) use certifi's CA bundle when it's installed; python.org Python on macOS has none and fails with `CERTIFICATE_VERIFY_FAILED`.
 Reports go to `reports/<cmd>_<detector>_<HHMMSS>.json` (`--no-save` to skip). For a live-endpoint consistency check on chosen pages, `consistency.py --ids ... --runs N` does the same job with tighter cost control.
 
