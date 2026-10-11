@@ -1,4 +1,4 @@
-"""review(docs) -> list[Mark]           every absolute claim, rated by what the other docs say
+"""review(docs) -> list[Mark]           every absolute claim and checkable fact, rated by what the other docs say
 crossref(docs) -> list[ContradictionFlag]   contradictions only (the eval contract)
 
 Two passes over a firm's documents (site pages, old blog posts, its Form ADV):
@@ -10,10 +10,10 @@ Two passes over a firm's documents (site pages, old blog posts, its Form ADV):
 
 doc  = {"url": str, "markdown": str}
 flag = {"claim_span", "claim_url", "evidence_span", "evidence_url", "topic", "confidence", "why"}
-mark = flag + {"status": "contradicted" | "unverified", "severity": "high" | "review", "absolute": bool}
+mark = flag + {"status": "contradicted" | "unverified", "severity": "high" | "review" | "info", "absolute": bool}
   contradicted: another doc says otherwise (any claim, absolute or a checkable fact) -> high
   unverified:   an absolute / guarantee nothing contradicts; the firm must still substantiate it -> review
-  A plain checkable fact nothing contradicts is not marked.
+  unverified:   a plain checkable fact (number, date, fee, count) nothing contradicts; keep records -> info
 Both spans are exact substrings of their doc's markdown. No passages retrieved -> no LLM call.
 
 CROSSREF_MIN_CONF (default 0.6), CROSSREF_MAX_CLAIMS (default 40), CROSSREF_K (passages, default 6),
@@ -238,20 +238,27 @@ def _overlaps(claim: dict, url: str, span: str) -> bool:
     return claim["url"] == url and (claim["span"] in span or span in claim["span"])
 
 
+UNVERIFIED_WHY = {
+    True: "This is an absolute claim. No other document we checked contradicts it, but the firm "
+          "may need to be able to substantiate it.",
+    False: "This is a specific checkable fact. No other document we checked contradicts it; the firm "
+           "should keep records that support it.",
+}
+
+
 def mark(claims: list[dict], flags: list[dict]) -> list[dict]:
-    """Every contradiction (high), plus every absolute claim that took part in none of them (review)."""
+    """Every contradiction (high), plus every claim that took part in none of them:
+    absolutes -> review, plain checkable facts -> info."""
     out = [{**f, "status": "contradicted", "severity": "high"} for f in flags]
     for c in claims:
-        if not c.get("absolute"):
-            continue
         if any(_overlaps(c, f["claim_url"], f["claim_span"]) or _overlaps(c, f["evidence_url"], f["evidence_span"])
                for f in flags):
             continue
+        absolute = bool(c.get("absolute"))
         out.append({"claim_span": c["span"], "claim_url": c["url"], "evidence_span": "", "evidence_url": "",
-                    "topic": c["topic"], "confidence": None, "absolute": True,
-                    "status": "unverified", "severity": "review",
-                    "why": "This is an absolute claim. No other document we checked contradicts it, but the firm "
-                           "may need to be able to substantiate it."})
+                    "topic": c["topic"], "confidence": None, "absolute": absolute,
+                    "status": "unverified", "severity": "review" if absolute else "info",
+                    "why": UNVERIFIED_WHY[absolute]})
     return out
 
 

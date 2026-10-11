@@ -211,7 +211,11 @@ class TestReview(unittest.TestCase):
                    "contradict": {NEVER_LOST["span"]: contradiction(NEVER_LOST, "declined 14.6% net of fees")}}
         marks, _ = run(replies, fn="review")
         by = {m["claim_span"]: m for m in marks}
-        self.assertEqual(set(by), {NEVER_LOST["span"], CONFLICT["span"]})  # the plain fact is not marked
+        self.assertEqual(set(by), {NEVER_LOST["span"], CONFLICT["span"], FOUNDED["span"]})
+        fact = by[FOUNDED["span"]]  # a plain fact nothing contradicts is still marked, at info
+        self.assertEqual((fact["status"], fact["severity"], fact["absolute"], fact["evidence_span"]),
+                         ("unverified", "info", False, ""))
+        self.assertIn("checkable fact", fact["why"])
         self.assertEqual((by[NEVER_LOST["span"]]["status"], by[NEVER_LOST["span"]]["severity"]), ("contradicted", "high"))
         self.assertIn(by[NEVER_LOST["span"]]["evidence_span"], ADV["markdown"])
         un = by[CONFLICT["span"]]
