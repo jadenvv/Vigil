@@ -68,7 +68,7 @@ Last updated: **7:05 PM**
   - Page-as-captured as the default tab on flag detail
   - AdvisorQuill on the demo firm (11 pages, 15 flags)
 - **Not live:** PR #5 Clerk `/reviews`, the crossref function and UI, and detector v4. Backend functions are unchanged; the detector is v3.
-- **`main` vs live:** `main` (`fc286ae`) merged `bab4d6d` but not the `5b6ef7c` theme commit. It also carries the unlinked Clerk `/reviews` routes and the crossref UI. A build from `main` does **not** match live.
+- **`main` vs live:** the theme is on `main` as `35f8196`; live `5b6ef7c` is the same overlay on the deploy branch. `main` matches live except for PR #5 (Clerk `/reviews` routes and the `ClerkProvider` wrapper in `main.jsx`) and the crossref UI.
 
 **Follow-ups after the event:**
 - Real-firm rows are readable through public RLS. The dashboard only filters them client-side.
