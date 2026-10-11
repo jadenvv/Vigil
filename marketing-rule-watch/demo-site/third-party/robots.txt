@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://nqiu-ventures.github.io/advisorquill/sitemap.xml
+Sitemap: https://nathanqiu07.github.io/advisorquill/sitemap.xml
