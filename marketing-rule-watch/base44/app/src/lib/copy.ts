@@ -18,6 +18,10 @@ export const COPY = {
   examPrint: "Print",
   examPrepared: "Prepared",
   examPage: "Page",
+  // Testers A4/B2: firms need to prove what a page said on a past date, in a file they can keep.
+  examDownloadCsv: "Download evidence (CSV)",
+  examDownloadCsvHelp:
+    "One row per potential issue for review: the exact quote, where and when it was captured, and the page fingerprint.",
   emptyInbox: "No potential issues found",
   emptyInboxDetail: "Nothing on these pages matched a Marketing Rule pattern. A person should still review new content.",
   loadError: "We couldn't load this. Check your connection and try again.",
@@ -82,6 +86,10 @@ export const COPY = {
   placeholdersNote: (placeholders: string[]) =>
     `Fill in ${placeholders.join(", ")} with real facts before approving. Use Edit.`,
   flagsCleared: (cleared: number, total: number) => `Flags cleared: ${cleared} of ${total}`,
+  showChanges: "Show changes",
+  diffRemoved: "removed:",
+  diffAdded: "added:",
+  diffLegend: "Struck-through words are removed. Underlined words are added. You decide what gets saved.",
   approve: "Approve",
   edit: "Edit",
   reject: "Dismiss",

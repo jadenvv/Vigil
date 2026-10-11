@@ -83,3 +83,9 @@ When a prompt changes inside Base44, copy it back to `prompts/` so the repo stay
 - `cabebb3` LIVE run, detector v3 on Base44 InvokeLLM, 16:03–16:05, 69 calls, all `base44:base44-invokellm`, no errors. 37 seeded: F1 0.70 → 0.98, clean flagged 28% → 0%, pairs 6/8 → 8/8 (`llm_invokellm_160353.json`; 1 FP `email_riskfree`, left scored as FP). Tester 10: 0/5 → 5/5 caught, 2/5 → 0/5 clean flagged. Demo site 16: F1 0.36 → 1.00 (dev set: its 2 misses were fixed first). Consistency 3 pages × 2: 2/3 identical, 3/3 same categories. detect-text closed again by p2-backend (~16:07).
 - `cb05c56` `research/slide_numbers.md` + `research/what_we_changed.md` (the only research/ files p4-eval touched, by orchestrator request). Every number has its caveat there; use them for slides.
 - Not done: no live rewrite eval, no live run on cases_hard / scope / injection (quota).
+
+## Cross-reference (two-pass contradictions, 10-10 evening)
+- `engine/crossref.py`: `crossref(docs) -> list[ContradictionFlag]`. Pass 1 (`prompts/absolutes.md`) lists absolute/checkable claims per doc; pass 2 (`prompts/contradict.md`) checks each claim against keyword-retrieved passages from the OTHER docs. Both spans grounded; boilerplate, low confidence (<0.6) and non-quotes dropped. Needs an LLM (raises under `DETECT_MODE=rules`).
+- **New contract (not yet agreed with P2/base44):** `{claim_span, claim_url, evidence_span, evidence_url, topic, confidence, why}`; topics `losses|returns|guarantees|conflicts|fees|size|credentials|regulatory|other`.
+- Fixtures: `demo-site/docs/` (fictional Form ADV + 2021 blog, `load_demo_docs()`), 8 planted contradictions + near misses in `docs/README.md`. Eval: `eval/crossref_eval.py --detector engine.crossref:crossref` over `eval/cases_crossref.jsonl` (17 cases). Offline tests: 32/32.
+- Groq `gpt-oss-120b` hit its 200k tokens/day cap at ~18:00 (shared key). Live runs after that used `LLM_MODEL=openai/gpt-oss-20b`; name the model with any number.

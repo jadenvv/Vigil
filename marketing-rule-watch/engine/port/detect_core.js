@@ -62,6 +62,34 @@ function normalizeWithMap(s) {
   return [out.join(""), idx];
 }
 
+// Last-resort normalization: drop every non-letter/digit, so a span that omits the page's
+// markdown syntax (> ** _ ` #) or adds separators still grounds on the same word sequence.
+const WORD_CHAR = /[\p{L}\p{N}]/u;
+
+function wordMap(s) {
+  const out = [], idx = [];
+  let prevSpace = true; // leading syntax emits no leading space
+  for (let i = 0; i < s.length; i++) {
+    const ch = TRANS[s[i]] ?? s[i];
+    if (WORD_CHAR.test(ch)) {
+      out.push(ch.toLowerCase());
+      idx.push(i);
+      prevSpace = false;
+    } else if (!prevSpace) {
+      out.push(" ");
+      idx.push(i); // boundary position; only mid-match use
+      prevSpace = true;
+    }
+  }
+  return [out.join(""), idx];
+}
+
+// A word-matched slice may absorb markdown/quotes glued to its edges ("> ", "**", an opening
+// quote) so the raw find covers the decorated region. Sentence punctuation is right-only:
+// expanding left over '.' would eat a previous sentence's full stop. Newlines always bound.
+const EDGE_LEFT = new Set([..." \t>#*_`\"'“”‘’([{"]);
+const EDGE_RIGHT = new Set([...".!?\"'”’)]}*_`"]);
+
 export function ground(text, span) {
   if (!span || !span.trim()) return null;
   if (text.includes(span)) return span;
@@ -70,8 +98,16 @@ export function ground(text, span) {
   const [nt, idx] = normalizeWithMap(text);
   const ns = normalizeWithMap(span)[0].trim();
   const i = ns ? nt.indexOf(ns) : -1;
-  if (i < 0) return null;
-  return text.slice(idx[i], idx[i + ns.length - 1] + 1);
+  if (i >= 0) return text.slice(idx[i], idx[i + ns.length - 1] + 1);
+  const [wt, wi] = wordMap(text);
+  const ws = wordMap(span)[0].trim();
+  const k = ws ? wt.indexOf(ws) : -1;
+  if (k < 0) return null;
+  let a = wi[k], b = wi[k + ws.length - 1] + 1;
+  while (a > 0 && EDGE_LEFT.has(text[a - 1])) a--;
+  while (a < b && (text[a] === " " || text[a] === "\t")) a++;
+  while (b < text.length && EDGE_RIGHT.has(text[b])) b++;
+  return text.slice(a, b);
 }
 
 // ------------------------------------------------------------------ suppression

@@ -78,7 +78,7 @@ The changes behind each tester quote, with commits, are in `marketing-rule-watch
 ## Known limitations
 
 - **Bright Data markdown drops the end of a page**: one character for each extra UTF-8 byte on the page (·, ®, curly quotes). On the demo pages only the end of the footer disclaimer is lost; the raw HTML captures are complete.
-- **Discovery**: signed-in users can only discover the firm's own site, which is guarded against SSRF. Web search is admin-only and off in the demo. A DNS-rebinding window between the check and the fetch remains.
+- **Discovery**: anyone can discover the demo firm's own site; signed-in users can discover any site's own pages (guarded against SSRF). Web search is admin-only and off in the demo. A DNS-rebinding window between the check and the fetch remains.
 - **Re-check cap is soft**: simultaneous scripted calls can each spend a credit.
 - **Rule paragraph references are hidden** in the UI until a mentor or compliance professional confirms them.
 
