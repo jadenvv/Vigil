@@ -3,6 +3,7 @@
 import { lazy, Suspense, useState } from "react";
 import { SeverityBadge } from "@/components/Badges";
 import { Shell } from "@/components/Chrome";
+import HeroContact from "@/components/hero/HeroContact";
 import "@/components/hero/schemes.css";
 import { UrlText } from "@/components/UrlText";
 import { loadFlag } from "@/lib/data";
@@ -65,7 +66,7 @@ export default function Home() {
             <Variant ScanForm={ScanForm} featuredFlagId={FEATURED_FLAG_ID} featuredRewrite={FEATURED_REWRITE} />
           </Suspense>
         ) : (
-          <CurrentHero />
+          <HeroContact ScanForm={ScanForm} featuredFlagId={FEATURED_FLAG_ID} featuredRewrite={FEATURED_REWRITE} />
         )}
         </div>
 
