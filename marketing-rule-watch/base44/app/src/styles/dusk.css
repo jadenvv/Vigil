@@ -1,0 +1,118 @@
+/* Dusk night theme. Every rule is scoped under html.dusk:not(.dusk-off) and @media screen, so removing
+   class="dusk" from index.html (or this file's import) restores the light Paper theme, and
+   print stays light. Palette hexes only (brand/BRAND.md); amber is the "look here" signal. */
+@media screen {
+  html.dusk:not(.dusk-off) {
+    color-scheme: dark;
+    --background: 223 49% 8%;
+    --foreground: 40 37% 97%;
+    --card: 222 41% 13%;
+    --card-foreground: 40 37% 97%;
+    --popover: 222 41% 13%;
+    --popover-foreground: 40 37% 97%;
+    --muted: 222 36% 16%;
+    --muted-foreground: 222 20% 61%;
+    --border: 223 31% 24%;
+    --input: 223 31% 24%;
+  }
+  html.dusk:not(.dusk-off) body { background-color: #0B1120; color: #FAF8F4; }
+
+  /* Surfaces */
+  html.dusk:not(.dusk-off) .bg-paper-50,
+  html.dusk:not(.dusk-off) .bg-paper-100,
+  html.dusk:not(.dusk-off) .bg-background { background-color: #0B1120; }
+  html.dusk:not(.dusk-off) .bg-white { background-color: #131B2E; }
+  html.dusk:not(.dusk-off) .bg-paper-200 { background-color: #1A2338; }
+  html.dusk:not(.dusk-off) .hover\:bg-paper-50:hover,
+  html.dusk:not(.dusk-off) .hover\:bg-paper-100:hover { background-color: #1A2338; }
+  html.dusk:not(.dusk-off) header.bg-white { background-color: #0B1120; }
+
+  /* Borders */
+  html.dusk:not(.dusk-off) .border-paper-100,
+  html.dusk:not(.dusk-off) .border-paper-200,
+  html.dusk:not(.dusk-off) .border-night-200,
+  html.dusk:not(.dusk-off) .border-border,
+  html.dusk:not(.dusk-off) .divide-paper-200 > * + * { border-color: #2A3550; }
+  html.dusk:not(.dusk-off) .border-night-300,
+  html.dusk:not(.dusk-off) .hover\:border-night-300:hover { border-color: #4A5570; }
+  html.dusk:not(.dusk-off) .border-night-950 { border-color: #C9CFDC; }
+
+  /* Text */
+  html.dusk:not(.dusk-off) .text-night-950,
+  html.dusk:not(.dusk-off) .text-night-900,
+  html.dusk:not(.dusk-off) .text-night-800,
+  html.dusk:not(.dusk-off) .text-foreground,
+  html.dusk:not(.dusk-off) .hover\:text-night-950:hover { color: #FAF8F4; }
+  html.dusk:not(.dusk-off) .text-night-700,
+  html.dusk:not(.dusk-off) .text-night-600 { color: #C9CFDC; }
+  html.dusk:not(.dusk-off) .text-night-400,
+  html.dusk:not(.dusk-off) .text-night-300 { color: #8B95AE; }
+  html.dusk:not(.dusk-off) .placeholder\:text-night-300::placeholder { color: #8B95AE; }
+  html.dusk:not(.dusk-off) .decoration-night-300,
+  html.dusk:not(.dusk-off) .decoration-night-200,
+  html.dusk:not(.dusk-off) .decoration-paper-200 { text-decoration-color: #4A5570; }
+  html.dusk:not(.dusk-off) .decoration-night-600,
+  html.dusk:not(.dusk-off) .hover\:decoration-night-600:hover { text-decoration-color: #8B95AE; }
+  html.dusk:not(.dusk-off) .hover\:decoration-night-950:hover { text-decoration-color: #F5A524; }
+  html.dusk:not(.dusk-off) a.hover\:text-night-950:hover { color: #FFCF6E; }
+
+  /* Primary actions and selected segments: amber with night text */
+  html.dusk:not(.dusk-off) button.bg-night-950,
+  html.dusk:not(.dusk-off) a.bg-night-950,
+  html.dusk:not(.dusk-off) input[type="submit"].bg-night-950 { background-color: #F5A524; color: #0B1120; }
+  html.dusk:not(.dusk-off) button.bg-night-950:hover:not(:disabled),
+  html.dusk:not(.dusk-off) a.bg-night-950:hover { background-color: #FFCF6E; }
+  html.dusk:not(.dusk-off) button.bg-night-950 *,
+  html.dusk:not(.dusk-off) a.bg-night-950 * { color: inherit; }
+  /* Non-interactive night-950 chips (e.g. "Latest" pill) lift off the page */
+  html.dusk:not(.dusk-off) span.bg-night-950 { background-color: #2A3550; }
+  html.dusk:not(.dusk-off) .accent-night-950 { accent-color: #F5A524; }
+
+  /* Amber highlight / quote: translucent lamp over night, paper text */
+  html.dusk:not(.dusk-off) .bg-lamp-100 { background-color: rgba(245, 165, 36, 0.18); }
+  html.dusk:not(.dusk-off) .bg-lamp-100.text-night-950,
+  html.dusk:not(.dusk-off) .bg-lamp-100.text-night-700,
+  html.dusk:not(.dusk-off) .bg-lamp-100 .text-night-950,
+  html.dusk:not(.dusk-off) blockquote.bg-lamp-100,
+  html.dusk:not(.dusk-off) mark.bg-lamp-100 { color: #FAF8F4; }
+  html.dusk:not(.dusk-off) .border-lamp-300 { border-color: rgba(245, 165, 36, 0.45); }
+  html.dusk:not(.dusk-off) .text-lamp-700 { color: #FFCF6E; }
+
+  /* Status chips: translucent fills with light text */
+  html.dusk:not(.dusk-off) .bg-ember-100 { background-color: rgba(184, 56, 42, 0.28); }
+  html.dusk:not(.dusk-off) .border-ember-100 { border-color: rgba(184, 56, 42, 0.45); }
+  html.dusk:not(.dusk-off) .text-ember-700 { color: #FBE3DE; }
+  html.dusk:not(.dusk-off) .bg-dusk-100 { background-color: rgba(88, 120, 173, 0.28); }
+  html.dusk:not(.dusk-off) .text-dusk-700 { color: #E3EAF5; }
+  html.dusk:not(.dusk-off) .bg-sage-100 { background-color: rgba(59, 154, 111, 0.24); }
+  html.dusk:not(.dusk-off) .text-sage-700 { color: #DDF0E6; }
+  html.dusk:not(.dusk-off) .decoration-sage-700 { text-decoration-color: #3B9A6F; }
+
+  /* SVG fills that were dark-on-light */
+  html.dusk:not(.dusk-off) .fill-night-950 { fill: #FAF8F4; }
+  html.dusk:not(.dusk-off) .fill-night-700 { fill: #C9CFDC; }
+  html.dusk:not(.dusk-off) .fill-night-600 { fill: #8B95AE; }
+  html.dusk:not(.dusk-off) svg [fill="#0B1120"] { fill: #FAF8F4; }
+  html.dusk:not(.dusk-off) svg [fill="#4A5570"] { fill: #8B95AE; }
+  html.dusk:not(.dusk-off) svg [fill="#E6E0D4"],
+  html.dusk:not(.dusk-off) svg [fill="#F3EFE7"] { fill: #2A3550; }
+  html.dusk:not(.dusk-off) svg [stroke="#E6E0D4"],
+  html.dusk:not(.dusk-off) svg [stroke="#F3EFE7"] { stroke: #2A3550; }
+  html.dusk:not(.dusk-off) svg [stroke="#0B1120"] { stroke: #C9CFDC; }
+
+  /* Form controls */
+  html.dusk:not(.dusk-off) input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
+  html.dusk:not(.dusk-off) textarea,
+  html.dusk:not(.dusk-off) select { background-color: #131B2E; color: #FAF8F4; border-color: #2A3550; }
+  html.dusk:not(.dusk-off) input::placeholder,
+  html.dusk:not(.dusk-off) textarea::placeholder { color: #8B95AE; }
+  html.dusk:not(.dusk-off) input[type="checkbox"],
+  html.dusk:not(.dusk-off) input[type="radio"] { accent-color: #F5A524; }
+  html.dusk:not(.dusk-off) ::selection { background: rgba(245, 165, 36, 0.35); color: #FAF8F4; }
+
+  /* Header logo: use the reversed lockup on the dark header */
+  html.dusk:not(.dusk-off) header img[src="/vigil-lockup.svg"] { content: url("/vigil-lockup-reversed.svg"); }
+
+  /* Captured page and screenshots keep their own colors */
+  html.dusk:not(.dusk-off) iframe { background-color: #FFFFFF; color-scheme: light; }
+}
