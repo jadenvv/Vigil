@@ -108,8 +108,8 @@ export function PageText({ page, span }) {
         {SHOW_PAGE_VIEW && (
           <div role="tablist" aria-label={COPY.pageTextLabel} className="ml-auto flex gap-1">
             {[
-              ["text", COPY.tabText],
               ["captured", COPY.tabCaptured],
+              ["text", COPY.tabText],
             ].map(([key, label]) => {
               const selected = key === "captured" ? view !== "text" : view === "text";
               return (
