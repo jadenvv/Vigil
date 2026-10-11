@@ -572,7 +572,17 @@ export const details = {
           }
         }
       ]
-    }
+    },
+    {
+      id: "versus_partial",
+      title: "Our pipeline vs a single-prompt LLM (incomplete)",
+      incomplete: true,
+      caveat: "INCOMPLETE: 12 of 36 panel cases, then the run stopped. One run on gpt-oss-120b via Groq on a laptop, not the live app's model. All 12 are cases traced to tester feedback, written by us, unreviewed. Weak evidence; not for slides.",
+      runs: [
+        { label: "Vigil pipeline (prompt v4, not yet live)", model: "gpt-oss-120b via Groq", live: false, report: "versus_groq120b_panel.json", cases: 12, precision: 0.8, recall: 0.8, f1: 0.8, tp: 4, fp: 1, fn: 1, cleanFlagged: "0 of 7", cleanFlaggedRate: 0, grounding: 1, minimalPairs: null },
+        { label: "Single prompt, no hints or filters (naive)", model: "gpt-oss-120b via Groq", live: false, report: "versus_groq120b_panel.json", cases: 12, precision: 0.45, recall: 1, f1: 0.62, tp: 5, fp: 6, fn: 0, cleanFlagged: "1 of 7", cleanFlaggedRate: 0.14, grounding: 1, minimalPairs: null },
+      ],
+    },
   ],
   consistency: {
     pages: 3,
