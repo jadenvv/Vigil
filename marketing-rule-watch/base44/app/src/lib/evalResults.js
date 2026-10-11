@@ -574,13 +574,13 @@ export const details = {
       ]
     },
     {
-      id: "versus_partial",
-      title: "Our pipeline vs a single-prompt LLM (incomplete)",
-      incomplete: true,
-      caveat: "INCOMPLETE: 12 of 36 panel cases, then the run stopped. One run on gpt-oss-120b via Groq on a laptop, not the live app's model. All 12 are cases traced to tester feedback, written by us, unreviewed. Weak evidence; not for slides.",
+      id: "versus_full",
+      title: "Our pipeline vs a single-prompt LLM (35 cases)",
+      caveat: "35 cases written by us (16 traced to tester feedback, 19 others; 15 are clean), unreviewed. Two runs on gpt-oss-120b via Groq on a laptop, not the live app's model. Run 2 (19:16) uses a scoring change: a flag that quotes part of the expected passage counts as a hit. The single prompt failed to answer on 1 case. Not for slides.",
       runs: [
-        { label: "Vigil pipeline (prompt v4, not yet live)", model: "gpt-oss-120b via Groq", live: false, report: "versus_groq120b_panel.json", cases: 12, precision: 0.8, recall: 0.8, f1: 0.8, tp: 4, fp: 1, fn: 1, cleanFlagged: "0 of 7", cleanFlaggedRate: 0, grounding: 1, minimalPairs: null },
-        { label: "Single prompt, no hints or filters (naive)", model: "gpt-oss-120b via Groq", live: false, report: "versus_groq120b_panel.json", cases: 12, precision: 0.45, recall: 1, f1: 0.62, tp: 5, fp: 6, fn: 0, cleanFlagged: "1 of 7", cleanFlaggedRate: 0.14, grounding: 1, minimalPairs: null },
+        { label: "Vigil pipeline (prompt v4, not yet live), run 2, current scoring", model: "gpt-oss-120b via Groq", live: false, report: "versus_groq120b_panel_full2.json", cases: 35, precision: 1, recall: 0.95, f1: 0.98, tp: 20, fp: 0, fn: 1, cleanFlagged: "0 of 15", cleanFlaggedRate: 0, grounding: 1, minimalPairs: null },
+        { label: "Vigil pipeline (prompt v4, not yet live), run 1, earlier scoring", model: "gpt-oss-120b via Groq", live: false, report: "versus_groq120b_panel_full.json", cases: 35, precision: 0.95, recall: 0.9, f1: 0.93, tp: 19, fp: 1, fn: 2, cleanFlagged: "0 of 15", cleanFlaggedRate: 0, grounding: 1, minimalPairs: null },
+        { label: "Single prompt, no hints or filters (naive), same in both runs", model: "gpt-oss-120b via Groq", live: false, report: "versus_groq120b_panel_full2.json", cases: 35, precision: 0.53, recall: 0.86, f1: 0.65, tp: 18, fp: 16, fn: 3, cleanFlagged: "3 of 15", cleanFlaggedRate: 0.2, grounding: 0.97, minimalPairs: null },
       ],
     },
   ],
