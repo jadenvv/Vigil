@@ -8,6 +8,7 @@ import { UrlText } from "@/components/UrlText";
 import { loadFlag } from "@/lib/data";
 import { quoted } from "@/lib/highlight";
 import { Link, navigate } from "@/lib/router";
+import { EVAL_CAVEAT, EVAL_RESULTS, EVAL_TITLE } from "@/lib/evalResults";
 import { categoryLabel } from "@/lib/severity";
 import { useAsync } from "@/lib/useAsync";
 
@@ -68,6 +69,8 @@ export default function Home() {
         )}
         </div>
 
+        <EvalResults />
+
         <section aria-labelledby="loop-title" className="space-y-8">
           <h2 id="loop-title" className="text-2xl font-semibold tracking-tight">
             How a page gets from published to reviewed
@@ -83,18 +86,32 @@ export default function Home() {
           </ol>
         </section>
 
-        <section aria-label="What we measured" className="rounded-[10px] border border-paper-200 bg-white p-6 sm:p-8">
-          <p className="max-w-3xl text-balance text-xl leading-snug text-night-950 sm:text-2xl">
-            Our own test on our fictional demo firm: <span className="whitespace-nowrap font-semibold">all 11</span> planted
-            issues found, <span className="whitespace-nowrap font-semibold">0 false alarms</span>.
-          </p>
-          <p className="mt-3 text-sm text-night-600">
-            One run on a site we built with planted issues; the detector was tuned on this site. Not real-world
-            accuracy. Oct 10, 2026.
-          </p>
-        </section>
       </div>
     </Shell>
+  );
+}
+
+// Our measured results, straight from src/lib/evalResults.js (which copies research/slide_numbers.md).
+function EvalResults() {
+  return (
+    <section aria-labelledby="eval-title" className="space-y-6" data-testid="eval-results">
+      <h2 id="eval-title" className="text-2xl font-semibold tracking-tight">
+        {EVAL_TITLE}
+      </h2>
+      <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+        {EVAL_RESULTS.map((result) => (
+          <li key={result.label} className="flex flex-col rounded-[10px] border border-paper-200 bg-white p-5">
+            <span className="text-sm font-medium text-night-950">{result.label}</span>
+            <span className="mt-2 whitespace-nowrap font-mono text-3xl tabular-nums tracking-tight text-night-950">
+              {result.value}
+            </span>
+            <span className="mt-3 text-sm leading-relaxed text-night-600">{result.detail}</span>
+            <span className="mt-auto pt-3 text-xs text-night-600">{result.set}</span>
+          </li>
+        ))}
+      </ul>
+      <p className="max-w-3xl text-sm text-night-600">{EVAL_CAVEAT}</p>
+    </section>
   );
 }
 
