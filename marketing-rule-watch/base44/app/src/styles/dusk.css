@@ -21,8 +21,49 @@
   html.dusk:not(.dusk-off) .bg-paper-50,
   html.dusk:not(.dusk-off) .bg-paper-100,
   html.dusk:not(.dusk-off) .bg-background { background-color: #0B1120; }
+  /* Page texture. Fixed to the viewport, so the page and any full-bleed paper surface share one continuous
+     layer and cards (night-800) paint over it. Default: a faint amber lamp wash at the top edge over a dot
+     grid that fades out down the screen (Vigil, the lamp kept lit). Switch with a class on <html>:
+     bg-a = ledger grid, bg-c = audit-paper rules, bg-none = flat. No motion. */
+  html.dusk:not(.dusk-off) body,
+  html.dusk:not(.dusk-off) .bg-paper-50,
+  html.dusk:not(.dusk-off) .bg-paper-100,
+  html.dusk:not(.dusk-off) .bg-background {
+    background-image:
+      radial-gradient(ellipse 60% 320px at 50% 0, rgba(245, 165, 36, 0.07), rgba(245, 165, 36, 0) 100%),
+      linear-gradient(to bottom, rgba(11, 17, 32, 0) 0, rgba(11, 17, 32, 0) 30vh, rgba(11, 17, 32, 0.45) 100vh),
+      radial-gradient(circle at 1px 1px, rgba(250, 248, 244, 0.15) 1px, rgba(250, 248, 244, 0) 1.6px);
+    background-size: 100% 100%, 100% 100%, 24px 24px;
+    background-repeat: no-repeat, no-repeat, repeat;
+    background-attachment: fixed;
+  }
+  html.dusk.bg-a:not(.dusk-off) body,
+  html.dusk.bg-a:not(.dusk-off) .bg-paper-50,
+  html.dusk.bg-a:not(.dusk-off) .bg-paper-100,
+  html.dusk.bg-a:not(.dusk-off) .bg-background {
+    background-image:
+      linear-gradient(to bottom, rgba(11, 17, 32, 0) 0, rgba(11, 17, 32, 0) 30vh, rgba(11, 17, 32, 0.45) 100vh),
+      linear-gradient(rgba(250, 248, 244, 0.06) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(250, 248, 244, 0.06) 1px, transparent 1px);
+    background-size: 100% 100%, 40px 40px, 40px 40px;
+    background-repeat: no-repeat, repeat, repeat;
+  }
+  html.dusk.bg-c:not(.dusk-off) body,
+  html.dusk.bg-c:not(.dusk-off) .bg-paper-50,
+  html.dusk.bg-c:not(.dusk-off) .bg-paper-100,
+  html.dusk.bg-c:not(.dusk-off) .bg-background {
+    background-image:
+      linear-gradient(to bottom, rgba(11, 17, 32, 0) 0, rgba(11, 17, 32, 0) 30vh, rgba(11, 17, 32, 0.45) 100vh),
+      linear-gradient(rgba(250, 248, 244, 0.065) 1px, transparent 1px);
+    background-size: 100% 100%, 100% 32px;
+    background-repeat: no-repeat, repeat;
+  }
+  html.dusk.bg-none:not(.dusk-off) body,
+  html.dusk.bg-none:not(.dusk-off) .bg-paper-50,
+  html.dusk.bg-none:not(.dusk-off) .bg-paper-100,
+  html.dusk.bg-none:not(.dusk-off) .bg-background { background-image: none; }
   /* Cards sit one step paler than the page (night-800 on night-950) so they read as panels */
-  html.dusk:not(.dusk-off) .bg-white { background-color: #1A2338; box-shadow: inset 0 1px 0 rgba(250, 248, 244, 0.04); }
+  html.dusk:not(.dusk-off) .bg-white { background-color: #1A2338; box-shadow: inset 0 1px 0 rgba(250, 248, 244, 0.08); }
   html.dusk:not(.dusk-off) .bg-paper-200 { background-color: #2A3550; }
   html.dusk:not(.dusk-off) .hover\:bg-paper-50:hover,
   html.dusk:not(.dusk-off) .hover\:bg-paper-100:hover { background-color: #2A3550; }
