@@ -5,7 +5,7 @@ import { base44 } from "@/api/base44Client";
 import { COPY } from "@/lib/copy";
 
 const button = "rounded-md border border-night-200 px-4 py-2 text-sm text-night-700 hover:bg-paper-100 disabled:opacity-50";
-const link = "text-sm text-dusk-700 underline hover:text-night-950";
+const link = "text-sm text-night-600 underline hover:text-night-950";
 
 export default function AdvLookup({ firm }) {
   // { status: idle | loading | done | denied | error, candidates?, demo? }
