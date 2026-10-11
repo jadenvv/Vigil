@@ -53,3 +53,24 @@ export function wordDiff(originalText, suggestedText, maxTokens = WORD_DIFF_MAX_
   for (; j < b.length; j += 1) pushSegment(suggested, "add", b[j]);
   return { original, suggested };
 }
+
+// Below these, a rewrite is mostly new text: the diff is a wall of strike-through with a few
+// coincidental matches ("to"), which is noise, so the drawer shows both sides plain instead.
+export const MIN_KEPT_SHARE = 0.35;
+export const MIN_KEPT_RUN = 3;
+
+// Same as wordDiff, but null when the rewrite keeps too little of the original to be worth marking:
+// under MIN_KEPT_SHARE of the original's words unchanged, or no unchanged run of MIN_KEPT_RUN words
+// (capped at the original's length, so a short quote that survives whole still counts).
+export function readableWordDiff(originalText, suggestedText, maxTokens = WORD_DIFF_MAX_TOKENS) {
+  const diff = wordDiff(originalText, suggestedText, maxTokens);
+  if (!diff) return null;
+  const originalWords = tokenize(originalText).length;
+  if (originalWords === 0) return null;
+  const keptRuns = diff.original.filter((segment) => segment.type === "same").map((segment) => tokenize(segment.text).length);
+  const kept = keptRuns.reduce((sum, run) => sum + run, 0);
+  const longestRun = Math.max(0, ...keptRuns);
+  if (kept / originalWords < MIN_KEPT_SHARE) return null;
+  if (longestRun < Math.min(MIN_KEPT_RUN, originalWords)) return null;
+  return diff;
+}

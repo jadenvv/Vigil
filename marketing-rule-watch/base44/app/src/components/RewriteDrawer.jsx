@@ -6,7 +6,7 @@ import { base44 } from "@/api/base44Client";
 import { DecisionBadge } from "@/components/Badges";
 import { COPY, FETCH_REWRITE_SUGGESTIONS } from "@/lib/copy";
 import { recordDecision } from "@/lib/data";
-import { wordDiff } from "@/lib/wordDiff";
+import { readableWordDiff } from "@/lib/wordDiff";
 
 // Renders one side of a word diff. Changes carry <del>/<ins> semantics plus visually hidden
 // "removed:"/"added:" text, so the change never relies on color or strike-through alone.
@@ -118,9 +118,10 @@ export default function RewriteDrawer({ flag, decision, onDecided }) {
   const showSecondColumn = editing || status === "loading" || status === "ready" || status === "unavailable";
   const canSuggest = status === "idle" || (status === "unavailable" && suggestion.canRetry);
   const originalText = suggestion.original_text ?? flag.span;
-  // Display only: the diff never feeds into what Approve / Edit / Dismiss save. Null past the token cap.
+  // Display only: the diff never feeds into what Approve / Edit / Dismiss save.
+  // Null past the token cap or when the rewrite is mostly new; then both sides show plain, with no toggle.
   const diff = useMemo(
-    () => (status === "ready" && suggested ? wordDiff(originalText, suggested) : null),
+    () => (status === "ready" && suggested ? readableWordDiff(originalText, suggested) : null),
     [status, originalText, suggested],
   );
   const showDiff = Boolean(diff) && showChanges && !editing;
