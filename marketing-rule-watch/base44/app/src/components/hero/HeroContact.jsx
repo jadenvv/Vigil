@@ -1,9 +1,10 @@
 // Hero variant "Contact sheet" (?hero=contact). Every page Vigil read for the demo firm, laid out as a
 // photographer's contact sheet: a scan line sweeps the sheet, viewfinder brackets lock on to the pages
-// with potential issues, then the about.html frame is pulled and enlarged into the evidence card.
-// The final frame is the default render; the sequence is layered on with WAAPI after mount, once, or with
-// `loop` it holds on the evidence, fades back to the start state and repeats (paused by `paused`, off-screen
-// or a hidden tab).
+// with potential issues, the about.html frame gets the final lock, and the evidence card below answers with
+// one quiet confirm beat (its quote rule extends, one soft sweep over the quote, the approval dot pulses once).
+// The evidence card never animates in or out: it is mounted, opaque and readable from first paint. Only the
+// sheet sequence and the confirm beat run, with WAAPI after mount, once, or with `loop` they hold, the sheet
+// softly resets and they repeat (paused by `paused`, off-screen or a hidden tab).
 import { useEffect, useMemo, useRef, useState } from "react";
 import { base44 } from "@/api/base44Client";
 import { SeverityBadge } from "@/components/Badges";
@@ -17,11 +18,15 @@ const EASE_OUT = "cubic-bezier(0.16, 1, 0.3, 1)";
 const SWEEP_EASE = [0.45, 0, 0.2, 1]; // eased in and out, so the line accelerates off the edge and settles
 const SWEEP_START = 150;
 const SWEEP_MS = 1050;
-const PULL_AT = 1450; // the about.html frame starts to grow into the card
-const PULL_MS = 700;
-const CONTENT_FADE_AT = PULL_AT + PULL_MS * 0.55;
-const CONTENT_FADE_MS = 420;
-const SEQUENCE_END = CONTENT_FADE_AT + CONTENT_FADE_MS; // ≈2255 ms, the last beat settles
+const FINAL_LOCK_AT = 1350; // after the sweep: the sheet steps back and the about.html frame locks last
+const FINAL_LOCK_MS = 380;
+const CONFIRM_AT = FINAL_LOCK_AT + 180; // the card answers as the final bracket settles
+const RULE_MS = 520; // the quote's amber rule extends, then settles back
+const GLINT_DELAY = 80;
+const GLINT_MS = 600; // one soft sweep across the quote ground
+const DOT_DELAY = 220;
+const DOT_MS = 480; // "Awaiting your approval" dot pulses once
+const SEQUENCE_END = CONFIRM_AT + GLINT_DELAY + GLINT_MS; // ≈2210 ms, the last beat settles
 const HOLD_MS = 2500; // loop only: rest on the evidence frame
 const RESET_MS = 400; // loop only: the soft fade back to the start state
 
@@ -123,7 +128,6 @@ function ContactSheet({ sheet, rewrite, loop, paused }) {
   const gridRef = useRef(null);
   const lineRef = useRef(null);
   const cardRef = useRef(null);
-  const ghostRef = useRef(null);
   const stageRef = useRef(null);
   const controlRef = useRef(null); // { setRunning(bool) } for the live sequence
   const blockers = useRef({ paused: false, offscreen: false, hidden: false });
@@ -226,19 +230,22 @@ function ContactSheet({ sheet, rewrite, loop, paused }) {
         { duration: SWEEP_MS, delay: SWEEP_START, easing: sweepEase, fill: "backwards" },
       );
 
-      // Beat 2: as the line crosses each frame with findings, its brackets lock on.
+      // Beat 2: as the line crosses each frame with findings, its brackets lock on. The about.html frame waits
+      // for the final lock in beat 3.
       grid.querySelectorAll("[data-hc-tile]").forEach((tile) => {
         const box = tile.getBoundingClientRect();
         if (!box.width) return; // hidden on this breakpoint
+        const isFeatured = tile.hasAttribute("data-hc-featured");
         const center = (box.left + box.width / 2 - gridBox.left + 24) / (gridBox.width + 24);
-        const at = SWEEP_START + timeAtProgress(SWEEP_EASE, Math.min(1, Math.max(0, center))) * SWEEP_MS;
+        const crossed = SWEEP_START + timeAtProgress(SWEEP_EASE, Math.min(1, Math.max(0, center))) * SWEEP_MS;
+        const at = isFeatured ? FINAL_LOCK_AT : crossed;
         run(
           tile.querySelector("[data-hc-bracket]"),
           [
-            { transform: "scale(1.18)", opacity: 0 },
+            { transform: isFeatured ? "scale(1.3)" : "scale(1.18)", opacity: 0 },
             { transform: "scale(1)", opacity: 1 },
           ],
-          { duration: 320, delay: at, easing: EASE_OUT },
+          { duration: isFeatured ? FINAL_LOCK_MS : 320, delay: at, easing: EASE_OUT },
         );
         run(
           tile.querySelector("[data-hc-count]"),
@@ -247,55 +254,51 @@ function ContactSheet({ sheet, rewrite, loop, paused }) {
         );
       });
 
-      // Beat 3a: the whole sheet steps back while one frame is pulled.
-      grid.querySelectorAll("img").forEach((img) =>
-        run(img, [{ opacity: 1 }, { opacity: dim }], { duration: 450, delay: PULL_AT - 50, easing: EASE_OUT }),
+      // Beat 3: the rest of the sheet steps back as the about.html frame gets the final lock.
+      const dimmed = grid.querySelectorAll("img[data-hc-dim]");
+      dimmed.forEach((img) =>
+        run(img, [{ opacity: 1 }, { opacity: dim }], { duration: 450, delay: FINAL_LOCK_AT - 100, easing: EASE_OUT }),
       );
 
-      // Beat 3b: the about.html frame grows into the evidence card (FLIP: start at the frame's box).
-      const source = grid.querySelector("[data-hc-featured] [data-hc-frame]");
-      const from = source?.getBoundingClientRect();
-      const to = card.getBoundingClientRect();
-      if (from && from.width && to.width) {
-        const dx = from.left - to.left;
-        const dy = from.top - to.top;
-        const sx = from.width / to.width;
-        const sy = from.height / to.height;
-        run(
-          card,
-          [
-            { transform: `translate(${dx}px, ${dy}px) scale(${sx}, ${sy})`, opacity: 0 },
-            { opacity: 1, offset: 0.12 },
-            { transform: "translate(0, 0) scale(1, 1)", opacity: 1 },
-          ],
-          { duration: PULL_MS, delay: PULL_AT, easing: EASE_OUT },
-        );
-        // The captured page rides along inside the growing card, then gives way to the evidence.
-        run(
-          ghostRef.current,
-          [
-            { opacity: 1, offset: 0 },
-            { opacity: 1, offset: 0.45 },
-            { opacity: 0, offset: 1 },
-          ],
-          { duration: PULL_MS, delay: PULL_AT, easing: EASE_OUT },
-        );
-        run(
-          card.querySelector("[data-hc-content]"),
-          [{ opacity: 0 }, { opacity: 1 }],
-          { duration: CONTENT_FADE_MS, delay: CONTENT_FADE_AT, easing: EASE_OUT },
-        );
-      }
+      // Beat 4: the evidence card confirms. It never moves or fades; only three decorative layers on it play once.
+      run(
+        card.querySelector("[data-hc-rule]"),
+        [
+          { transform: "scaleY(0)", opacity: 1 },
+          { transform: "scaleY(1)", opacity: 1, offset: 0.55 },
+          { transform: "scaleY(1)", opacity: 0 },
+        ],
+        { duration: RULE_MS, delay: CONFIRM_AT, easing: EASE_OUT },
+      );
+      run(
+        card.querySelector("[data-hc-glint]"),
+        [
+          { transform: "translateX(-100%)", opacity: 0 },
+          { opacity: 1, offset: 0.25 },
+          { opacity: 1, offset: 0.7 },
+          { transform: "translateX(100%)", opacity: 0 },
+        ],
+        { duration: GLINT_MS, delay: CONFIRM_AT + GLINT_DELAY, easing: "cubic-bezier(0.45, 0, 0.2, 1)" },
+      );
+      run(
+        card.querySelector("[data-hc-dot]"),
+        [
+          { transform: "scale(1)", opacity: 1 },
+          { transform: "scale(1.9)", opacity: 0.55, offset: 0.4 },
+          { transform: "scale(1)", opacity: 1 },
+        ],
+        { duration: DOT_MS, delay: CONFIRM_AT + DOT_DELAY, easing: EASE_OUT },
+      );
 
+      // Loop: hold, then a soft reset of the SHEET only (brackets and counts out, thumbnails up), held there
+      // ("forwards") until the next cycle's backwards fill takes over. The card is never touched. Opacity only,
+      // so nothing moves and the layout never changes. The scan line (always present) carries the cycle timer.
       if (!loop) return;
-      // Loop: hold on the evidence, then a soft reset. Everything the sequence revealed fades back to its start
-      // state (brackets and counts out, thumbnails up, the card out) and is held there ("forwards") until the
-      // next cycle's backwards fill takes over. Opacity only, so nothing moves and the layout never changes.
       const reset = { duration: RESET_MS, delay: SEQUENCE_END + HOLD_MS, easing: EASE_OUT, fill: "forwards" };
       const out = [{ opacity: 1 }, { opacity: 0 }];
       grid.querySelectorAll("[data-hc-bracket], [data-hc-count]").forEach((el) => run(el, out, reset));
-      grid.querySelectorAll("img").forEach((img) => run(img, [{ opacity: dim }, { opacity: 1 }], reset));
-      const tail = run(card, out, reset);
+      dimmed.forEach((img) => run(img, [{ opacity: dim }, { opacity: 1 }], reset));
+      const tail = run(line, [{ opacity: 0 }, { opacity: 0 }], reset);
       tail.onfinish = playCycle;
     };
 
@@ -339,7 +342,8 @@ function ContactSheet({ sheet, rewrite, loop, paused }) {
                         alt=""
                         loading="eager"
                         decoding="async"
-                        className="hc-shot h-full w-full object-cover object-top"
+                        data-hc-dim={isFeatured ? undefined : ""}
+                        className={`h-full w-full object-cover object-top ${isFeatured ? "" : "hc-shot"}`}
                       />
                     ) : null}
                   </div>
@@ -359,20 +363,11 @@ function ContactSheet({ sheet, rewrite, loop, paused }) {
 
       <figure
         ref={cardRef}
-        className="relative mt-4 origin-top-left overflow-hidden rounded-[10px] border border-[color:var(--h-border)] bg-[color:var(--h-surface)] sm:mt-5"
+        className="relative mt-4 overflow-hidden rounded-[10px] border border-[color:var(--h-border)] bg-[color:var(--h-surface)] sm:mt-5"
         style={{ boxShadow: "var(--h-shadow)" }}
         data-testid="home-pair"
       >
-        {ready && featuredPage?.screenshot_ref ? (
-          <img
-            ref={ghostRef}
-            src={featuredPage.screenshot_ref}
-            alt=""
-            aria-hidden="true"
-            className="pointer-events-none absolute inset-0 z-10 h-full w-full object-cover object-top opacity-0"
-          />
-        ) : null}
-        <div data-hc-content className="p-4 sm:p-5">
+        <div className="p-4 sm:p-5">
           {/* Fixed two-line header so the loading placeholder and the loaded card are the same height. */}
           <div className="flex h-6 items-center gap-3 text-sm">
             {ready ? (
@@ -390,16 +385,19 @@ function ContactSheet({ sheet, rewrite, loop, paused }) {
           <div className="mt-3 grid gap-3 sm:mt-4 sm:grid-cols-2 sm:gap-4">
             <blockquote
               data-testid="home-quote"
-              className="min-h-[3.75rem] rounded-r-md border-l-[3px] border-[color:var(--h-accent)] bg-[color:var(--h-quote-bg)] px-3 py-2 font-mono text-[13px] leading-relaxed text-[color:var(--h-quote-fg)]"
+              className="relative min-h-[3.75rem] overflow-hidden rounded-r-md border-l-[3px] border-[color:var(--h-accent)] bg-[color:var(--h-quote-bg)] px-3 py-2 font-mono text-[13px] leading-relaxed text-[color:var(--h-quote-fg)]"
             >
-              {ready ? quoted(featured.span) : " "}
+              {/* Confirm beat layers, painted under the quote text (the positioned text span comes later). */}
+              <span aria-hidden="true" data-hc-glint className="hc-glint pointer-events-none absolute inset-0" />
+              <span aria-hidden="true" data-hc-rule className="hc-rule pointer-events-none absolute inset-y-0 left-0 w-[3px]" />
+              <span className="relative">{ready ? quoted(featured.span) : " "}</span>
             </blockquote>
             {rewrite ? (
               <div data-testid="home-rewrite">
                 <div className="flex flex-wrap items-center justify-between gap-2 text-xs">
                   <span className="font-medium text-[color:var(--h-fg)]">Vigil's suggested rewrite</span>
                   <span className="inline-flex items-center gap-1.5 rounded-full border border-[color:var(--h-border)] px-2 py-0.5 text-[color:var(--h-muted)]">
-                    <span className="h-1.5 w-1.5 rounded-full bg-[color:var(--h-accent)]" />
+                    <span data-hc-dot className="h-1.5 w-1.5 rounded-full bg-[color:var(--h-accent)]" />
                     Awaiting your approval
                   </span>
                 </div>
@@ -451,7 +449,15 @@ function Brackets({ count }) {
 const CSS = `
 .hc-line { opacity: 0; will-change: transform, opacity; }
 .hc-shot { opacity: var(--h-thumb-dim); }
+/* Confirm beat layers rest invisible; the card itself is never animated. The glint is a faint amber band
+   under the text (max ~16% amber over the Lamp ground), so quote contrast stays well above AA. */
+.hc-rule { opacity: 0; background: var(--h-accent); transform-origin: 50% 0; will-change: transform, opacity; }
+.hc-glint {
+  opacity: 0;
+  background: linear-gradient(90deg, transparent 0%, color-mix(in srgb, var(--h-accent) 16%, transparent) 50%, transparent 100%);
+  will-change: transform, opacity;
+}
 @media (prefers-reduced-motion: reduce) {
-  .hc-line { display: none; }
+  .hc-line, .hc-rule, .hc-glint { display: none; }
 }
 `;
