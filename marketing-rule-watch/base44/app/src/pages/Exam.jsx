@@ -2,11 +2,12 @@
 // of every open flag with its exact quote and where and when it was captured. No new data.
 import { SeverityBadge } from "@/components/Badges";
 import { EmptyBlock, ErrorBlock, LoadingBlock, Shell } from "@/components/Chrome";
-import { COPY } from "@/lib/copy";
-import { loadInbox } from "@/lib/data";
+import { CHANNEL_LABELS, COPY } from "@/lib/copy";
+import { loadInbox, loadSessionDecisions } from "@/lib/data";
+import { buildEvidenceCsv, downloadCsv, evidenceFilename } from "@/lib/evidenceCsv";
 import { quoted } from "@/lib/highlight";
 import { Link, useParams } from "@/lib/router";
-import { categoryLabel } from "@/lib/severity";
+import { categoryLabel, SEVERITY_LABELS, severityOf } from "@/lib/severity";
 import { pageTitle, useAsync } from "@/lib/useAsync";
 
 function formatDate(value) {
@@ -15,9 +16,28 @@ function formatDate(value) {
   return date.toLocaleString(undefined, { dateStyle: "medium", timeStyle: "short" });
 }
 
+// Decisions only fill the CSV's decision columns; if they fail to load, those stay blank.
+async function loadDecisionsQuietly() {
+  try {
+    return await loadSessionDecisions();
+  } catch (error) {
+    console.warn("Session decisions unavailable:", error?.message ?? error);
+    return {};
+  }
+}
+
+const CSV_LABELS = {
+  category: categoryLabel,
+  severity: (category) => SEVERITY_LABELS[severityOf(category)],
+  channel: (channel) => CHANNEL_LABELS[channel] ?? channel,
+};
+
 export default function Exam() {
   const { id } = useParams();
-  const { status, data, reload } = useAsync(() => loadInbox(id), [id]);
+  const { status, data, reload } = useAsync(async () => {
+    const [inbox, decisions] = await Promise.all([loadInbox(id), loadDecisionsQuietly()]);
+    return { ...inbox, decisions };
+  }, [id]);
   return (
     <Shell demo={data?.firm?.is_demo}>
       {status === "loading" && <LoadingBlock rows={4} />}
@@ -27,24 +47,38 @@ export default function Exam() {
   );
 }
 
-function ExamBody({ firm, groups, pagesScanned }) {
+function ExamBody({ firm, groups, pagesScanned, decisions }) {
   const rows = groups.flatMap(({ page, flags }) =>
     flags.filter((flag) => (flag.status ?? "open") === "open").map((flag) => ({ flag, page })),
   );
   const inboxPath = firm.is_demo ? "/demo" : `/firm/${firm.id}`;
+  // Every flag on the firm's latest captures, not just the open ones listed below.
+  const downloadEvidence = () =>
+    downloadCsv(evidenceFilename(firm), buildEvidenceCsv(groups, decisions ?? {}, CSV_LABELS));
   return (
     <article className="space-y-6">
       <div className="flex flex-wrap items-start justify-between gap-3 print:hidden">
         <Link to={inboxPath} className="text-sm text-night-600 hover:text-night-950">
           ← {COPY.backToInbox}
         </Link>
-        <button
-          type="button"
-          onClick={() => window.print()}
-          className="rounded-md bg-night-950 px-4 py-2 text-sm text-white hover:bg-night-800"
-        >
-          {COPY.examPrint}
-        </button>
+        <div className="flex flex-wrap gap-2">
+          <button
+            type="button"
+            onClick={downloadEvidence}
+            title={COPY.examDownloadCsvHelp}
+            data-testid="exam-download-csv"
+            className="rounded-md border border-night-200 px-4 py-2 text-sm text-night-700 hover:bg-paper-100"
+          >
+            {COPY.examDownloadCsv}
+          </button>
+          <button
+            type="button"
+            onClick={() => window.print()}
+            className="rounded-md bg-night-950 px-4 py-2 text-sm text-white hover:bg-night-800"
+          >
+            {COPY.examPrint}
+          </button>
+        </div>
       </div>
       <header>
         <h1 className="text-2xl font-semibold tracking-tight">
