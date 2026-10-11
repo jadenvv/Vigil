@@ -8,7 +8,7 @@
 4. dedupe     - overlapping flags: keep the higher-confidence one
 5. threshold  - drop below min_conf
 
-Mirror of this logic for Base44 lives in engine/port/postprocess.js. Keep them in sync.
+Mirror of this logic for Base44 lives in engine/port/detect_core.js (postprocess). Keep them in sync.
 """
 from __future__ import annotations
 
