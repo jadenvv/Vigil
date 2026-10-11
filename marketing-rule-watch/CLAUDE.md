@@ -30,7 +30,7 @@ The product is called **Vigil**. Before any UI, slide, favicon or pitch work, re
 
 The **product runs entirely inside Base44** (screens, scan button, Bright Data and LLM calls, stored data, the live link testers open). Laptops with Claude Code are the workshop for detector development, eval, Bright Data testing and launching Sense Checks. Devin builds and hosts the fictional demo site.
 
-**Open question, owned by Person 1 and due 1:30:** can Base44 backend functions make outbound HTTPS calls (Bright Data, an LLM API)? **VERIFY.** Plan B if not is in `base44/CLAUDE.md`.
+**Resolved (was an open question for Person 1):** yes — Base44 backend functions make outbound HTTPS calls live; `scan`, `discover` and `recheck` all reach Bright Data. Plan B in `base44/CLAUDE.md` not needed.
 
 **Crawl status (P3):** Bright Data runs inside Base44 (`scan`, tested live by P2). Fetch, discovery (live SERP tested; press + podcast queries added, offline-tested), snapshots and the Base44 port (`scan`, `discover`) are on `main`. P1 and P2 hand-off notes: `crawl/CLAUDE.md` → "Status and hand-off".
 
