@@ -63,19 +63,19 @@ function FlagDetailBody({ flag, page, firm }) {
   );
 }
 
+// Opens on "Page as captured" when the page has a capture and the quote is found in it; otherwise it stays
+// on the formatted text without a note. Text shows first while the capture loads, then swaps in place.
 function PageText({ page, span }) {
-  const [tab, setTab] = useState("text");
-  const [note, setNote] = useState(null);
+  const hasCapture = SHOW_PAGE_VIEW && Boolean(page.html_ref);
+  // The tab the reviewer picked; null means automatic.
+  const [choice, setChoice] = useState(null);
+  useEffect(() => setChoice(null), [page.id]);
+  const capture = useCapture(page, span, hasCapture || choice === "captured");
 
-  useEffect(() => {
-    setTab("text");
-    setNote(null);
-  }, [page.id]);
-
-  const fallBackToText = (message) => {
-    setTab("text");
-    setNote(message);
-  };
+  const wantsCapture = (choice ?? (capture.status === "ready" ? "captured" : "text")) === "captured";
+  const view = !wantsCapture ? "text" : capture.status === "ready" ? "captured" : capture.status === "loading" ? "loading" : "text";
+  // A note only when the reviewer asked for the capture and it can't be shown.
+  const note = choice === "captured" && capture.status === "unavailable" ? capture.message : null;
 
   return (
     <section aria-label={COPY.pageTextLabel} className="rounded-lg border border-paper-200 bg-white">
@@ -87,21 +87,21 @@ function PageText({ page, span }) {
             {[
               ["text", COPY.tabText],
               ["captured", COPY.tabCaptured],
-            ].map(([key, label]) => (
-              <button
-                key={key}
-                type="button"
-                role="tab"
-                aria-selected={tab === key}
-                onClick={() => {
-                  setNote(null);
-                  setTab(key);
-                }}
-                className={`rounded px-2 py-1 text-xs ${tab === key ? "bg-night-950 text-paper-50" : "text-night-600 hover:bg-paper-100"}`}
-              >
-                {label}
-              </button>
-            ))}
+            ].map(([key, label]) => {
+              const selected = key === "captured" ? view !== "text" : view === "text";
+              return (
+                <button
+                  key={key}
+                  type="button"
+                  role="tab"
+                  aria-selected={selected}
+                  onClick={() => setChoice(key)}
+                  className={`rounded px-2 py-1 text-xs ${selected ? "bg-night-950 text-paper-50" : "text-night-600 hover:bg-paper-100"}`}
+                >
+                  {label}
+                </button>
+              );
+            })}
           </div>
         )}
       </div>
@@ -110,11 +110,26 @@ function PageText({ page, span }) {
           {note}
         </p>
       )}
-      {tab === "captured" ? (
-        <CapturedView page={page} span={span} onUnavailable={fallBackToText} />
-      ) : (
-        <TextView page={page} span={span} />
-      )}
+      {/* Same height for both views when a capture may swap in, so the page below never jumps. */}
+      <div className={hasCapture ? "min-h-[60vh]" : undefined}>
+        {view === "captured" && (
+          <div>
+            <iframe
+              title={COPY.tabCaptured}
+              data-testid="capture-frame"
+              sandbox=""
+              referrerPolicy="no-referrer"
+              src={`${capture.frameUrl}#${HIT_ID}`}
+              className="block h-[calc(60vh-2rem)] w-full bg-white"
+            />
+            <p className="h-8 truncate border-t border-paper-200 px-4 text-xs leading-8 text-night-600">
+              {COPY.capturedCaption(formatDate(capture.fetchedAt))}
+            </p>
+          </div>
+        )}
+        {view === "loading" && <div aria-busy="true" className="m-4 h-64 animate-pulse rounded bg-paper-200" />}
+        {view === "text" && <TextView page={page} span={span} />}
+      </div>
     </section>
   );
 }
@@ -139,56 +154,37 @@ async function fetchCapture(pageId) {
   return result;
 }
 
-function CapturedView({ page, span, onUnavailable }) {
-  const [capture, setCapture] = useState({ status: "loading" });
+// Loads and prepares the capture: { status: "idle" | "loading" | "ready" | "unavailable", frameUrl, fetchedAt, message }.
+// The span is marked before the page is shown: the sandboxed frame is opaque to us, so it is opened at "#mrw-hit"
+// and the browser scrolls to the mark itself. A blob URL (unlike srcdoc) can carry that fragment.
+function useCapture(page, span, enabled) {
+  const [result, setResult] = useState(null);
 
   useEffect(() => {
+    if (!enabled) return undefined;
     let cancelled = false;
-    fetchCapture(page.id).then((result) => {
-      if (cancelled) return;
-      if (result.status !== "ready") onUnavailable(result.message);
-      else setCapture(result);
-    });
+    setResult(null);
+    fetchCapture(page.id).then((loaded) => !cancelled && setResult(loaded));
     return () => {
       cancelled = true;
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [page.id]);
+  }, [page.id, enabled]);
 
-  // The span is marked before the page is shown: the sandboxed frame is opaque to us, so it is opened
-  // at "#mrw-hit" and the browser scrolls to the mark itself. A blob URL (unlike srcdoc) can carry that fragment.
   const prepared = useMemo(
-    () => (capture.status === "ready" ? prepareCapture(capture.html, capture.url || page.url, span) : null),
-    [capture, page.url, span],
+    () => (result?.status === "ready" ? prepareCapture(result.html, result.url || page.url, span) : null),
+    [result, page.url, span],
   );
   const frameUrl = useMemo(
     () => (prepared?.found ? URL.createObjectURL(new Blob([prepared.html], { type: "text/html" })) : null),
     [prepared],
   );
-
-  useEffect(() => {
-    if (prepared && !prepared.found) onUnavailable(COPY.captureSpanMissing);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [prepared]);
-
   useEffect(() => () => frameUrl && URL.revokeObjectURL(frameUrl), [frameUrl]);
 
-  if (!frameUrl) return <div aria-busy="true" className="m-4 h-64 animate-pulse rounded bg-paper-200" />;
-  return (
-    <div>
-      <iframe
-        title={COPY.tabCaptured}
-        data-testid="capture-frame"
-        sandbox=""
-        referrerPolicy="no-referrer"
-        src={`${frameUrl}#${HIT_ID}`}
-        className="block h-[60vh] w-full bg-white"
-      />
-      <p className="border-t border-paper-200 px-4 py-2 text-xs text-night-600">
-        {COPY.capturedCaption(formatDate(capture.fetched_at ?? page.fetched_at))}
-      </p>
-    </div>
-  );
+  if (!enabled) return { status: "idle" };
+  if (!result) return { status: "loading" };
+  if (result.status !== "ready") return { status: "unavailable", message: result.message };
+  if (!prepared?.found) return { status: "unavailable", message: COPY.captureSpanMissing };
+  return { status: "ready", frameUrl, fetchedAt: result.fetched_at ?? page.fetched_at };
 }
 
 function TextView({ page, span }) {
@@ -462,6 +458,7 @@ function Screenshot({ page }) {
 }
 
 function formatDate(value) {
+  if (value == null) return "";
   const date = new Date(value);
   if (Number.isNaN(date.getTime())) return value;
   return date.toLocaleString(undefined, { dateStyle: "medium", timeStyle: "short" });
