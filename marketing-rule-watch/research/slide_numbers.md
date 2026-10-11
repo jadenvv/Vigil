@@ -86,3 +86,22 @@ Caveat: this is a **development set**, not a test. We first ran the detector on 
 From `eval/reports/discovery_v2.json`: the app's discovery queries found 10 of 10 of the firm's own pages and 7 of 7 third-party pages about it, with 0 personal pages leaked.
 
 Caveat: this is a simulated web (our demo site plus a fake search engine answering from 13 documents we labeled). It tests our query design and filters, not real Google indexing.
+
+## 7. Held-out cases and the next detector version (v4, NOT live)
+
+*14 held-out cases a teammate (Ethan) wrote from public SEC 2024–2025 risk alerts and sweeps* (`eval/cases_generalize.jsonl`, `a6c2d65`, 17:30): 12 issues and 3 clean. They were written **before detect.md v4** (`851f64e`, 18:29) and after v3, so the live v3 prompt never saw them. Caveat: the same person who wrote the cases then wrote v4. The cases are unreviewed.
+
+**Model caveat, critical:** these runs used **gpt-oss-20b via Groq on a laptop**, not the live app's Base44 InvokeLLM. Don't compare them with sections 1–3, and never put them under "Model: Base44 InvokeLLM". **v4 is not deployed**: the live app still runs v3. Call v4 "next detector version, not yet live".
+
+| Run (one each) | Cases | Issues caught | Precision | F1 | Clean flagged |
+|---|---|---|---|---|---|
+| Keyword rules (`baseline_regex_generalize.json`) | 14 | 0 of 12 | 0.00 | 0.00 | 1 of 3 |
+| Detector v3, the prompt live now (`llm_groq20b_v3_generalize.json`) | 14 | 8 of 12 | 0.89 | 0.76 | 0 of 3 |
+| Detector v4, not yet live (`llm_groq20b_v4_generalize.json`) | 14 | 7 of 12 | 0.88 | 0.70 | 0 of 3 |
+| v3, the 11 cases both versions answered | 11 | 5 of 9 | 0.83 | 0.67 | 0 of 3 |
+| v4 (not yet live), same 11 cases | 11 | **7 of 9** | 0.88 | **0.82** | 0 of 3 |
+
+- **Use the 11-case comparison.** 3 v4 cases errored on the model's daily cap (`gen_benchmark_unnamed`, `gen_credentials_claim`, `gen_testimonial_link_only`), and v3 got all 3 right. The 14-case v4 row counts those errors as misses, so it understates v4.
+- v4 newly caught the two "free of conflicts" claims (`gen_conflict_free_about`, `gen_conflict_none_faq`). Nothing v3 caught on the 11 was lost.
+- p4-eval re-derived every number in this table from the report JSONs (18:4x). Ethan's commit message ("F1 0.67 -> 0.82, clean flagged 0/3 both") matches.
+- Slide line, if used: "On 11 held-out cases written before the change, the next detector version (not yet live) found 7 of 9 issues vs 5 of 9 for the current prompt, with no clean case flagged by either. That's one run on a smaller model than the live app's."
