@@ -43,7 +43,7 @@ The core loop is **crawl → flag → rewrite → approve**. The product runs en
 - **Base44**: hosting, the React app, five entities (Firm, Page, Flag, Decision, Recheck) with row-level security, nine backend functions, Google sign-in, file storage. The LLM is Base44's built-in **InvokeLLM**.
 - **Bright Data**: every page Vigil reads comes through the Web Unlocker: markdown text, screenshots and raw HTML. The SERP API finds pages about the firm elsewhere on the web (admin-only, off in the demo). Each scan reads at most 25 URLs and never retries.
 - **Daytona**: an admin-only **Check calculation** tool on the flag detail screen. A reviewer types the numbers behind a stated return (for example $10,000 → $15,000 "a 60% return"). One fixed Python script recomputes it in a fresh Daytona sandbox, which is then deleted. It checks arithmetic only; it does not verify that the performance was real.
-- **Devin (Cognition)**: built **AdvisorQuill** (https://nathanqiu07.github.io/advisorquill/), a fictional third-party review site with 4 planted issues on the demo firm's profile, from our brief (PR #4, Devin-authored commits). Who built the firm site itself is not yet verified.
+- **Devin (Cognition)**: built **AdvisorQuill** (https://nathanqiu07.github.io/advisorquill/), a fictional third-party review site with 4 planted issues on the demo firm's profile, from our brief (PR #4, Devin-authored commits). Vigil catches all 4 live (see results). Who built the firm site itself is not yet verified.
 
 Full detail, with file paths and live counts: `marketing-rule-watch/research/sponsor_usage.md`.
 
@@ -66,6 +66,8 @@ Every number comes from **one run** of detector v3 on Base44 InvokeLLM (10 Oct, 
 **Tester-style cases** (10 cases we wrote from Sense Check 1 testers' comments): keyword baseline caught 0 of 5 issues and flagged 2 of 5 clean cases; the live detector caught 5 of 5 and flagged 0 of 5. *The testers did not write or label these cases, and 3 of them were written together with the fix they test.*
 
 **Our fictional demo site**: the first in-app scan found 9 of 11 planted issues. We fixed the two misses; it now finds 11 of 11 with 0 false alarms. *One run, on a site we built and tuned the detector on. Not real-world accuracy.*
+
+**Third-party review site (AdvisorQuill, built by Devin)**: the demo firm's AdvisorQuill profile is in the app as a review-site page. The live detector flagged all 4 planted issues under the answer key's categories, and none of the page's clean content. `/demo` shows these 4 flags without sign-in, bringing the demo firm to 11 pages and 15 flags. *One page, one run (about 6:45 PM). The site was written from a brief based on our own issue categories, so this is not an independent test.*
 
 **Consistency**: 3 pages, 2 runs each. 2 of 3 pages gave identical flags; 3 of 3 flagged the same categories. *Too few calls for a rate.*
 

@@ -70,7 +70,10 @@ Facts only, for judges and the submission. Counts come from read-only queries of
 - **Verified: Devin built AdvisorQuill**, the fictional third-party review site, live at https://nathanqiu07.github.io/advisorquill/.
   - **Evidence:** PR #4 (`devin/advisorquill-third-party`, merged), with commits `4b6d46b` and `d0d51be` authored by `Devin <devin@cognition.ai>`.
   - **What it contains:** four invented firms, a Quarrywick Wealth profile with 4 planted issues, one fictional press article, and a "fictional" banner on every page. Source is in `demo-site/third-party/`; the planted sentences are in `demo-site/ANSWER_KEY.md` under "Third-party site".
-  - **Not yet claimed:** that the app shows AdvisorQuill pages. Ingesting them is in progress; confirm before saying so.
+  - **In the app (confirmed by the orchestrator, about 6:45 PM):** the Quarrywick profile is stored on the demo firm as Page `6acae98a770ded722c7108da`, channel `review_site`.
+    - Live detector v3 on Base44 InvokeLLM flagged all 4 planted issues with the answer key's categories, and 0 clean controls.
+    - `/demo` shows the 4 flags signed out. The demo firm now has 11 pages and 15 flags. Its own site still has 11 planted issues.
+    - *Caveats: one page, one run, and the site was written from our own taxonomy brief, so this is not an independent test.*
 - **VERIFY: did Devin build the Quarrywick firm site?** Its only commit (`e73f178`) is by Nathan Qiu, and `PROJECT.md` says a Claude agent built it while Devin was down. Don't claim it without a Devin session link.
 
 The firm site is live at https://nathanqiu07.github.io/quarrywick-wealth-demo/, with its answer key in `demo-site/ANSWER_KEY.md`.
