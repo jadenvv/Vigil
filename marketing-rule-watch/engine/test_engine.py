@@ -195,3 +195,28 @@ class Naive(unittest.TestCase):
         with mock.patch.object(llm, "complete") as m:
             self.assertEqual(naive.detect("   "), [])
         m.assert_not_called()
+
+
+class TestBadReply(unittest.TestCase):
+    """A truncated or non-JSON reply gets one more call, then raises; never silently scored as clean."""
+
+    def setUp(self):
+        self.env = mock.patch.dict(os.environ, {"DETECT_MODE": "llm"})
+        self.env.start()
+
+    def tearDown(self):
+        self.env.stop()
+
+    def test_one_retry_then_success(self):
+        good = json.dumps({"flags": [{"category": "BENEFITS_WITHOUT_RISK",
+                                      "span": "guaranteed 9% returns", "confidence": 0.9, "why": "x"}]})
+        with mock.patch.object(llm, "complete", side_effect=['{"flags": [{"categ', good]) as m:
+            flags = D.detect("We offer guaranteed 9% returns.", "website")
+        self.assertEqual(m.call_count, 2)
+        self.assertEqual([f["span"] for f in flags], ["guaranteed 9% returns"])
+
+    def test_two_bad_replies_raise(self):
+        with mock.patch.object(llm, "complete", side_effect=["not json", "still not json"]) as m:
+            with self.assertRaises(ValueError):
+                D.detect("We offer guaranteed 9% returns.", "website")
+        self.assertEqual(m.call_count, 2)

@@ -109,7 +109,11 @@ def detect(text: str, channel: str = "", debug: list | None = None) -> list[dict
             cands = rule_candidates(ch)
         else:
             system, user = build_messages(ch, channel)
-            cands = parse_flags(llm.complete(system, user))
+            # a truncated or non-JSON reply gets exactly one more call, then raises (never scored as clean)
+            try:
+                cands = parse_flags(llm.complete(system, user))
+            except ValueError:
+                cands = parse_flags(llm.complete(system, user))
         flags.extend(postprocess(ch, cands, min_conf=min_conf, debug=debug))
     return flags
 
