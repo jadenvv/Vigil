@@ -24,6 +24,21 @@ const MAX_GETS_NON_ADMIN = 3; // home, sitemap.xml, robots.txt; a followed redir
 
 interface Budget { left: number }
 
+/** Reads at most ~maxChars of the body, then cancels the stream, so a huge response can't fill memory. */
+async function readCapped(r: Response, maxChars: number): Promise<string> {
+  if (!r.body) return "";
+  const reader = r.body.getReader();
+  const decoder = new TextDecoder();
+  let out = "";
+  while (out.length < maxChars) {
+    const { done, value } = await reader.read();
+    if (done) return out + decoder.decode();
+    out += decoder.decode(value, { stream: true });
+  }
+  await reader.cancel();
+  return out.slice(0, maxChars);
+}
+
 /** Guarded GET: every hop is checked (scheme, port, resolved address) and redirects are followed by hand, once. */
 async function plainGet(url: string, log: string[], budget: Budget): Promise<{ body: string; finalUrl: string } | null> {
   let target = url;
@@ -52,7 +67,7 @@ async function plainGet(url: string, log: string[], budget: Budget): Promise<{ b
         target = new URL(location, target).href;
         continue;
       }
-      const body = (await r.text()).slice(0, MAX_BODY_CHARS);
+      const body = await readCapped(r, MAX_BODY_CHARS);
       log.push(`plain_get ${r.status} ${Date.now() - t0}ms ${body.length}B ${target}`);
       return r.status === 200 ? { body, finalUrl: target } : null;
     } catch (e) {
