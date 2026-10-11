@@ -38,31 +38,44 @@ export function FirmInbox() {
 
 function InboxView({ result, demo }) {
   const { status, data, reload } = result;
+  const ready = status === "ready" && !data.missingDemoFirm;
   return (
-    <Shell demo={demo}>
+    <Shell demo={demo} hero={ready ? <InboxHeader {...data} /> : null}>
       {status === "loading" && <LoadingBlock rows={4} />}
       {status === "error" && <ErrorBlock onRetry={reload} />}
       {status === "ready" && data.missingDemoFirm && <EmptyBlock title={COPY.noDemoFirm} />}
-      {status === "ready" && !data.missingDemoFirm && <InboxBody {...data} />}
+      {ready && <InboxBody {...data} />}
     </Shell>
   );
 }
 
-function InboxBody({ firm, groups, flagCount, pagesScanned, decisions }) {
+// The firm's summary sits in the same Dusk night band as the home hero, so the two read as one site.
+function InboxHeader({ firm, groups, flagCount, pagesScanned }) {
   return (
-    <>
-      <div className="mb-6">
-        <h1 className="text-2xl font-semibold tracking-tight">{firm.name}</h1>
-        <p className="mt-1 text-night-600" data-testid="issue-count">
+    <div className="hero-scope" data-scheme="dusk-night">
+      <div className="mx-auto w-full max-w-5xl px-4 pb-10 pt-8 sm:pb-12 sm:pt-10">
+        <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">{firm.name}</h1>
+        <p className="mt-2 text-[color:var(--h-muted)]" data-testid="issue-count">
           {COPY.issueCountAcross(flagCount, groups.length, pagesScanned)}
         </p>
-        <p data-testid="scope-note" className="mt-1 text-sm text-night-600">
+        <p data-testid="scope-note" className="mt-1 text-sm text-[color:var(--h-muted)]">
           {COPY.scopeNote}
         </p>
-        <Link to={`/firm/${firm.id}/exam`} data-testid="exam-link" className="mt-2 inline-block text-sm underline">
+        <Link
+          to={`/firm/${firm.id}/exam`}
+          data-testid="exam-link"
+          className="mt-3 inline-block text-sm text-[color:var(--h-fg)] underline decoration-[color:var(--h-muted)] underline-offset-4 hover:decoration-[color:var(--h-fg)]"
+        >
           {COPY.examLink}
         </Link>
       </div>
+    </div>
+  );
+}
+
+function InboxBody({ groups, decisions }) {
+  return (
+    <>
       {groups.length === 0 ? (
         <EmptyBlock title={COPY.emptyInbox} detail={COPY.emptyInboxDetail} />
       ) : (
