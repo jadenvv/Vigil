@@ -95,6 +95,7 @@
   html.dusk:not(.dusk-off) .fill-night-600 { fill: #8B95AE; }
   html.dusk:not(.dusk-off) svg [fill="#0B1120"] { fill: #FAF8F4; }
   html.dusk:not(.dusk-off) svg [fill="#4A5570"] { fill: #8B95AE; }
+  html.dusk:not(.dusk-off) svg [fill="#9A5B00"] { fill: #FFCF6E; }
   html.dusk:not(.dusk-off) svg [fill="#E6E0D4"],
   html.dusk:not(.dusk-off) svg [fill="#F3EFE7"] { fill: #2A3550; }
   html.dusk:not(.dusk-off) svg [stroke="#E6E0D4"],
