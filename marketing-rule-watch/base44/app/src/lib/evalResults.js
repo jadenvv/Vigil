@@ -28,6 +28,12 @@ export const EVAL_RESULTS = [
     detail: "Found 9 of 11 first, fixed the 2 misses on this site, now 11 of 11 with 0 false alarms.",
     set: "Our fictional site; a development set",
   },
+  {
+    label: "Third-party review page",
+    value: "4 of 4",
+    detail: "0 clean passages flagged; a page the detector was never tuned on.",
+    set: "Fictional review site Devin built; one page, one run",
+  },
 ];
 
 export const EVAL_CAVEAT =

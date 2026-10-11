@@ -105,3 +105,19 @@ Caveat: this is a simulated web (our demo site plus a fake search engine answeri
 - v4 newly caught the two "free of conflicts" claims (`gen_conflict_free_about`, `gen_conflict_none_faq`). Nothing v3 caught on the 11 was lost.
 - p4-eval re-derived every number in this table from the report JSONs (18:4x). Ethan's commit message ("F1 0.67 -> 0.82, clean flagged 0/3 both") matches.
 - Slide line, if used: "On 11 held-out cases written before the change, the next detector version (not yet live) found 7 of 9 issues vs 5 of 9 for the current prompt, with no clean case flagged by either. That's one run on a smaller model than the live app's."
+
+## 8. Third-party review page (live v3, a page the detector was never tuned on)
+
+*One page on a fictional review site Devin built (AdvisorQuill profile of Quarrywick Wealth, channel `review_site`), one run of the live v3 detector on Base44 InvokeLLM, ~18:42 on 10-10.*
+
+- **4 of 4 planted issues flagged:**
+  - RATING_NO_DISCLOSURE: "Rated #1 Advisor in the Region by AdvisorQuill.", 0.9
+  - UNSUBSTANTIATED_CLAIM: "The firm consistently outperforms the market.", 0.9
+  - BENEFITS_WITHOUT_RISK: "Quarrywick Wealth provides guaranteed income with no investment risk.", 1.0
+  - TESTIMONIAL_NO_DISCLOSURE: the "Quarrywick doubled our retirement savings in five years." review, 1.0
+- **0 clean passages flagged.** The disclosed Sandra M. review (current client, not paid), the About text and the facts table stayed quiet.
+- **How it was checked:** p4-eval read the 4 stored Flag rows (Page `6acae98a770ded722c7108da`) read-only and confirmed they are the only flags on that page. All 4 quotes appear on the live page, and the Sandra M. disclosure is present. The answer-key categories come from the orchestrator, because the key isn't in the page HTML.
+- **Not tuned on it:** no eval case or prompt file contains this page's text, and v3 (15:22) predates the page.
+- **Caveats:** one page, 4 issues, one run. Devin wrote the page from our own taxonomy brief, so the issues follow our categories. It is a fictional site, not real-world accuracy.
+
+Home card (5th entry in `EVAL_RESULTS`): "Third-party review page: 4 of 4", "0 clean passages flagged; a page the detector was never tuned on", "Fictional review site Devin built; one page, one run".

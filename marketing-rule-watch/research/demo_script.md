@@ -20,6 +20,9 @@ Each potential issue shows a headline, the exact quote and the page. A tester on
 **0:50–1:10 · Open the flag "Our clients have never lost money in a down year."** (About page, benefits without risk)
 No trigger word like "guaranteed". Our keyword baseline missed this sentence; the live detector caught it. *Changed after a tester (B4):* the detector now skips text that only shows an example of what not to say, so a firm's explainer blog isn't flagged. On our 37-case synthetic, unreviewed test set, clean documents wrongly flagged went from **28% with keyword rules to 0% with the live detector**, in one run. That matters because a tester told us repeated false positives would make them doubt every flag.
 
+**Optional, +10 s · Back to results → open the flag "Rated #1 Advisor in the Region by AdvisorQuill."** (Review site badge)
+Vigil also checks pages the firm doesn't control. This is a review-site profile of the firm, a fictional site our teammate built. A rating shown without its disclosures is a potential issue for review. On that page the live detector found all 4 planted issues, with no clean passage flagged. The prompt was never tuned on that page. *(Then go back to the About flag for the next beat. Skip this beat if you're over time.)*
+
 **1:10–1:30 · Page as captured → Re-check now**
 This is the page exactly as we captured it, with the date and its fingerprint. *Changed after a tester (B2):* a regulator-side tester said, "I would still want to independently verify that I could locate the ad". So Re-check now fetches the live page again and says whether the quote is still there.
 
