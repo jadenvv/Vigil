@@ -9,6 +9,9 @@ const HeroRedline = lazy(() => import("@/components/hero/HeroRedline"));
 const HeroHeadline = lazy(() => import("@/components/hero/HeroHeadline"));
 const HeroScroll = lazy(() => import("@/components/hero/HeroScroll"));
 const HeroWorkflow = lazy(() => import("@/components/hero/HeroWorkflow"));
+const HeroWorkflow2 = lazy(() => import("@/components/hero/HeroWorkflow2"));
+const HeroWorkflow3 = lazy(() => import("@/components/hero/HeroWorkflow3"));
+const HeroWorkflow4 = lazy(() => import("@/components/hero/HeroWorkflow4"));
 
 export const ANIMATIONS = [
   { id: "contact", label: "Contact sheet", Comp: HeroContact, kind: "once" },
@@ -19,6 +22,9 @@ export const ANIMATIONS = [
   { id: "headline-loop", label: "Scanned headline · loop", Comp: HeroHeadline, kind: "loop" },
   { id: "scroll", label: "Scroll-driven", Comp: HeroScroll, kind: "scroll" },
   { id: "workflow", label: "Workflow · loop", Comp: HeroWorkflow, kind: "loop" },
+  { id: "workflow-2", label: "Workflow 2 · rail", Comp: HeroWorkflow2, kind: "loop" },
+  { id: "workflow-3", label: "Workflow 3 · journey", Comp: HeroWorkflow3, kind: "loop" },
+  { id: "workflow-4", label: "Workflow 4 · log", Comp: HeroWorkflow4, kind: "loop" },
 ];
 
 export const SCHEMES = [
@@ -26,9 +32,14 @@ export const SCHEMES = [
   { id: "night", label: "Night" },
   { id: "split", label: "Split" },
   { id: "dusk", label: "Dusk" },
+  { id: "sage", label: "Sage" },
+  { id: "ink", label: "Ink" },
+  { id: "dusk-night", label: "Dusk night" },
+  { id: "lamp", label: "Lamp" },
+  { id: "night-sage", label: "Night sage" },
 ];
 
-const DARK = new Set(["night", "split"]);
+const DARK = new Set(["night", "split", "dusk-night", "night-sage"]);
 
 function initialSelection() {
   const query = new URLSearchParams(window.location.search);
