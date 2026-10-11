@@ -175,11 +175,11 @@ function liveSetFromDetails(set) {
 // Prefer p4-eval's `details` (src/lib/evalResults.js) whenever it has the shape this page reads.
 function pickDetails() {
   const details = evalResults.details;
-  if (!details || !Array.isArray(details.sets)) return { ...FALLBACK_DETAILS, nextSet: null, fromFallback: true };
+  if (!details || !Array.isArray(details.sets)) return { ...FALLBACK_DETAILS, nextSets: [], fromFallback: true };
   const sets = details.sets.filter((s) => Array.isArray(s.runs)).map(liveSetFromDetails).filter(Boolean);
-  if (sets.length === 0) return { ...FALLBACK_DETAILS, nextSet: null, fromFallback: true };
+  if (sets.length === 0) return { ...FALLBACK_DETAILS, nextSets: [], fromFallback: true };
   // Sets with no live run (e.g. the held-out set measured on a laptop model) render apart, labelled not live.
-  const nextSet = details.sets.find((s) => Array.isArray(s.runs) && s.runs.length > 0 && !s.runs.some((r) => r.live === true)) || null;
+  const nextSets = details.sets.filter((s) => Array.isArray(s.runs) && s.runs.length > 0 && !s.runs.some((r) => r.live === true));
   const c = details.consistency;
   const consistency = c
     ? {
@@ -191,7 +191,7 @@ function pickDetails() {
         report: c.report || FALLBACK_DETAILS.consistency.report,
       }
     : FALLBACK_DETAILS.consistency;
-  return { ...FALLBACK_DETAILS, sets, nextSet, consistency, fromFallback: false };
+  return { ...FALLBACK_DETAILS, sets, nextSets, consistency, fromFallback: false };
 }
 
 const count = (c) => `${c.n} of ${c.of}`;
@@ -432,6 +432,7 @@ function SetCard({ set }) {
 const NEXT_FILL = { v3: "#5878AD", v4: "#22674A" }; // dusk-500, sage-700
 
 function NextVersion({ set }) {
+  const badge = set.incomplete ? "Incomplete run, not live" : "Next version, not yet live";
   const subsetV3 = set.runs.find((r) => /v3/i.test(r.label) && r.cases !== set.runs[0]?.cases && !isBaselineRun(r));
   const subsetV4 = set.runs.find((r) => /v4/i.test(r.label) && r.cases === subsetV3?.cases && !isBaselineRun(r));
   const models = [...new Set(set.runs.map((r) => r.model).filter(Boolean))];
@@ -447,15 +448,19 @@ function NextVersion({ set }) {
       : null;
   return (
     <Section
-      id="next-title"
-      title="Next version, not yet live"
-      intro="We also test the next detector prompt on held-out cases written before it. None of these numbers come from the live app."
+      id={`next-title-${set.id}`}
+      title={badge}
+      intro={
+        set.incomplete
+          ? "A partial head-to-head run that stopped early. Too few cases to conclude anything; shown for completeness. None of these numbers come from the live app."
+          : "We also test the next detector prompt on held-out cases written before it. None of these numbers come from the live app."
+      }
     >
-      <article aria-labelledby="next-set" className="min-w-0 space-y-5 rounded-[10px] border border-dashed border-night-300 bg-white p-5 sm:p-6">
+      <article aria-labelledby={`next-set-${set.id}`} className="min-w-0 space-y-5 rounded-[10px] border border-dashed border-night-300 bg-white p-5 sm:p-6">
         <div className="space-y-2">
           <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
-            <h3 id="next-set" className="text-lg font-semibold tracking-tight">{set.title}</h3>
-            <span className="rounded-full bg-paper-100 px-2 py-0.5 text-xs font-medium text-night-700">Next version, not yet live</span>
+            <h3 id={`next-set-${set.id}`} className="text-lg font-semibold tracking-tight">{set.title}</h3>
+            <span className="rounded-full bg-paper-100 px-2 py-0.5 text-xs font-medium text-night-700">{badge}</span>
           </div>
           <p className="text-sm leading-relaxed text-night-600">{set.caveat}</p>
           {models.length > 0 && (
@@ -513,6 +518,70 @@ function NextVersion({ set }) {
             </tbody>
           </table>
         </div>
+      </article>
+    </Section>
+  );
+}
+
+// Live v3 on Devin's fictional AdvisorQuill profile page (Page 6acae98a770ded722c7108da, ~6:45 PM, one run).
+// Expected issues come from demo-site/ANSWER_KEY.md, "Third-party site". No keyword baseline was run here.
+const THIRD_PARTY = {
+  page: "AdvisorQuill profile of Quarrywick Wealth",
+  model: "Base44 InvokeLLM (live app, detector v3)",
+  rows: [
+    { quote: "Rated #1 Advisor in the Region by AdvisorQuill.", category: "Rating or award missing disclosures", confidence: 0.9 },
+    { quote: "The firm consistently outperforms the market.", category: "Claim without support", confidence: 0.9 },
+    { quote: "Quarrywick Wealth provides guaranteed income with no investment risk.", category: "Benefits without balancing risks", confidence: 1 },
+    { quote: "“Quarrywick doubled our retirement savings in five years.”", category: "Testimonial missing disclosures", confidence: 1 },
+  ],
+  clean: "A disclosed client review, the “About the firm” text and the facts table",
+};
+
+function ThirdParty() {
+  return (
+    <Section
+      id="third-party-title"
+      title="A page the firm doesn't control"
+      intro="Risk also lives outside the firm's own site. We ran the live detector once on a fictional third-party review page that Devin built, after the detection prompt was written."
+    >
+      <div className="grid gap-3 sm:grid-cols-3">
+        <Stat value="4 of 4" label="planted issues found, each in the category the answer key expects" />
+        <Stat value="0" label="clean passages flagged" />
+        <Stat value="4 of 4" label="flags quote the page word for word" />
+      </div>
+      <article aria-labelledby="third-party-set" className="min-w-0 space-y-4 rounded-[10px] border border-paper-200 bg-white p-5 sm:p-6">
+        <div className="space-y-1">
+          <h3 id="third-party-set" className="text-lg font-semibold tracking-tight">{THIRD_PARTY.page}</h3>
+          <p className="text-sm text-night-600">
+            Model: <span className="font-medium text-night-950">{THIRD_PARTY.model}</span> · one page, one run
+          </p>
+        </div>
+        <div className="min-w-0 overflow-x-auto">
+          <table className="w-full min-w-[560px] text-left text-sm">
+            <caption className="sr-only">Planted issues on the third-party page and what the live detector flagged</caption>
+            <thead>
+              <tr className="border-b border-paper-200 text-xs text-night-600">
+                <th scope="col" className="py-2 pr-3 font-medium">Planted sentence</th>
+                <th scope="col" className="py-2 pr-3 font-medium">Flagged as</th>
+                <th scope="col" className="py-2 font-medium">Confidence</th>
+              </tr>
+            </thead>
+            <tbody>
+              {THIRD_PARTY.rows.map((r) => (
+                <tr key={r.quote} className="border-b border-paper-100 align-top">
+                  <th scope="row" className="py-2 pr-3 font-mono text-xs font-normal leading-relaxed text-night-950">{r.quote}</th>
+                  <td className="py-2 pr-3 text-night-700">{r.category}</td>
+                  <td className="py-2 font-mono tabular-nums">{Math.round(r.confidence * 100)}%</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        <p className="text-sm text-night-600">Left alone, as it should be: {THIRD_PARTY.clean}.</p>
+        <p className="text-sm leading-relaxed text-night-600">
+          <span className="font-medium text-night-950">Caveat:</span> one page with four issues, one run. Devin wrote the page from our
+          own issue list, so this is not an independent test. Source: demo-site/ANSWER_KEY.md.
+        </p>
       </article>
     </Section>
   );
@@ -599,7 +668,10 @@ export default function Evals() {
             ))}
           </div>
         </Section>
-        {data.nextSet && <NextVersion set={data.nextSet} />}
+        {!data.fromFallback && <ThirdParty />}
+        {(data.nextSets || []).map((set) => (
+          <NextVersion key={set.id} set={set} />
+        ))}
         <ConsistencyAndGrounding consistency={data.consistency} grounding={data.grounding} />
         <Limits limits={data.limits} />
       </div>
