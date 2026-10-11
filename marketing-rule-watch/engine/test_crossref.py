@@ -167,7 +167,8 @@ class TestCrossref(unittest.TestCase):
         def complete(system, user, max_tokens=2000):
             n.append(1)
             return "sorry, I can't"
-        with mock.patch.object(llm, "complete", complete), mock.patch.object(llm, "available", lambda: True):
+        with mock.patch.object(llm, "complete", complete), mock.patch.object(llm, "available", lambda: True), \
+                mock.patch.dict("os.environ", {"DETECT_MODE": "auto"}):
             with self.assertRaises(ValueError):
                 X.crossref(DOCS)
         self.assertEqual(len(n), 2)
