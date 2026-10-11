@@ -72,6 +72,39 @@ export function buildEvidenceCsv(groups, decisions, labels) {
   return toCsv(EVIDENCE_COLUMNS, evidenceRows(groups, decisions, labels));
 }
 
+// Cross-document check marks (crossref function). Claim and evidence quotes are untrusted page text.
+export const MARK_COLUMNS = [
+  "status",
+  "severity",
+  "topic",
+  "absolute",
+  "claim_url",
+  "claim_quote",
+  "evidence_url",
+  "evidence_quote",
+  "confidence",
+  "why",
+];
+
+export function markRows(marks) {
+  return marks.map((m) => [
+    m.status ?? "",
+    m.severity ?? "",
+    m.topic ?? "",
+    m.absolute ? "yes" : "no",
+    m.claim_url ?? "",
+    m.claim_span ?? "",
+    m.evidence_url ?? "",
+    m.evidence_span ?? "",
+    typeof m.confidence === "number" ? m.confidence : "",
+    m.why ?? "",
+  ]);
+}
+
+export function buildMarksCsv(marks) {
+  return toCsv(MARK_COLUMNS, markRows(marks));
+}
+
 function localDate(now) {
   const pad = (n) => String(n).padStart(2, "0");
   return `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}`;
@@ -81,6 +114,10 @@ export function evidenceFilename(firm, now = new Date()) {
   const raw = String(firm?.domain || firm?.id || "firm").toLowerCase();
   const slug = raw.replace(/^https?:\/\//, "").replace(/[^a-z0-9.-]+/g, "-").replace(/^-+|-+$/g, "") || "firm";
   return `vigil-evidence-${slug}-${localDate(now)}.csv`;
+}
+
+export function marksFilename(firm, now = new Date()) {
+  return evidenceFilename(firm, now).replace(/^vigil-evidence-/, "vigil-crosscheck-");
 }
 
 // The BOM makes Excel read the file as UTF-8, so curly quotes and accents survive.

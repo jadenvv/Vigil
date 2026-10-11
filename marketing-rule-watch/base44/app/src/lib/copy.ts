@@ -144,6 +144,29 @@ export const COPY = {
   reviewDecidedAt: "Decided",
   reviewOriginalQuote: "Flagged quote",
   reviewFinalText: "Saved text",
+  // Cross-document check (crossref function): claims on the firm's pages checked against its other documents.
+  crossTitle: "Cross-document check",
+  crossIntro:
+    "Lists every absolute claim and checkable fact on the firm's latest pages, and checks each one against the firm's other pages and any documents you add (for example Form ADV or old blog posts). Each result is a potential issue for review.",
+  crossAddDocs: "Add documents (.md or .txt)",
+  crossAddDocsHelp: "Up to 3 files, 60,000 characters each. Read in your browser and sent only with this check.",
+  crossDocTooLong: (name: string) => `${name} is over 60,000 characters and was not added.`,
+  crossRemoveDoc: "Remove",
+  crossRun: "Run cross-document check",
+  crossRunning: "Checking… this makes one model call per claim and can take a minute.",
+  crossDenied: "The cross-document check is limited to reviewers.",
+  crossCooldown: "The model is busy or out of quota just now. Try again later.",
+  crossServiceError: "The cross-document check isn't reachable right now. Try again later.",
+  crossNone: "No absolute claims or checkable facts were found.",
+  crossCount: (n: number) => `${n} ${n === 1 ? "claim" : "claims"} marked`,
+  crossGroupContradicted: "Contradicted by another document",
+  crossGroupAbsolute: "Absolute claim to substantiate",
+  crossGroupFact: "Checkable fact — keep supporting records",
+  crossClaimLabel: "Claim",
+  crossEvidenceLabel: "Other document says",
+  crossModel: (model: string) => `Answered by ${model}.`,
+  crossDownloadCsv: "Download cross-check (CSV)",
+  crossNote: "A model compares the documents; it can miss contradictions or misread them. Every result needs human review.",
 };
 
 // Phase 5 rewrite drawer stays off until after Sense Check 2.

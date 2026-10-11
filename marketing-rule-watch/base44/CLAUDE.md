@@ -86,3 +86,10 @@ tester path requires sign-in. Base44 auth is untouched and still guards admin op
   `deno run --allow-read=base44/app/base44/entities base44/app/base44/shared/reviewer-core.ts`
   (the second asserts the entity RLS stays all-false). Both run in `verify.sh`; frontend tests
   via `npm test` in `base44/app`.
+
+## Cross-document check (P4 → P2, 10-10 evening; not deployed)
+
+- **Function `crossref`** (`base44/app/base44/functions/crossref/entry.ts`, core in `shared/crossref_core.js`): admin only (401 otherwise). Body `{firm_id, docs?: [{url, markdown}]}` (≤3 docs, ≤60k chars each). Reads the latest `Page` per URL, runs P4's two-pass check (claims → contradictions in other docs), returns `{marks, provider, model, docs}`. LLM unavailable → 503 `{error: "llm_unavailable", marks: []}`. One LLM call per chunk plus one per claim, capped at 25 claims, no retries.
+- **New contract — Mark:** `{claim_span, claim_url, evidence_span, evidence_url, topic, confidence, why, status, severity, absolute}`. `contradicted`/`high` (evidence quoted), uncontradicted absolute → `unverified`/`review`, uncontradicted checkable fact → `unverified`/`info` (empty evidence, `confidence: null`). Not stored as `Flag` rows; shown only on the exam page.
+- **UI:** `src/components/CrossCheck.jsx` at the bottom of `/exam` (`ExamBody`). Upload `.md`/`.txt` (e.g. Form ADV, old blog posts; read in the browser), run, see marks grouped by severity, download `vigil-crosscheck-<firm>-<date>.csv`. Copy lives in `copy.ts` (`cross*`). Prints only when it has results.
+- **Status:** `base44 deploy` NOT run (ask first). Not run live: no live numbers. Until deployed, the button shows the service-error message.
