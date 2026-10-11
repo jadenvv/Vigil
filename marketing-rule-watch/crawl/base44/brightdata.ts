@@ -57,6 +57,27 @@ function nowIso(): string {
   return new Date().toISOString().replace(/\.\d{3}Z$/, "+00:00"); // matches Python isoformat(timespec="seconds")
 }
 
+const FETCH_TIMEOUT_MS = 90_000; // screenshots take ~10-13 s through the zone; a hung request must die
+const MAX_BODY_BYTES = 16_000_000; // markdown/html are far smaller; refuse a body that would OOM the function
+
+/** Reads at most ~maxBytes of the body then cancels, so a huge response can't fill memory (cf. discover's readCapped). */
+async function readCappedBytes(r: Response, maxBytes: number): Promise<Uint8Array> {
+  if (!r.body) return new Uint8Array();
+  const reader = r.body.getReader();
+  const parts: Uint8Array[] = [];
+  let n = 0, done = false;
+  while (n <= maxBytes && !done) {
+    const rd = await reader.read();
+    done = rd.done;
+    if (!done && rd.value) { parts.push(rd.value); n += rd.value.length; }
+  }
+  if (!done) { await reader.cancel(); throw new Error(`response over ${maxBytes} bytes`); }
+  const out = new Uint8Array(n);
+  let o = 0;
+  for (const p of parts) { out.set(p, o); o += p.length; }
+  return out;
+}
+
 async function unlock(fetchFn: FetchFn, token: string, zone: string, url: string, dataFormat: string, log: string[]) {
   const t0 = Date.now();
   try {
@@ -64,8 +85,9 @@ async function unlock(fetchFn: FetchFn, token: string, zone: string, url: string
       method: "POST",
       headers: { "Authorization": `Bearer ${token}`, "Content-Type": "application/json" },
       body: JSON.stringify({ zone, url, format: "raw", data_format: dataFormat }),
+      signal: AbortSignal.timeout(FETCH_TIMEOUT_MS),
     });
-    const bytes = new Uint8Array(await r.arrayBuffer());
+    const bytes = await readCappedBytes(r, MAX_BODY_BYTES);
     log.push(`${new Date().toISOString()}\t${dataFormat}\t${r.status}\t${((Date.now() - t0) / 1000).toFixed(1)}s\t${bytes.length}B\t${url}`);
     return { status: r.status, bytes };
   } catch (e) {
