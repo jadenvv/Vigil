@@ -433,7 +433,7 @@ function Recheck({ flagId }) {
         <p role="status" className="text-night-700">
           {COPY.recheckQuote(r.quote_present)} {COPY.recheckText(r.unchanged)}{" "}
           {r.cached
-            ? `${COPY.recheckCheckedAgo(Math.max(0, Math.floor((Date.now() - Date.parse(r.checked_at)) / 60000)))} ${COPY.recheckCacheNote}`
+            ? `${COPY.recheckCheckedAgo(recheckMinutesAgo(r.checked_at))} ${COPY.recheckCacheNote}`
             : `(${formatDate(r.checked_at)})`}
         </p>
       )}
@@ -477,6 +477,12 @@ function Screenshot({ page }) {
       <span className="mt-1 block text-xs text-night-600">{COPY.openScreenshot}</span>
     </a>
   );
+}
+
+// A missing/malformed checked_at must not render "NaN min ago".
+function recheckMinutesAgo(value) {
+  const parsed = Date.parse(value);
+  return Number.isNaN(parsed) ? 0 : Math.max(0, Math.floor((Date.now() - parsed) / 60000));
 }
 
 function formatDate(value) {

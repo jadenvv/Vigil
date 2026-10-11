@@ -3,3 +3,6 @@ Ore Base44.pdf
 .DS_Store
 old/
 .mcp.json
+
+# Local git worktrees used by agent sessions
+.wt-*/

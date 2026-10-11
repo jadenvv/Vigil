@@ -50,6 +50,14 @@ class Grounding(unittest.TestCase):
     def test_rejects_paraphrase(self):
         self.assertIsNone(ground("We beat the market.", "We outperform the market"))
 
+    def test_grounds_span_with_dropped_markdown(self):
+        # a rewrite `find` that omits blockquote markers or adds separators still grounds
+        t = '> "Good work."\n>\n> Jane D.'
+        self.assertEqual(ground(t, '"Good work." - Jane D.'), t)
+
+    def test_word_match_absorbs_edge_syntax_not_prev_period(self):
+        self.assertEqual(ground('end. "Word here." Next.', 'word, here'), '"Word here."')
+
 
 class LLMPath(unittest.TestCase):
     def run_with(self, reply: str):
@@ -220,3 +228,24 @@ class TestBadReply(unittest.TestCase):
             with self.assertRaises(ValueError):
                 D.detect("We offer guaranteed 9% returns.", "website")
         self.assertEqual(m.call_count, 2)
+
+
+class TestRateLimitBackoff(unittest.TestCase):
+    def _err(self, retry_after):
+        import urllib.error
+        return urllib.error.HTTPError("u", 429, "Too Many Requests", {"retry-after": retry_after}, None)
+
+    def test_short_retry_after_waits_at_least_15s_then_succeeds(self):
+        ok = mock.MagicMock()
+        ok.__enter__.return_value.read.return_value = b'{"ok": 1}'
+        with mock.patch("urllib.request.urlopen", side_effect=[self._err("1"), ok]), \
+             mock.patch("time.sleep") as sl:
+            self.assertEqual(llm._post("https://x", {}, {}), {"ok": 1})
+        sl.assert_called_once_with(16)
+
+    def test_gives_up_after_five_tries(self):
+        with mock.patch("urllib.request.urlopen", side_effect=[self._err("2")] * 5) as up, \
+             mock.patch("time.sleep"):
+            with self.assertRaises(Exception):
+                llm._post("https://x", {}, {})
+        self.assertEqual(up.call_count, 5)
