@@ -4,7 +4,7 @@ import "@/components/hero/schemes.css";
 import { COPY } from "@/lib/copy";
 import { Link } from "@/lib/router";
 
-// Site navigation. Evals and About join the bar once their pages are routed in App.jsx.
+// Site navigation. Dashboard, Evals and About join the bar once their pages are routed in App.jsx.
 const NAV_ITEMS = [
   { to: "/", label: "Home", match: (path) => path === "/" },
   {
@@ -12,8 +12,9 @@ const NAV_ITEMS = [
     label: "Live demo",
     match: (path) => path === "/demo" || /^\/(flag|firm|page)\//.test(path),
   },
-  { to: "/evals", label: "Evals", match: (path) => path.startsWith("/evals"), routed: false },
-  { to: "/about", label: "About", match: (path) => path.startsWith("/about"), routed: false },
+  { to: "/dashboard", label: "Dashboard", match: (path) => path.startsWith("/dashboard"), routed: false },
+  { to: "/evals", label: "Evals", match: (path) => path.startsWith("/evals") },
+  { to: "/about", label: "About", match: (path) => path.startsWith("/about") },
 ].filter((item) => item.routed !== false);
 
 // Each page renders its own Shell, so the bar remounts on navigation. Remembering where the indicator was

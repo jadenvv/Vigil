@@ -104,7 +104,7 @@ function EvalResults() {
       <h2 id="eval-title" className="text-2xl font-semibold tracking-tight">
         {EVAL_TITLE}
       </h2>
-      <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+      <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
         {EVAL_RESULTS.map((result) => (
           <li key={result.label} className="flex flex-col rounded-[10px] border border-paper-200 bg-white p-5">
             <span className="text-sm font-medium text-night-950">{result.label}</span>
@@ -130,6 +130,12 @@ function EvalResults() {
           <p className="mt-2 text-xs text-night-600">{EVAL_NEXT.caveat}</p>
         </div>
       )}
+      <Link
+        to="/evals"
+        className="inline-block text-sm font-medium text-night-950 underline decoration-night-300 underline-offset-4 hover:decoration-night-950"
+      >
+        See full results →
+      </Link>
     </section>
   );
 }
