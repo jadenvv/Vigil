@@ -87,9 +87,10 @@ tester path requires sign-in. Base44 auth is untouched and still guards admin op
   (the second asserts the entity RLS stays all-false). Both run in `verify.sh`; frontend tests
   via `npm test` in `base44/app`.
 
-## Cross-document check (P4 → P2, 10-10 evening; not deployed)
+## Form ADV lookup (replaces the cross-document check, 10-10 evening; not deployed)
 
-- **Function `crossref`** (`base44/app/base44/functions/crossref/entry.ts`, core in `shared/crossref_core.js`): admin only (401 otherwise). Body `{firm_id, docs?: [{url, markdown}]}` (≤3 docs, ≤60k chars each). Reads the latest `Page` per URL, runs P4's two-pass check (claims → contradictions in other docs), returns `{marks, provider, model, docs}`. LLM unavailable → 503 `{error: "llm_unavailable", marks: []}`. One LLM call per chunk plus one per claim, capped at 25 claims, no retries.
-- **New contract — Mark:** `{claim_span, claim_url, evidence_span, evidence_url, topic, confidence, why, status, severity, absolute}`. `contradicted`/`high` (evidence quoted), uncontradicted absolute → `unverified`/`review`, uncontradicted checkable fact → `unverified`/`info` (empty evidence, `confidence: null`). Not stored as `Flag` rows; shown only on the exam page.
-- **UI:** `src/components/CrossCheck.jsx` at the bottom of `/exam` (`ExamBody`). Upload `.md`/`.txt` (e.g. Form ADV, old blog posts; read in the browser), run, see marks grouped by severity, download `vigil-crosscheck-<firm>-<date>.csv`. Copy lives in `copy.ts` (`cross*`). Prints only when it has results.
-- **Status:** `base44 deploy` NOT run (ask first). Not run live: no live numbers. Until deployed, the button shows the service-error message.
+- The cross-document check (`crossref` function, `CrossCheck.jsx`, marks CSV) was removed from the app. The offline engine/eval version stays in `engine/crossref.py` and `eval/crossref_eval.py`.
+- **Function `adv-lookup`** (`base44/app/base44/functions/adv-lookup/entry.ts`, helpers in `shared/adv.ts`): body `{firm_id}` → `{candidates: [{url, crd, pdf_url}], searches_used, demo?, log}`. One Bright Data SERP call (`"<firm name>" Form ADV site:adviserinfo.sec.gov`), no retries, 45 s cap. Keeps only https `adviserinfo.sec.gov` results, one per CRD, at most 3; `pdf_url` is the SEC's `reports.adviserinfo.sec.gov/reports/ADV/<crd>/PDF/<crd>.pdf`. Writes nothing.
+- **Who:** admin only (401/403), because it spends SERP credits. A Firm with `is_demo` returns `{candidates: [], demo: true}` without searching: the demo firm is fictional and has no Form ADV.
+- **UI:** `src/components/AdvLookup.jsx` at the bottom of `/exam`. Shows possible matches with "confirm it is this firm"; copy in `copy.ts` (`adv*`). Tests: `src/lib/adv.test.js`, `src/components/AdvLookup.test.jsx`.
+- **Status:** `base44 deploy` NOT run (ask first). Not run live against SERP.

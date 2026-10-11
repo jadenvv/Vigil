@@ -16,10 +16,6 @@ export const DETECT_SCHEMA = ${JSON.stringify(JSON.parse(read("detect.schema.jso
 export const REWRITE_PROMPT = ${JSON.stringify(read("rewrite.md"))};
 
 export const REWRITE_SCHEMA = ${JSON.stringify(JSON.parse(read("rewrite.schema.json")), null, 2)};
-
-export const ABSOLUTES_PROMPT = ${JSON.stringify(read("absolutes.md"))};
-
-export const CONTRADICT_PROMPT = ${JSON.stringify(read("contradict.md"))};
 `;
 writeFileSync(app + "base44/shared/prompts.ts", out);
 
@@ -28,8 +24,6 @@ const back = readFileSync(app + "base44/shared/prompts.ts", "utf8");
 for (const [name, file] of [
   ["DETECT_PROMPT", "detect.md"],
   ["REWRITE_PROMPT", "rewrite.md"],
-  ["ABSOLUTES_PROMPT", "absolutes.md"],
-  ["CONTRADICT_PROMPT", "contradict.md"],
 ]) {
   const m = back.match(new RegExp(`export const ${name} = (".*?");\\n`, "s"));
   if (JSON.parse(m[1]) !== read(file)) throw new Error(`${name} is not verbatim`);

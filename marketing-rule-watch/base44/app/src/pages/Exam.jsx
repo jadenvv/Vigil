@@ -1,7 +1,7 @@
 // Check 1, Tester A (A4): examiners use what a firm publishes to ask for more. This is a printable list
 // of every open flag with its exact quote and where and when it was captured. No new data.
+import AdvLookup from "@/components/AdvLookup";
 import { SeverityBadge } from "@/components/Badges";
-import CrossCheck from "@/components/CrossCheck";
 import { EmptyBlock, ErrorBlock, LoadingBlock, Shell } from "@/components/Chrome";
 import { CHANNEL_LABELS, COPY } from "@/lib/copy";
 import { loadInbox, loadSessionDecisions } from "@/lib/data";
@@ -125,7 +125,7 @@ function ExamBody({ firm, groups, pagesScanned, decisions }) {
           ))}
         </ol>
       )}
-      <CrossCheck firm={firm} />
+      <AdvLookup firm={firm} />
     </article>
   );
 }
