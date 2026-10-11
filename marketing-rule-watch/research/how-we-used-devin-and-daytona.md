@@ -1,8 +1,10 @@
 # How we used Devin and Daytona
 
-Two sponsor tools, two different jobs. Devin built the thing our product scans. Daytona runs the math our reviewers check.
+Two sponsor tools, two different jobs. Devin built the third-party review site our product finds. Daytona runs the math our reviewers check.
 
-## Devin — built the fictional firm we scan
+## Devin — the fictional firm we scan
+
+> **VERIFY: who built the Quarrywick firm site?** This section says Devin built it, but no Devin-authored commit or PR for it exists. Its only commit, `e73f178`, is by Nathan Qiu, and `PROJECT.md` says a Claude agent built it while Devin was down. Don't claim this half without a Devin session link. The AdvisorQuill site below is proven Devin work.
 
 **What Devin is:** Cognition's AI software agent. You give it a written brief; it writes the code, deploys it, and hands back a live URL.
 
@@ -12,7 +14,11 @@ Two sponsor tools, two different jobs. Devin built the thing our product scans. 
 
 **The result:** a live public site — https://nathanqiu07.github.io/quarrywick-wealth-demo/ — ten pages with a visible "fictional firm" banner. This is what Vigil crawls in the demo. Because Devin wrote the site from the same taxonomy our detector scores against, the demo is honest: we know exactly what should be flagged (the answer key) and can measure what the tool actually caught (eval `cases_demo_site.jsonl`: 11/11 planted spans survive extraction).
 
-We also drafted a second brief (`demo-site/DEVIN_THIRD_PARTY.md`) for a fictional advisor-review directory — the "risk lives on third-party pages" half of the story. It is written but was not built this weekend.
+## Devin — built the third-party review site (verified)
+
+We gave Devin a second brief (`demo-site/DEVIN_THIRD_PARTY.md`): a fictional advisor-review directory, the "risk lives on third-party pages" half of the story. **Devin built it.** It's called **AdvisorQuill** and is live at https://nathanqiu07.github.io/advisorquill/. It lists four invented firms; the Quarrywick Wealth profile has 4 planted issues, and there's one fictional press article. Every page carries a "Fictional website for a hackathon demo" banner. The planted sentences are in `demo-site/ANSWER_KEY.md` under "Third-party site", and the source is in `demo-site/third-party/`.
+
+**Evidence:** PR #4 (`devin/advisorquill-third-party`, merged), with commits `4b6d46b` and `d0d51be` authored by `Devin <devin@cognition.ai>`.
 
 ## Daytona — runs the "Check calculation" math
 
@@ -39,7 +45,8 @@ We also drafted a second brief (`demo-site/DEVIN_THIRD_PARTY.md`) for a fictiona
 | Piece | Path |
 |---|---|
 | Devin brief (firm site) | `demo-site/CLAUDE.md` |
-| Devin brief (review directory, unbuilt) | `demo-site/DEVIN_THIRD_PARTY.md` |
+| Devin brief (review directory, built by Devin, PR #4) | `demo-site/DEVIN_THIRD_PARTY.md` |
+| Built review directory (AdvisorQuill) | `demo-site/third-party/` |
 | Built site + answer key | `demo-site/site/`, `demo-site/ANSWER_KEY.md` |
 | Daytona shared module (script, validation, executor) | `base44/app/base44/shared/calc-check.ts` |
 | Backend function | `base44/app/base44/functions/check-calculation/entry.ts` |

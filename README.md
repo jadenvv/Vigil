@@ -43,7 +43,7 @@ The core loop is **crawl → flag → rewrite → approve**. The product runs en
 - **Base44**: hosting, the React app, five entities (Firm, Page, Flag, Decision, Recheck) with row-level security, nine backend functions, Google sign-in, file storage. The LLM is Base44's built-in **InvokeLLM**.
 - **Bright Data**: every page Vigil reads comes through the Web Unlocker: markdown text, screenshots and raw HTML. The SERP API finds pages about the firm elsewhere on the web (admin-only, off in the demo). Each scan reads at most 25 URLs and never retries.
 - **Daytona**: an admin-only **Check calculation** tool on the flag detail screen. A reviewer types the numbers behind a stated return (for example $10,000 → $15,000 "a 60% return"). One fixed Python script recomputes it in a fresh Daytona sandbox, which is then deleted. It checks arithmetic only; it does not verify that the performance was real.
-- **Devin (Cognition)**: **VERIFY before claiming.** The team's notes disagree on whether Devin or a Claude agent built the demo site. A second Devin brief, for a fictional third-party review site, was written but not built.
+- **Devin (Cognition)**: built **AdvisorQuill** (https://nathanqiu07.github.io/advisorquill/), a fictional third-party review site with 4 planted issues on the demo firm's profile, from our brief (PR #4, Devin-authored commits). Who built the firm site itself is not yet verified.
 
 Full detail, with file paths and live counts: `marketing-rule-watch/research/sponsor_usage.md`.
 

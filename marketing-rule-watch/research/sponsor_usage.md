@@ -67,6 +67,10 @@ Facts only, for judges and the submission. Counts come from read-only queries of
 
 ## Devin (Cognition)
 
-**VERIFY: did Devin build the demo site?** Git shows commits to `demo-site/` only by Ethan Cai and Nathan Qiu. `research/how-we-used-devin-and-daytona.md` says Devin built it; this needs confirming (a Devin session link or its PR) before we claim it.
+- **Verified: Devin built AdvisorQuill**, the fictional third-party review site, live at https://nathanqiu07.github.io/advisorquill/.
+  - **Evidence:** PR #4 (`devin/advisorquill-third-party`, merged), with commits `4b6d46b` and `d0d51be` authored by `Devin <devin@cognition.ai>`.
+  - **What it contains:** four invented firms, a Quarrywick Wealth profile with 4 planted issues, one fictional press article, and a "fictional" banner on every page. Source is in `demo-site/third-party/`; the planted sentences are in `demo-site/ANSWER_KEY.md` under "Third-party site".
+  - **Not yet claimed:** that the app shows AdvisorQuill pages. Ingesting them is in progress; confirm before saying so.
+- **VERIFY: did Devin build the Quarrywick firm site?** Its only commit (`e73f178`) is by Nathan Qiu, and `PROJECT.md` says a Claude agent built it while Devin was down. Don't claim it without a Devin session link.
 
-The fictional demo site is live at https://nathanqiu07.github.io/quarrywick-wealth-demo/, with its answer key in `demo-site/ANSWER_KEY.md`.
+The firm site is live at https://nathanqiu07.github.io/quarrywick-wealth-demo/, with its answer key in `demo-site/ANSWER_KEY.md`.
