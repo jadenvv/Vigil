@@ -25,21 +25,22 @@ const TAXONOMY = [
   "RATING_NO_DISCLOSURE",
 ];
 
-// Timeline (ms from cycle start).
+// Timeline (ms from cycle start). Each step dwells about a second longer than the one before it, and once
+// revealed, every step's text stays on screen until the reset, so it can be read.
 const T = {
   domain: 100,
   rows: 300, // first captured page; then every ROW_GAP
   rowGap: 230,
-  check: 1450, // text starts streaming, the check marker walks the list
+  check: 2450, // text starts streaming, the check marker walks the list
   checkMs: 900,
-  lock: 2400, // matched check locks on
-  quote: 2550, // quote lifts out, brackets lock
-  suggest: 3150, // rewrite fades in word by word, ≤ 900 ms
+  lock: 3400, // matched check locks on
+  quote: 3550, // quote lifts out, brackets lock
+  suggest: 5150, // rewrite fades in word by word, ≤ 900 ms
   suggestMs: 850,
-  decide: 4150,
-  end: 4500,
+  decide: 7150,
+  end: 7500,
 };
-const HOLD_MS = 2500;
+const HOLD_MS = 5000;
 const RESET_MS = 400;
 
 function stamp(value) {
