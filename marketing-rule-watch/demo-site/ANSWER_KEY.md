@@ -42,12 +42,12 @@ Page paths are relative to the site root above. Pages with no planted issue: `/f
 
 ## Third-party site
 
-**AdvisorQuill** is a fictional advisor-review directory on a separate origin from the firm site (GitHub Pages under the `nqiu-ventures` org, vs `nathanqiu07.github.io`). It lists four invented firms — Quarrywick Wealth, Sorrelwood Wealth Management, Tarnworth Advisory Group and Vellbrook Capital — and every page carries the banner "Fictional website for a hackathon demo. Not a real review site."
+**AdvisorQuill** is a fictional advisor-review directory published as a separate GitHub Pages repo on the same account as the firm site (note: `nathanqiu07.github.io/advisorquill/` is the same origin as `nathanqiu07.github.io/quarrywick-wealth-demo/` — a different origin was not achievable with the accounts available). It lists four invented firms — Quarrywick Wealth, Sorrelwood Wealth Management, Tarnworth Advisory Group and Vellbrook Capital — and every page carries the banner "Fictional website for a hackathon demo. Not a real review site."
 
-- Live site: https://nqiu-ventures.github.io/advisorquill/
-- Quarrywick profile: https://nqiu-ventures.github.io/advisorquill/firms/quarrywick-wealth.html
-- Sitemap: https://nqiu-ventures.github.io/advisorquill/sitemap.xml
-- Source: `demo-site/third-party/` (published copy: https://github.com/nqiu-ventures/advisorquill)
+- Live site: https://nathanqiu07.github.io/advisorquill/
+- Quarrywick profile: https://nathanqiu07.github.io/advisorquill/firms/quarrywick-wealth.html
+- Sitemap: https://nathanqiu07.github.io/advisorquill/sitemap.xml
+- Source: `demo-site/third-party/` (published copy: https://github.com/nathanqiu07/advisorquill)
 
 Name check (2026-10-10): web searches for "AdvisorQuill" returned no real review site or firm with that name; "Sorrelwood", "Tarnworth" and "Vellbrook" matched no advisory firms. Candidate names dropped for colliding with real companies: "Dunamore Capital", "Corvessa", "Marrowgate".
 
