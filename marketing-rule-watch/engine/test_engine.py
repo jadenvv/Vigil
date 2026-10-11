@@ -220,3 +220,24 @@ class TestBadReply(unittest.TestCase):
             with self.assertRaises(ValueError):
                 D.detect("We offer guaranteed 9% returns.", "website")
         self.assertEqual(m.call_count, 2)
+
+
+class TestRateLimitBackoff(unittest.TestCase):
+    def _err(self, retry_after):
+        import urllib.error
+        return urllib.error.HTTPError("u", 429, "Too Many Requests", {"retry-after": retry_after}, None)
+
+    def test_short_retry_after_waits_at_least_15s_then_succeeds(self):
+        ok = mock.MagicMock()
+        ok.__enter__.return_value.read.return_value = b'{"ok": 1}'
+        with mock.patch("urllib.request.urlopen", side_effect=[self._err("1"), ok]), \
+             mock.patch("time.sleep") as sl:
+            self.assertEqual(llm._post("https://x", {}, {}), {"ok": 1})
+        sl.assert_called_once_with(16)
+
+    def test_gives_up_after_five_tries(self):
+        with mock.patch("urllib.request.urlopen", side_effect=[self._err("2")] * 5) as up, \
+             mock.patch("time.sleep"):
+            with self.assertRaises(Exception):
+                llm._post("https://x", {}, {})
+        self.assertEqual(up.call_count, 5)
