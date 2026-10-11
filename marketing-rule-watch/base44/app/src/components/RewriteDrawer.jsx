@@ -1,11 +1,13 @@
-// Rewrite drawer: Approve / Edit / Dismiss, each writing a session-scoped Decision.
+// Rewrite drawer: Approve / Edit / Dismiss. With the default `record` it writes a session-scoped
+// Decision (anonymous demo); the reviewer workspace passes a Clerk-backed `record` instead.
 // Suggestions are fetched only when the reviewer asks: each rewrite call costs LLM quota,
 // and calling on every flag view used up a monthly quota in one afternoon.
-import { useEffect, useMemo, useState } from "react";
-import { base44 } from "@/api/base44Client";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { DecisionBadge } from "@/components/Badges";
-import { COPY, FETCH_REWRITE_SUGGESTIONS } from "@/lib/copy";
+import { COPY } from "@/lib/copy";
 import { recordDecision } from "@/lib/data";
+import { fetchSuggestion, initialSuggestionState } from "@/lib/rewriteSuggestion";
+import { newRequestId } from "@/lib/session";
 import { readableWordDiff } from "@/lib/wordDiff";
 
 // Renders one side of a word diff. Changes carry <del>/<ins> semantics plus visually hidden
@@ -39,50 +41,18 @@ function DiffText({ segments }) {
   });
 }
 
-// Per flag id, for this page session, so reopening a flag never calls the LLM again.
-const suggestionCache = new Map();
-
-// rewrite writes nothing; it returns {original_text, suggested_text, flags_total, flags_cleared, placeholders}.
-// 503 = no model available, 502 = no usable suggestion, 401 = not allowed.
-async function fetchSuggestion(flagId) {
-  try {
-    const res = await base44.functions.invoke("rewrite", { flag_id: flagId });
-    const result = { status: "ready", ...res.data };
-    suggestionCache.set(flagId, result);
-    return result;
-  } catch (error) {
-    const httpStatus = error?.response?.status;
-    console.warn("Rewrite unavailable:", httpStatus, error?.response?.data?.error ?? error?.message);
-    if (httpStatus === 503) {
-      const result = { status: "manual" };
-      suggestionCache.set(flagId, result);
-      return result;
-    }
-    if (httpStatus === 502) {
-      const result = { status: "unavailable", message: COPY.rewriteNoSuggestion };
-      suggestionCache.set(flagId, result);
-      return result;
-    }
-    // Network or unknown errors are not cached, so the reviewer can click Suggest again.
-    return { status: "unavailable", message: COPY.rewriteFailed, canRetry: true };
-  }
-}
-
-function initialState(flagId) {
-  if (!FETCH_REWRITE_SUGGESTIONS) return { status: "manual" };
-  return suggestionCache.get(flagId) ?? { status: "idle" };
-}
-
-export default function RewriteDrawer({ flag, decision, onDecided }) {
-  const [suggestion, setSuggestion] = useState(() => initialState(flag.id));
+export default function RewriteDrawer({ flag, decision, onDecided, record = recordDecision }) {
+  const [suggestion, setSuggestion] = useState(() => initialSuggestionState(flag.id));
   const [editing, setEditing] = useState(false);
-  const [draft, setDraft] = useState(() => initialState(flag.id).suggested_text ?? flag.span);
+  const [draft, setDraft] = useState(() => initialSuggestionState(flag.id).suggested_text ?? flag.span);
   const [saving, setSaving] = useState(false);
   const [saveError, setSaveError] = useState(null);
   const [showChanges, setShowChanges] = useState(true);
+  // One idempotency key per decision intent: retries reuse it, a saved decision mints a new one.
+  const requestIdRef = useRef(newRequestId());
 
   useEffect(() => {
-    const state = initialState(flag.id);
+    const state = initialSuggestionState(flag.id);
     setSuggestion(state);
     setDraft(state.suggested_text ?? flag.span);
     setEditing(false);
@@ -100,7 +70,8 @@ export default function RewriteDrawer({ flag, decision, onDecided }) {
     setSaving(true);
     setSaveError(null);
     try {
-      const created = await recordDecision({ flagId: flag.id, action, finalText });
+      const created = await record({ flagId: flag.id, action, finalText, requestId: requestIdRef.current });
+      requestIdRef.current = newRequestId();
       setEditing(false);
       onDecided?.(created);
     } catch (error) {
