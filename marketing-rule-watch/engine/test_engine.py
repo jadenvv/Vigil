@@ -50,6 +50,14 @@ class Grounding(unittest.TestCase):
     def test_rejects_paraphrase(self):
         self.assertIsNone(ground("We beat the market.", "We outperform the market"))
 
+    def test_grounds_span_with_dropped_markdown(self):
+        # a rewrite `find` that omits blockquote markers or adds separators still grounds
+        t = '> "Good work."\n>\n> Jane D.'
+        self.assertEqual(ground(t, '"Good work." - Jane D.'), t)
+
+    def test_word_match_absorbs_edge_syntax_not_prev_period(self):
+        self.assertEqual(ground('end. "Word here." Next.', 'word, here'), '"Word here."')
+
 
 class LLMPath(unittest.TestCase):
     def run_with(self, reply: str):
