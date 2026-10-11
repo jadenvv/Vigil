@@ -453,6 +453,8 @@ function NextVersion({ set }) {
       intro={
         set.incomplete
           ? "A partial head-to-head run that stopped early. Too few cases to conclude anything; shown for completeness. None of these numbers come from the live app."
+          : set.id.startsWith("versus")
+          ? "Head to head on the same cases and the same model: Vigil's pipeline vs one plain prompt with no hints or filters. None of these numbers come from the live app."
           : "We also test the next detector prompt on held-out cases written before it. None of these numbers come from the live app."
       }
     >
