@@ -173,6 +173,19 @@ class TestCrossref(unittest.TestCase):
                 X.crossref(DOCS)
         self.assertEqual(len(n), 2)
 
+    def test_reverse_pair_reported_once(self):
+        ev = "Our affiliate, Quarrywick Insurance Agency, receives commissions, which creates a conflict of interest."
+        rev = {"span": ev, "topic": "conflicts", "assertion": "affiliate earns commissions", "terms": ["conflict-free"]}
+        replies = {"absolutes": {ABOUT["url"]: {"claims": [CONFLICT]}, ADV["url"]: {"claims": [rev]}}, "contradict": {}}
+        for claim, own_url, quote, conf in ((CONFLICT, ABOUT["url"], ev, 0.9),
+                                            (rev, ADV["url"], "We are completely conflict-free.", 0.8)):
+            found = X.retrieve({**claim, "url": own_url}, DOCS)
+            n = next(i for i, p in enumerate(found, 1) if quote in p["text"])
+            replies["contradict"][claim["span"]] = verdict(n, quote, conf=conf)
+        flags, _ = run(replies)
+        self.assertEqual(len(flags), 1)
+        self.assertEqual(flags[0]["claim_url"], ABOUT["url"])
+
     def test_needs_llm(self):
         with mock.patch.object(llm, "available", lambda: False):
             with self.assertRaises(RuntimeError):

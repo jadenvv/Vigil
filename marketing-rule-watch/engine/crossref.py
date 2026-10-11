@@ -11,7 +11,8 @@ doc  = {"url": str, "markdown": str}
 flag = {"claim_span", "claim_url", "evidence_span", "evidence_url", "topic", "confidence", "why"}
 Both spans are exact substrings of their doc's markdown. No passages retrieved -> no LLM call.
 
-CROSSREF_MIN_CONF (default 0.6), CROSSREF_MAX_CLAIMS (default 40), CROSSREF_K (passages, default 6).
+CROSSREF_MIN_CONF (default 0.6), CROSSREF_MAX_CLAIMS (default 40), CROSSREF_K (passages, default 6),
+CROSSREF_MAX_TOKENS (per call, default 4000).
 """
 from __future__ import annotations
 
@@ -72,11 +73,13 @@ def _parse(raw: str) -> dict:
 
 
 def _ask(system: str, user: str) -> dict:
-    # one retry on a non-JSON reply, then raise (never treated as "no contradiction")
+    # one retry on a non-JSON reply, then raise (never treated as "no contradiction").
+    # reasoning models (gpt-oss) can spend a 2000-token budget thinking and return "", so allow more
+    n = int(os.environ.get("CROSSREF_MAX_TOKENS", "4000"))
     try:
-        return _parse(llm.complete(system, user))
+        return _parse(llm.complete(system, user, max_tokens=n))
     except ValueError:
-        return _parse(llm.complete(system, user))
+        return _parse(llm.complete(system, user, max_tokens=n))
 
 
 # ---------------------------------------------------------------- pass 1
@@ -205,12 +208,16 @@ def check(claim: dict, found: list[dict], docs: list[dict], debug: list | None =
 
 
 def find_contradictions(claims: list[dict], docs: list[dict], debug: list | None = None) -> list[dict]:
-    flags = []
+    flags: dict[frozenset, dict] = {}
     for c in claims:
         f = check(c, retrieve(c, docs), docs, debug)
-        if f:
-            flags.append(f)
-    return flags
+        if not f:
+            continue
+        # A vs B and B vs A are one finding: keep the more confident direction
+        key = frozenset({(f["claim_url"], f["claim_span"]), (f["evidence_url"], f["evidence_span"])})
+        if key not in flags or f["confidence"] > flags[key]["confidence"]:
+            flags[key] = f
+    return list(flags.values())
 
 
 def crossref(docs: list[dict], debug: list | None = None) -> list[dict]:

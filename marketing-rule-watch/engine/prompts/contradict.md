@@ -36,7 +36,9 @@ When unsure, answer false. A false alarm costs the officer's trust.
 - `evidence_span` must be copied EXACTLY, character for character, from that passage: the shortest
   sentence or clause that shows the contradiction. Empty string if none.
 - `confidence` 0.0-1.0: how sure you are both statements cannot be true together.
-- `why` is one plain-English sentence for a compliance officer. Say "may", never "violates".
+- `why` is one full plain-English sentence for a compliance officer naming both statements, e.g.
+  "The Form ADV reports a 2022 loss, which may contradict the claim that clients never lost money."
+  Use "may", never "violates".
 - Respond with JSON only, no prose and no code fences:
 {"contradicts": false, "passage": 0, "evidence_span": "", "confidence": 0.0, "why": ""}
 === USER ===
