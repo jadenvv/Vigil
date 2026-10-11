@@ -1,8 +1,9 @@
 // Home: one real before/after from the demo firm, then the two ways in (scan your site, or open the demo).
 // Everything on the evidence card is read live from stored rows; nothing here calls the LLM.
-import { useState } from "react";
+import { lazy, Suspense, useState } from "react";
 import { SeverityBadge } from "@/components/Badges";
 import { Shell } from "@/components/Chrome";
+import "@/components/hero/schemes.css";
 import { UrlText } from "@/components/UrlText";
 import { loadFlag } from "@/lib/data";
 import { quoted } from "@/lib/highlight";
@@ -11,12 +12,12 @@ import { categoryLabel } from "@/lib/severity";
 import { useAsync } from "@/lib/useAsync";
 
 // "Our clients have never lost money in a down year." on the fictional Quarrywick Wealth about page.
-const FEATURED_FLAG_ID = "6acab8a4d5e4233dd70d831d";
+export const FEATURED_FLAG_ID = "6acab8a4d5e4233dd70d831d";
 
 // Vigil's real output from the live `rewrite` function for the featured flag, copied verbatim
 // (provider base44-invokellm, no placeholders). With null the card shows the stored reason instead.
 // Never write or edit one by hand.
-const FEATURED_REWRITE = {
+export const FEATURED_REWRITE = {
   text: "While we strive to protect assets during downturns, market volatility means that investment returns can fluctuate and clients may experience losses.",
   generatedAt: "2026-10-10T23:01:46Z",
 };
@@ -36,23 +37,36 @@ function captureStamp(value) {
 
 
 
+// Hero prototypes, picked with ?hero=contact|redline|headline. Loaded on demand, so without the parameter
+// the page and its bundle are exactly the current hero.
+const HERO_VARIANTS = {
+  contact: lazy(() => import("@/components/hero/HeroContact")),
+  redline: lazy(() => import("@/components/hero/HeroRedline")),
+  headline: lazy(() => import("@/components/hero/HeroHeadline")),
+};
+
+function heroVariant() {
+  try {
+    return HERO_VARIANTS[new URLSearchParams(window.location.search).get("hero")] ?? null;
+  } catch {
+    return null;
+  }
+}
+
 export default function Home() {
+  const Variant = heroVariant();
   return (
     <Shell>
       <div className="space-y-20 sm:space-y-28">
-        <section aria-labelledby="home-title" className="space-y-5 sm:space-y-8">
-          <div className="max-w-3xl space-y-3 sm:space-y-4">
-            <h1 id="home-title" className="text-balance text-[2rem] font-semibold leading-tight tracking-tight text-night-950 sm:text-5xl">
-              Vigil finds what slipped past review.
-            </h1>
-            <p className="max-w-2xl text-pretty text-base leading-relaxed text-night-600 sm:text-lg">
-              Vigil scans what your firm has published online and flags anything that may conflict with your
-              compliance policy, with the exact quote, for a human to review.
-            </p>
-          </div>
-          <EvidencePair />
-          <ScanForm />
-        </section>
+        <div className="hero-scope" data-scheme="paper">
+        {Variant ? (
+          <Suspense fallback={<CurrentHero />}>
+            <Variant ScanForm={ScanForm} featuredFlagId={FEATURED_FLAG_ID} featuredRewrite={FEATURED_REWRITE} />
+          </Suspense>
+        ) : (
+          <CurrentHero />
+        )}
+        </div>
 
         <section aria-labelledby="loop-title" className="space-y-8">
           <h2 id="loop-title" className="text-2xl font-semibold tracking-tight">
@@ -81,6 +95,24 @@ export default function Home() {
         </section>
       </div>
     </Shell>
+  );
+}
+
+function CurrentHero() {
+  return (
+    <section aria-labelledby="home-title" className="space-y-5 sm:space-y-8">
+      <div className="max-w-3xl space-y-3 sm:space-y-4">
+        <h1 id="home-title" className="text-balance text-[2rem] font-semibold leading-tight tracking-tight text-night-950 sm:text-5xl">
+          Vigil finds what slipped past review.
+        </h1>
+        <p className="max-w-2xl text-pretty text-base leading-relaxed text-night-600 sm:text-lg">
+          Vigil scans what your firm has published online and flags anything that may conflict with your
+          compliance policy, with the exact quote, for a human to review.
+        </p>
+      </div>
+      <EvidencePair />
+      <ScanForm />
+    </section>
   );
 }
 
@@ -161,7 +193,7 @@ function EvidencePair() {
   );
 }
 
-function ScanForm() {
+export function ScanForm() {
   const [site, setSite] = useState("");
   const onSubmit = (event) => {
     event.preventDefault();
@@ -185,19 +217,19 @@ function ScanForm() {
           value={site}
           onChange={(event) => setSite(event.target.value)}
           placeholder="Your firm's website, e.g. example.com"
-          className="h-11 w-full min-w-0 rounded-[10px] sm:flex-1 border border-paper-200 bg-white px-4 text-[15px] text-night-950 placeholder:text-night-600 focus:border-lamp-500 focus:outline-none focus:ring-2 focus:ring-lamp-500/40"
+          className="h-11 w-full min-w-0 rounded-[10px] border border-[color:var(--h-input-border)] bg-[color:var(--h-input-bg)] px-4 text-[15px] text-[color:var(--h-input-fg)] placeholder:text-[color:var(--h-muted)] focus:border-[color:var(--h-accent)] focus:outline-none focus:ring-2 focus:ring-lamp-500/40 sm:flex-1"
         />
         <button
           type="submit"
-          className="h-11 rounded-[10px] bg-night-950 px-6 text-[15px] font-medium text-paper-50 hover:bg-night-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-lamp-500 focus-visible:ring-offset-2 focus-visible:ring-offset-paper-50"
+          className="h-11 rounded-[10px] bg-[color:var(--h-btn-bg)] px-6 text-[15px] font-medium text-[color:var(--h-btn-fg)] hover:opacity-90 focus:outline-none focus-visible:ring-2 focus-visible:ring-lamp-500 focus-visible:ring-offset-2 focus-visible:ring-offset-[color:var(--h-bg)]"
         >
           Scan
         </button>
       </form>
-      <Link to="/demo" className="inline-block text-[15px] font-medium text-night-950 underline decoration-night-400 decoration-2 underline-offset-4 hover:decoration-night-950">
+      <Link to="/demo" className="inline-block text-[15px] font-medium text-[color:var(--h-fg)] underline decoration-[color:var(--h-muted)] decoration-2 underline-offset-4 hover:decoration-[color:var(--h-fg)]">
         See a live demo →
       </Link>
-      <p className="text-xs text-night-600">Scanning needs a team sign-in. The demo needs nothing.</p>
+      <p className="text-xs text-[color:var(--h-muted)]">Try it on our demo firm, no sign-in needed. Scanning your own firm needs a team sign-in.</p>
     </div>
   );
 }

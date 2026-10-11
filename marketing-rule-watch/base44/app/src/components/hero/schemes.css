@@ -1,0 +1,68 @@
+/* Hero colour schemes: semantic tokens built only from brand/tokens.css values (BRAND.md). Every hero reads these,
+   so a scheme is a token swap on the wrapper: <div class="hero-scope" data-scheme="paper|night|split|dusk">.
+   Amber (Lamp 500) stays the "look here" signal in every scheme. Text pairs pass WCAG AA. */
+.hero-scope,
+.hero-scope[data-scheme="paper"] {
+  --h-bg: #faf8f4; /* Paper 50 */
+  --h-fg: #0b1120; /* Night 950 */
+  --h-muted: #4a5570; /* Night 600: 7.1:1 on Paper 50 */
+  --h-surface: #ffffff; /* white cards on Paper 50 */
+  --h-surface-2: #f3efe7; /* Paper 100: rewrite and muted fills */
+  --h-border: #e6e0d4; /* Paper 200 */
+  --h-accent: #f5a524; /* Lamp 500: scan line, brackets, quote border */
+  --h-accent-text: #9a5b00; /* Lamp 700: amber text on light */
+  --h-quote-bg: #fff1d6; /* Lamp 100 */
+  --h-quote-fg: #0b1120;
+  --h-btn-bg: #0b1120;
+  --h-btn-fg: #faf8f4;
+  --h-input-bg: #ffffff;
+  --h-input-fg: #0b1120;
+  --h-input-border: #e6e0d4;
+  --h-thumb-dim: 0.55;
+  --h-shadow: 0 12px 32px -12px rgba(11, 17, 32, 0.18);
+  background-color: var(--h-bg);
+  color: var(--h-fg);
+}
+
+/* Dark: Night 950 ground. The flagged quote keeps its Lamp 100 ground, so the evidence is the brightest thing. */
+.hero-scope[data-scheme="night"],
+.hero-scope[data-scheme="split"] {
+  --h-bg: #0b1120; /* Night 950 */
+  --h-fg: #faf8f4; /* Paper 50 */
+  --h-muted: #8b95ae; /* Night 300: 6.9:1 on Night 950 */
+  --h-surface: #131b2e; /* Night 900 */
+  --h-surface-2: #1a2338; /* Night 800 */
+  --h-border: #2a3550; /* Night 700 */
+  --h-accent: #f5a524;
+  --h-accent-text: #ffcf6e; /* Lamp 300: amber text on dark */
+  --h-quote-bg: #fff1d6;
+  --h-quote-fg: #0b1120;
+  --h-btn-bg: #faf8f4;
+  --h-btn-fg: #0b1120;
+  --h-input-bg: #131b2e;
+  --h-input-fg: #faf8f4;
+  --h-input-border: #2a3550;
+  --h-thumb-dim: 0.45;
+  --h-shadow: 0 16px 40px -16px rgba(0, 0, 0, 0.6);
+}
+
+/* Cool light: Dusk 100 fields under white cards, Night text. */
+.hero-scope[data-scheme="dusk"] {
+  --h-bg: #e3eaf5; /* Dusk 100 */
+  --h-fg: #0b1120;
+  --h-muted: #34558a; /* Dusk 700: 5.6:1 on Dusk 100 */
+  --h-surface: #ffffff;
+  --h-surface-2: #faf8f4; /* Paper 50 */
+  --h-border: #c9cfdc; /* Night 200 */
+  --h-accent: #f5a524;
+  --h-accent-text: #9a5b00;
+  --h-quote-bg: #fff1d6;
+  --h-quote-fg: #0b1120;
+  --h-btn-bg: #0b1120;
+  --h-btn-fg: #faf8f4;
+  --h-input-bg: #ffffff;
+  --h-input-fg: #0b1120;
+  --h-input-border: #c9cfdc;
+  --h-thumb-dim: 0.55;
+  --h-shadow: 0 12px 32px -12px rgba(11, 17, 32, 0.18);
+}
