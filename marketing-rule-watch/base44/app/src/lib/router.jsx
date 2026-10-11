@@ -16,8 +16,11 @@ function matchRoute(pattern, path) {
   if (patternParts.length !== pathParts.length) return null;
   const params = {};
   for (let i = 0; i < patternParts.length; i++) {
-    if (patternParts[i].startsWith(":")) params[patternParts[i].slice(1)] = decodeURIComponent(pathParts[i]);
-    else if (patternParts[i] !== pathParts[i]) return null;
+    if (patternParts[i].startsWith(":")) {
+      // A malformed escape (e.g. /flag/%) must not crash the whole app with a URIError.
+      try { params[patternParts[i].slice(1)] = decodeURIComponent(pathParts[i]); }
+      catch { params[patternParts[i].slice(1)] = pathParts[i]; }
+    } else if (patternParts[i] !== pathParts[i]) return null;
   }
   return params;
 }
