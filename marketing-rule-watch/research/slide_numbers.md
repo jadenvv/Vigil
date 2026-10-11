@@ -122,16 +122,23 @@ Caveat: this is a simulated web (our demo site plus a fake search engine answeri
 
 Home card (5th entry in `EVAL_RESULTS`): "Third-party review page: 4 of 4", "0 clean passages flagged; a page the detector was never tuned on", "Fictional review site Devin built; one page, one run".
 
-## 9. Pipeline vs a single-prompt LLM (INCOMPLETE, not for slides)
+## 9. Pipeline vs a single-prompt LLM (not for slides)
 
-From Ethan's `eval/reports/versus_groq120b_panel.json` (`bd16a8f`, 18:53). p4-eval re-checked the numbers from the JSON.
+From Ethan's two complete runs: `eval/reports/versus_groq120b_panel_full.json` (run 1, 19:06) and `versus_groq120b_panel_full2.json` (run 2, 19:16). git-manager re-checked the numbers from the JSON. They replace the earlier partial run (12 of 36 cases, `versus_groq120b_panel.json`).
 
-- **Setup:** our pipeline (hints + prompt v4 + filters; v4 is **not live**) vs a single prompt with no hints or filters. Both ran on gpt-oss-120b via Groq on a laptop, not the live app's model.
-- **Coverage:** **12 of 36** panel cases, all in the "tester feedback" group. The run stopped when the pipeline got prose instead of JSON.
+- **Setup:** our pipeline (hints + prompt v4 + filters; v4 is **not live**) vs a single prompt with no hints or filters. Both ran on gpt-oss-120b via Groq on a laptop, not on the live app's model.
+- **Coverage:** all **35** panel cases (20 with an issue, 21 issues in all, and 15 clean). Both reports say the run completed.
+- **Scoring:** run 2 uses the new rule from `c718555`, which counts a flag quoted inside the labelled span as a hit.
 
 | | Precision | Recall | F1 | Clean flagged |
 |---|---|---|---|---|
-| Our pipeline | 0.80 (4 of 5) | 0.80 | 0.80 | 0 of 7 |
-| Single prompt | 0.45 (5 of 11) | 1.00 | 0.62 | 1 of 7 |
+| Our pipeline, run 2 (new scoring) | 1.00 (20 of 20) | 0.95 (20 of 21) | **0.98** | 0 of 15 |
+| Our pipeline, run 1 | 0.95 (19 of 20) | 0.90 (19 of 21) | 0.93 | 0 of 15 |
+| Single prompt (identical in both runs) | 0.53 (18 of 34) | 0.86 (18 of 21) | 0.65 | 3 of 15 |
 
-**Caveats:** incomplete, 12 cases, one run, labels written by us and unreviewed. The direction (fewer false alarms, one more miss) matches sections 1–3, but don't put these numbers on a slide or the home page.
+**Caveats:**
+- Two runs on a laptop model, not the live detector.
+- The pipeline uses v4, which is not live.
+- The labels are written by us and unreviewed.
+- The best pipeline number is from the run with the new scoring rule.
+- The direction matches sections 1–3: far fewer false alarms at about the same recall. Don't put these numbers on a slide or the home page.

@@ -57,11 +57,12 @@ Last updated: **7:05 PM**
 
 ### Final state: live and FROZEN (deployed 7:01 PM)
 
-**Live:** https://marketing-rule-watch-a0747dd2.base44.app/ is built from **`13e2187`** on branch `deploy/wave2-live`, deployed at 7:31 (the final deploy before submission). That's `bab4d6d` plus:
+**Live:** https://marketing-rule-watch-a0747dd2.base44.app/ is built from **`7ed9ce6`** on branch `deploy/wave2-live`, deployed at 7:34 (the final deploy). That's `bab4d6d` plus:
   - the dusk-night theme (`5b6ef7c`)
   - two `dusk.css` fixes: card contrast (`5fa661a`) and the amber chart value for AA contrast (`a25519f`)
   - `/evals` additions (`a394224`): the AdvisorQuill third-party result (4 of 4, 0 clean flagged, live v3) and Ethan's incomplete versus run, labelled "Incomplete run, not live"
-  - a background dot grid (`dc8002f`), then replaced by a night-to-dusk navy gradient with a transparent hero and `#1E2A45` cards (`13e2187`). Both touch `dusk.css` only.
+  - background experiments: dots (`dc8002f`), then a gradient (`13e2187`). Both were reverted in `7ed9ce6`, so `dusk.css` is back to the flat ground from `a394224`.
+  - `/evals` versus sets (`7ed9ce6`): Ethan's complete 35-case runs replace the partial 12-case one (see `research/slide_numbers.md` §9; not for slides).
 
 - **Live has:**
   - nav: Home · Live demo · Dashboard · Evals · About
@@ -72,7 +73,7 @@ Last updated: **7:05 PM**
   - Page-as-captured as the default tab on flag detail
   - AdvisorQuill on the demo firm (11 pages, 15 flags)
 - **Not live:** PR #5 Clerk `/reviews`, the Form ADV lookup (`2c38377`, which replaced the crossref function and UI on `main`), and detector v4. Backend functions are unchanged; the detector is v3.
-- **`main` vs live:** the theme is on `main` as `35f8196`; live `5b6ef7c` is the same overlay on the deploy branch. The deploy-branch commits are cherry-picked onto `main`: `5fa661a` → `a20e19d`, `a25519f` → `0818c68`, `a394224` → `4cf5bd4`, `dc8002f` → `6f52b5f`, `13e2187` → `9c47a68`. `main` matches live except for PR #5 (Clerk `/reviews` routes and the `ClerkProvider` wrapper in `main.jsx`) and the Form ADV lookup.
+- **`main` vs live:** the theme is on `main` as `35f8196`; live `5b6ef7c` is the same overlay on the deploy branch. The deploy-branch commits are cherry-picked onto `main`: `5fa661a` → `a20e19d`, `a25519f` → `0818c68`, `a394224` → `4cf5bd4`, `dc8002f` → `6f52b5f`, `13e2187` → `9c47a68`, `7ed9ce6` → `646b8cb`. `main` matches live except for PR #5 (Clerk `/reviews` routes and the `ClerkProvider` wrapper in `main.jsx`) and the Form ADV lookup.
 
 **Follow-ups after the event:**
 - Real-firm rows are readable through public RLS. The dashboard only filters them client-side.
