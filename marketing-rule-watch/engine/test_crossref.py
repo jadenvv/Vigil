@@ -38,7 +38,7 @@ def fake_llm(replies: dict):
     """Route by prompt: pass 1 replies keyed by doc url, pass 2 keyed by a claim substring."""
     calls = []
 
-    def complete(system, user, max_tokens=2000):
+    def complete(system, user, max_tokens=2000, **kw):
         calls.append(user)
         if "<page_content>" in user:
             for url, reply in replies["absolutes"].items():
@@ -53,11 +53,11 @@ def fake_llm(replies: dict):
     return complete, calls
 
 
-def run(replies, docs=DOCS, debug=None):
+def run(replies, docs=DOCS, debug=None, fn="crossref"):
     complete, calls = fake_llm(replies)
     with mock.patch.object(llm, "complete", complete), mock.patch.object(llm, "available", lambda: True), \
             mock.patch.dict("os.environ", {"DETECT_MODE": "auto"}):
-        return X.crossref(docs, debug), calls
+        return getattr(X, fn)(docs, debug), calls
 
 
 NEVER_LOST = {"span": "Our clients have never lost money in a down year.", "topic": "losses",
@@ -164,7 +164,7 @@ class TestCrossref(unittest.TestCase):
     def test_non_json_retries_once_then_raises(self):
         n = []
 
-        def complete(system, user, max_tokens=2000):
+        def complete(system, user, max_tokens=2000, **kw):
             n.append(1)
             return "sorry, I can't"
         with mock.patch.object(llm, "complete", complete), mock.patch.object(llm, "available", lambda: True), \
@@ -191,6 +191,79 @@ class TestCrossref(unittest.TestCase):
             with self.assertRaises(RuntimeError):
                 X.crossref(DOCS)
         self.assertEqual(X.crossref([ABOUT]), [])  # one doc: nothing to cross-reference
+
+
+FOUNDED = {"span": "Founded in 2011 by Odile Ketteridge, CFP.", "topic": "credentials", "absolute": False,
+           "assertion": "founded in 2011", "terms": ["founded", "2011"]}
+
+
+def contradiction(claim, ev, docs=DOCS, url=ABOUT["url"], conf=0.9):
+    found = X.retrieve({**claim, "url": url}, docs)
+    return verdict(next(i for i, p in enumerate(found, 1) if ev in p["text"]), ev, conf=conf)
+
+
+class TestReview(unittest.TestCase):
+    """review(): every absolute is marked; a contradiction makes it high, otherwise it is left for review."""
+
+    def test_absolute_marked_by_contradiction(self):
+        replies = {"absolutes": {ABOUT["url"]: {"claims": [{**NEVER_LOST, "absolute": True},
+                                                           {**CONFLICT, "absolute": True}, FOUNDED]}},
+                   "contradict": {NEVER_LOST["span"]: contradiction(NEVER_LOST, "declined 14.6% net of fees")}}
+        marks, _ = run(replies, fn="review")
+        by = {m["claim_span"]: m for m in marks}
+        self.assertEqual(set(by), {NEVER_LOST["span"], CONFLICT["span"]})  # the plain fact is not marked
+        self.assertEqual((by[NEVER_LOST["span"]]["status"], by[NEVER_LOST["span"]]["severity"]), ("contradicted", "high"))
+        self.assertIn(by[NEVER_LOST["span"]]["evidence_span"], ADV["markdown"])
+        un = by[CONFLICT["span"]]
+        self.assertEqual((un["status"], un["severity"], un["evidence_span"]), ("unverified", "review", ""))
+        self.assertIn(un["claim_span"], ABOUT["markdown"])
+        self.assertNotIn("violat", un["why"].lower())
+        # crossref() keeps its contradictions-only contract
+        flags, _ = run(replies)
+        self.assertEqual([f["claim_span"] for f in flags], [NEVER_LOST["span"]])
+
+    def test_contradicted_plain_fact_is_marked(self):
+        claim = {**FOUNDED, "span": "Founded in 2011 by Odile Ketteridge, CFP.", "terms": ["2022"]}
+        replies = {"absolutes": {ABOUT["url"]: {"claims": [claim]}},
+                   "contradict": {claim["span"]: contradiction(claim, "declined 14.6% net of fees")}}
+        marks, _ = run(replies, fn="review")
+        self.assertEqual([(m["status"], m["absolute"]) for m in marks], [("contradicted", False)])
+
+    def test_regex_backstop_marks_guarantee_model_missed(self):
+        page = {"url": "https://quarrywick.example/services.html", "markdown": "Income Shield: guaranteed income for life."}
+        claim = {"span": "guaranteed income for life", "topic": "guarantees", "absolute": False,
+                 "assertion": "income guaranteed", "terms": ["zzzz"]}
+        marks, _ = run({"absolutes": {page["url"]: {"claims": [claim]}}, "contradict": {}}, docs=[page, BLOG], fn="review")
+        self.assertEqual([(m["claim_span"], m["severity"]) for m in marks], [("guaranteed income for life", "review")])
+
+    def test_single_doc_still_marks_absolutes(self):
+        marks, calls = run({"absolutes": {ABOUT["url"]: {"claims": [{**CONFLICT, "absolute": True}]}}, "contradict": {}},
+                           docs=[ABOUT], fn="review")
+        self.assertEqual([m["status"] for m in marks], ["unverified"])
+        self.assertTrue(all("<page_content>" in c for c in calls))
+
+    def test_absolute_used_as_evidence_not_double_marked(self):
+        ev = "Our affiliate, Quarrywick Insurance Agency, receives commissions, which creates a conflict of interest."
+        fact = {"span": ev, "topic": "conflicts", "absolute": False, "assertion": "affiliate earns commissions",
+                "terms": ["conflict-free"]}
+        replies = {"absolutes": {ABOUT["url"]: {"claims": [{**CONFLICT, "absolute": True}]},
+                                 ADV["url"]: {"claims": [fact]}},
+                   "contradict": {fact["span"]: contradiction(fact, CONFLICT["span"], url=ADV["url"])}}
+        marks, _ = run(replies, fn="review")
+        self.assertEqual(len(marks), 1)
+        self.assertEqual(marks[0]["status"], "contradicted")
+
+    def test_dedupe_prefers_absolute_side_as_claim(self):
+        ev = "Our affiliate, Quarrywick Insurance Agency, receives commissions, which creates a conflict of interest."
+        fact = {"span": ev, "topic": "conflicts", "absolute": False, "assertion": "affiliate earns commissions",
+                "terms": ["conflict-free"]}
+        replies = {"absolutes": {ABOUT["url"]: {"claims": [{**CONFLICT, "absolute": True}]},
+                                 ADV["url"]: {"claims": [fact]}},
+                   "contradict": {CONFLICT["span"]: contradiction(CONFLICT, ev, conf=0.7),
+                                  fact["span"]: contradiction(fact, CONFLICT["span"], url=ADV["url"], conf=0.95)}}
+        marks, _ = run(replies, fn="review")
+        self.assertEqual(len(marks), 1)
+        self.assertEqual(marks[0]["claim_url"], ABOUT["url"])  # the absolute is the claim, despite lower confidence
 
 
 if __name__ == "__main__":

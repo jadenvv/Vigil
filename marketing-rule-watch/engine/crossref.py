@@ -1,4 +1,5 @@
-"""crossref(docs) -> list[ContradictionFlag]
+"""review(docs) -> list[Mark]           every absolute claim, rated by what the other docs say
+crossref(docs) -> list[ContradictionFlag]   contradictions only (the eval contract)
 
 Two passes over a firm's documents (site pages, old blog posts, its Form ADV):
   1. extract_absolutes: per doc, the LLM lists absolute / checkable claims (prompts/absolutes.md).
@@ -9,10 +10,14 @@ Two passes over a firm's documents (site pages, old blog posts, its Form ADV):
 
 doc  = {"url": str, "markdown": str}
 flag = {"claim_span", "claim_url", "evidence_span", "evidence_url", "topic", "confidence", "why"}
+mark = flag + {"status": "contradicted" | "unverified", "severity": "high" | "review", "absolute": bool}
+  contradicted: another doc says otherwise (any claim, absolute or a checkable fact) -> high
+  unverified:   an absolute / guarantee nothing contradicts; the firm must still substantiate it -> review
+  A plain checkable fact nothing contradicts is not marked.
 Both spans are exact substrings of their doc's markdown. No passages retrieved -> no LLM call.
 
 CROSSREF_MIN_CONF (default 0.6), CROSSREF_MAX_CLAIMS (default 40), CROSSREF_K (passages, default 6),
-CROSSREF_MAX_TOKENS (per call, default 4000).
+CROSSREF_MAX_TOKENS (per call, default 4000), CROSSREF_REASONING (gpt-oss effort, default low).
 """
 from __future__ import annotations
 
@@ -40,6 +45,12 @@ TOPIC_TERMS = {
     "regulatory": ["disciplinary", "sanction", "finra", "censure", "fine", "order", "settle"],
     "other": [],
 }
+
+# backstop for pass 1's `absolute` field: words that make a claim absolute on their own
+ABSOLUTE_RX = re.compile(
+    r"\b(?:never|always|guarantee[ds]?|guaranteeing|risk[- ]free|no risk|without (?:any )?risk|"
+    r"can(?:not|'t) lose|conflict[- ]free|free of (?:any )?conflicts|zero|every|100\s?%|"
+    r"consistently|most trusted)\b", re.I)
 
 
 def _min_conf() -> float:
@@ -74,12 +85,13 @@ def _parse(raw: str) -> dict:
 
 def _ask(system: str, user: str) -> dict:
     # one retry on a non-JSON reply, then raise (never treated as "no contradiction").
-    # reasoning models (gpt-oss) can spend a 2000-token budget thinking and return "", so allow more
-    n = int(os.environ.get("CROSSREF_MAX_TOKENS", "4000"))
+    # reasoning models (gpt-oss) can spend the whole budget thinking and return "": allow more, think less
+    kw = {"max_tokens": int(os.environ.get("CROSSREF_MAX_TOKENS", "4000")),
+          "reasoning_effort": os.environ.get("CROSSREF_REASONING", "low")}
     try:
-        return _parse(llm.complete(system, user, max_tokens=n))
+        return _parse(llm.complete(system, user, **kw))
     except ValueError:
-        return _parse(llm.complete(system, user, max_tokens=n))
+        return _parse(llm.complete(system, user, **kw))
 
 
 # ---------------------------------------------------------------- pass 1
@@ -101,7 +113,8 @@ def extract_absolutes(docs: list[dict]) -> list[dict]:
                 seen.add((d["url"], span))
                 topic = c.get("topic") if c.get("topic") in TOPICS else "other"
                 terms = [str(t).lower() for t in (c.get("terms") or []) if str(t).strip()][:8]
-                claims.append({"span": span, "url": d["url"], "topic": topic,
+                absolute = c.get("absolute") is True or bool(ABSOLUTE_RX.search(span))
+                claims.append({"span": span, "url": d["url"], "topic": topic, "absolute": absolute,
                                "assertion": str(c.get("assertion") or span)[:300], "terms": terms})
     return claims[: int(os.environ.get("CROSSREF_MAX_CLAIMS", "40"))]
 
@@ -201,7 +214,7 @@ def check(claim: dict, found: list[dict], docs: list[dict], debug: list | None =
         else:
             return {"claim_span": claim["span"], "claim_url": claim["url"], "evidence_span": ev,
                     "evidence_url": p["url"], "topic": claim["topic"], "confidence": round(conf, 2),
-                    "why": str(r.get("why") or "")[:400]}
+                    "why": str(r.get("why") or "")[:400], "absolute": bool(claim.get("absolute"))}
     if debug is not None:
         debug.append({"claim": claim["span"], "reason": why_drop, "reply": r})
     return None
@@ -213,22 +226,53 @@ def find_contradictions(claims: list[dict], docs: list[dict], debug: list | None
         f = check(c, retrieve(c, docs), docs, debug)
         if not f:
             continue
-        # A vs B and B vs A are one finding: keep the more confident direction
+        # A vs B and B vs A are one finding: keep the direction whose claim is the absolute, then the more confident
         key = frozenset({(f["claim_url"], f["claim_span"]), (f["evidence_url"], f["evidence_span"])})
-        if key not in flags or f["confidence"] > flags[key]["confidence"]:
+        rank = (f["absolute"], f["confidence"])
+        if key not in flags or rank > (flags[key]["absolute"], flags[key]["confidence"]):
             flags[key] = f
     return list(flags.values())
 
 
-def crossref(docs: list[dict], debug: list | None = None) -> list[dict]:
+def _overlaps(claim: dict, url: str, span: str) -> bool:
+    return claim["url"] == url and (claim["span"] in span or span in claim["span"])
+
+
+def mark(claims: list[dict], flags: list[dict]) -> list[dict]:
+    """Every contradiction (high), plus every absolute claim that took part in none of them (review)."""
+    out = [{**f, "status": "contradicted", "severity": "high"} for f in flags]
+    for c in claims:
+        if not c.get("absolute"):
+            continue
+        if any(_overlaps(c, f["claim_url"], f["claim_span"]) or _overlaps(c, f["evidence_url"], f["evidence_span"])
+               for f in flags):
+            continue
+        out.append({"claim_span": c["span"], "claim_url": c["url"], "evidence_span": "", "evidence_url": "",
+                    "topic": c["topic"], "confidence": None, "absolute": True,
+                    "status": "unverified", "severity": "review",
+                    "why": "This is an absolute claim. No other document we checked contradicts it, but the firm "
+                           "may need to be able to substantiate it."})
+    return out
+
+
+def review(docs: list[dict], debug: list | None = None) -> list[dict]:
     docs = [d for d in docs if (d.get("markdown") or "").strip()]
-    if len(docs) < 2:
+    if not docs:
         return []
     _require_llm()
     claims = extract_absolutes(docs)
     if debug is not None:
-        debug.append({"pass1_claims": [{"url": c["url"], "span": c["span"], "topic": c["topic"]} for c in claims]})
-    return find_contradictions(claims, docs, debug)
+        debug.append({"pass1_claims": [{"url": c["url"], "span": c["span"], "topic": c["topic"],
+                                        "absolute": c["absolute"]} for c in claims]})
+    # one doc: nothing to cross-reference, but its absolutes are still marked
+    flags = find_contradictions(claims, docs, debug) if len(docs) > 1 else []
+    return mark(claims, flags)
+
+
+def crossref(docs: list[dict], debug: list | None = None) -> list[dict]:
+    if len([d for d in docs if (d.get("markdown") or "").strip()]) < 2:
+        return []
+    return [m for m in review(docs, debug) if m["status"] == "contradicted"]
 
 
 if __name__ == "__main__":
@@ -243,6 +287,6 @@ if __name__ == "__main__":
     else:
         docs = [{"url": Path(a).name, "markdown": Path(a).read_text()} for a in args]
     dbg: list = []
-    out = crossref(docs, dbg)
-    print(json.dumps({"provider": llm.config()["provider"], "docs": [d["url"] for d in docs],
-                      "flags": out, "debug": dbg}, indent=2))
+    out = review(docs, dbg)
+    print(json.dumps({"provider": llm.config()["provider"], "model": llm.config()["model"],
+                      "docs": [d["url"] for d in docs], "marks": out, "debug": dbg}, indent=2))
