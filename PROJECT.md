@@ -79,14 +79,16 @@ Home `/` (Vigil, before/after of a real flag) → type the demo firm URL → `/s
 
 | Time | From → To | What | Status |
 |---|---|---|---|
-| 1:30 | Devin → P3 | Demo firm site at a public URL | ⏳ |
+| 1:30 | Devin → P3 | Demo firm site at a public URL | ✅ Quarrywick on GitHub Pages |
 | 1:30 | P1 → all | Mentor answer: Base44 outbound calls → plan A or B (see §6) | ✅ Plan A, proven by P2 at 1:45 |
-| 1:45 | P3 → P2 | Bright Data request code + sample `Page` JSON + one screenshot | ⏳ |
-| 2:30 | P4 → P2 | `engine/prompts/detect.md` + grounding logic, beats baseline | ⏳ |
+| 1:45 | P3 → P2 | Bright Data request code + sample `Page` JSON + one screenshot | ✅ `scan` live in Base44 |
+| 2:30 | P4 → P2 | `engine/prompts/detect.md` + grounding logic, beats baseline | ✅ v3 live, 11/11 on demo |
 | **2:45** | **P2 → P1** | **Live link with demo mode** | ✅ ready 1:52: https://marketing-rule-watch-a0747dd2.base44.app/demo |
-| ~5:00 | P4 → P2 | `engine/prompts/rewrite.md` | ⏳ |
-| 7:00 | P4 → P1 | Eval before/after report | ⏳ |
-| 7:00 | P2 → P1 | Screenshots for slides | ⏳ |
+| ~5:00 | P4 → P2 | `engine/prompts/rewrite.md` | ✅ rewrite live (verified 200, 3.6 s) |
+| 7:00 | P4 → P1 | Eval before/after report | ✅ `research/slide_numbers.md` (cb05c56); p4-eval re-checking against audit batch ca84d24 |
+| 6:50 | P2 → all | Hero redesign (3 localhost prototypes, user picks) → site deploy | ⏳ p2-frontend |
+| 7:00 | P2 → P1 | Screenshots for slides + fallback video | ⏳ p2-debugger-eval, after hero deploy |
+| 7:00 | P2 | App freeze; cleanup only after user OKs the dry-run list (p2-backend, 6:30) | ⏳ |
 | 7:45 | P1 | **Submit** | ⏳ |
 
 ## 6. Open questions
