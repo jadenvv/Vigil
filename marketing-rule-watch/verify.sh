@@ -29,6 +29,10 @@ for f in net-guard discover page-text page-html recheck; do
   run "deno self-check: $f"         deno run "base44/app/base44/shared/$f.ts"
 done
 run "deno self-check: calc-check"   deno run --allow-run --allow-env=DAYTONA_API_KEY base44/app/base44/shared/calc-check.ts
+run "deno self-check: clerk-auth"   deno run base44/app/base44/shared/clerk-auth.ts
+# --allow-read only: the self-check asserts the ReviewerDecision entity RLS stays all-false.
+run "deno self-check: reviewer-core" deno run --allow-read=base44/app/base44/entities base44/app/base44/shared/reviewer-core.ts
+run "app tests (vitest)"            bash -c 'cd base44/app && npm test'
 run "app build (vite)"              bash -c 'cd base44/app && npm run build'
 
 echo "=================================================="

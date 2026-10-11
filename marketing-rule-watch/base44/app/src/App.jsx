@@ -7,6 +7,8 @@ import FlagDetail from "@/pages/FlagDetail";
 import History from "@/pages/History";
 import Home from "@/pages/Home";
 import { DemoInbox, FirmInbox } from "@/pages/Inbox";
+import ReviewFlag from "@/pages/ReviewFlag";
+import Reviews from "@/pages/Reviews";
 import Setup from "@/pages/Setup";
 
 const routes = [
@@ -16,6 +18,8 @@ const routes = [
   { path: "/firm/:id/exam", element: <Exam /> },
   { path: "/flag/:id", element: <FlagDetail /> },
   { path: "/page/:id/history", element: <History /> },
+  { path: "/reviews", element: <Reviews /> },
+  { path: "/reviews/flag/:id", element: <ReviewFlag /> },
   { path: "/setup", element: <Setup /> },
 ];
 

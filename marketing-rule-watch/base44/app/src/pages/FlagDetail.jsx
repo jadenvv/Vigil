@@ -87,7 +87,8 @@ function FlagDetailBody({ flag, page, firm }) {
 
 // Opens on "Page as captured" when the page has a capture and the quote is found in it; otherwise it stays
 // on the formatted text without a note. Text shows first while the capture loads, then swaps in place.
-function PageText({ page, span }) {
+// Exported: the reviewer workspace reuses the same evidence view.
+export function PageText({ page, span }) {
   const hasCapture = SHOW_PAGE_VIEW && Boolean(page.html_ref);
   // The tab the reviewer picked; null means automatic.
   const [choice, setChoice] = useState(null);
@@ -351,7 +352,7 @@ function MarkdownBlocks({ blocks, markRef }) {
   );
 }
 
-function EvidencePanel({ flag, page }) {
+export function EvidencePanel({ flag, page }) {
   return (
     <section className="space-y-3 rounded-lg border border-paper-200 bg-white p-4 text-sm">
       <div>
@@ -446,7 +447,7 @@ function Recheck({ flagId }) {
 }
 
 // Never render a broken image: no ref, or a ref that fails to load, shows the placeholder.
-function Screenshot({ page }) {
+export function Screenshot({ page }) {
   const [failed, setFailed] = useState(false);
   const src = page.screenshot_ref;
   if (!src || failed) {
@@ -485,7 +486,7 @@ function recheckMinutesAgo(value) {
   return Number.isNaN(parsed) ? 0 : Math.max(0, Math.floor((Date.now() - parsed) / 60000));
 }
 
-function formatDate(value) {
+export function formatDate(value) {
   if (value == null) return "";
   const date = new Date(value);
   if (Number.isNaN(date.getTime())) return value;

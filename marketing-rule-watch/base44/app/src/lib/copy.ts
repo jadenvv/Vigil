@@ -123,6 +123,27 @@ export const COPY = {
   calcCooldown: "Too many checks just now. Try again shortly.",
   calcServiceError: "The calculation service isn't reachable right now. Try again later.",
   calcNote: "Checks arithmetic only; does not verify actual investment performance.",
+  // Reviewer workspace ("My reviews"): Clerk sign-in; decisions belong to the reviewer account,
+  // not the browser session. Copy mirrors the demo drawer; decisions are never called final.
+  navReviews: "My reviews",
+  signIn: "Sign in",
+  reviewsSignInTitle: "Sign in to review findings",
+  reviewsSignInDetail: "Your reviews are saved to your account, so they are here when you come back.",
+  reviewsTitle: "My reviews",
+  reviewsSavedNote: "Your reviews are saved to your account.",
+  reviewsDemoNote: "Reviewing works on the fictional demo firm only, for now.",
+  reviewsFindingsTitle: "Findings to review",
+  reviewsHistoryTitle: "Your reviews",
+  reviewsEmptyTitle: "No reviews yet",
+  reviewsEmptyDetail: "Pick a finding below. Whatever you decide is saved to your account.",
+  reviewsNotConfigured: "Reviewer sign-in isn't set up on this deployment yet.",
+  reviewsSessionExpired: "Your session expired. Sign in again to keep reviewing.",
+  reviewsNotEligible: "Only the fictional demo firm's findings can be reviewed here.",
+  reviewsSavedLink: "Saved — see it in My reviews",
+  backToReviews: "Back to my reviews",
+  reviewDecidedAt: "Decided",
+  reviewOriginalQuote: "Flagged quote",
+  reviewFinalText: "Saved text",
 };
 
 // Phase 5 rewrite drawer stays off until after Sense Check 2.
