@@ -1,7 +1,7 @@
 // Hero variant "Workflow 3 · journey" (lab only). One real captured page (about.html, Page.screenshot_ref) travels
 // through the four pipeline stations and changes at each: captured (UTC stamp) → scanned (amber scan line, matching
 // category) → the exact quote lifts out in brackets beside Vigil's real rewrite → awaiting a person's approval.
-// The completed journey is the default render; the sequence is layered on with WAAPI after mount, holds ~2.5 s,
+// The completed journey is the default render; the sequence is layered on with WAAPI after mount, holds ~5 s,
 // softly resets and repeats. It pauses on its own Pause button, the `paused` prop, off-screen or a hidden tab.
 // Reduced motion: the still, completed journey, no loop and no Pause button.
 import { useEffect, useRef, useState } from "react";
@@ -17,19 +17,19 @@ const EASE_IN_OUT = "cubic-bezier(0.45, 0, 0.2, 1)";
 const T = {
   arrive: 0, // page appears at station 1
   capture: 200, // viewfinder snaps on, stamp follows
-  move1: 1000, // → station 2
-  scan: 1650, // scan line sweeps the page
+  move1: 2000, // → station 2
+  scan: 2650, // scan line sweeps the page
   scanMs: 900,
-  category: 2350,
-  move2: 2750, // → station 3
-  quote: 3400, // the quote lifts out, brackets lock
-  rewrite: 3700,
-  move3: 4250, // → station 4
-  decide: 4900,
-  end: 5250,
+  category: 3350,
+  move2: 4750, // → station 3
+  quote: 5400, // the quote lifts out, brackets lock
+  rewrite: 5700,
+  move3: 7250, // → station 4
+  decide: 7900,
+  end: 8250,
 };
 const MOVE_MS = 650;
-const HOLD_MS = 2500;
+const HOLD_MS = 5000;
 const RESET_MS = 400;
 
 function stamp(value) {

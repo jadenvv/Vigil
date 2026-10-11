@@ -4,7 +4,7 @@
 // CRAWL (domain + captured pages with capture times) → CHECK (the matching category rolls in and locks on, then the
 // exact quote in brackets) → SUGGEST (Vigil's real rewrite, word by word) → DECIDE (awaiting a person).
 // The completed rail is the default render; the sequence is layered on with WAAPI after mount (transform/opacity only,
-// all heights reserved), holds ~2.5 s, softly resets and repeats. It pauses on its own Pause button, the `paused` prop,
+// all heights reserved), holds ~5 s, softly resets and repeats. It pauses on its own Pause button, the `paused` prop,
 // off-screen (<10% visible) or a hidden tab. Reduced motion: the still, completed rail, no loop, no Pause button.
 import { Fragment, useEffect, useRef, useState } from "react";
 import { base44 } from "@/api/base44Client";
@@ -30,16 +30,16 @@ const TICK = 20; // px height of one category line in the CHECK window
 
 // Timeline (ms from cycle start). `at` = the pulse arrives at that step's node; `leave` = it sets off for the next.
 const T = {
-  crawl: { at: 150, leave: 1250 },
-  check: { at: 1700, leave: 3000 },
-  suggest: { at: 3450, leave: 4350 },
-  decide: { at: 4800 },
+  crawl: { at: 150, leave: 2250 },
+  check: { at: 2700, leave: 5000 },
+  suggest: { at: 5450, leave: 7350 },
+  decide: { at: 7800 },
   rowGap: 200,
   rollMs: 650,
   suggestMs: 800,
-  end: 5200,
+  end: 8200,
 };
-const HOLD_MS = 2500;
+const HOLD_MS = 5000;
 const RESET_MS = 400;
 
 function stamp(value) {
