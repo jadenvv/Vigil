@@ -3,7 +3,7 @@
 // confidence, the rewrite line, and a waiting line. Beside the log, the about.html capture: amber brackets lock
 // on the check line, the real rewrite card appears on the suggest line, the approval chip on the waiting line.
 // Lines reveal with opacity + a small translateY (never typed). The completed log is the default render; the
-// sequence is layered on with WAAPI before first paint, holds ~2.5 s, softly resets and repeats when loop=true.
+// sequence is layered on with WAAPI before first paint, holds ~5 s, softly resets and repeats when loop=true.
 // Pauses on its own Pause button, the `paused` prop, < 10% visible, or a hidden tab.
 // Reduced motion: the still, completed log, no loop and no Pause button.
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
@@ -21,12 +21,12 @@ const GET_SLOTS = 4;
 const T = {
   firstGet: 200,
   getGap: 340,
-  check: 1750,
-  suggest: 2450,
-  waiting: 3100,
-  end: 3500,
+  check: 2750,
+  suggest: 4450,
+  waiting: 6100,
+  end: 6500,
 };
-const HOLD_MS = 2500;
+const HOLD_MS = 5000;
 const RESET_MS = 400;
 
 function stamp(value) {
