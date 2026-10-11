@@ -57,7 +57,7 @@ Last updated: **7:05 PM**
 
 ### Final state: live and FROZEN (deployed 7:01 PM)
 
-**Live:** https://marketing-rule-watch-a0747dd2.base44.app/ is built from **`5b6ef7c`** on branch `deploy/wave2-live`. That's `bab4d6d` plus the dusk-night theme. There are no more deploys.
+**Live:** https://marketing-rule-watch-a0747dd2.base44.app/ is built from **`5fa661a`** on branch `deploy/wave2-live`, deployed at about 7:05. That's `bab4d6d` plus the dusk-night theme (`5b6ef7c`) plus a card-contrast tweak in `dusk.css` (`5fa661a`). There are no more deploys.
 
 - **Live has:**
   - nav: Home · Live demo · Dashboard · Evals · About
@@ -68,7 +68,7 @@ Last updated: **7:05 PM**
   - Page-as-captured as the default tab on flag detail
   - AdvisorQuill on the demo firm (11 pages, 15 flags)
 - **Not live:** PR #5 Clerk `/reviews`, the crossref function and UI, and detector v4. Backend functions are unchanged; the detector is v3.
-- **`main` vs live:** the theme is on `main` as `35f8196`; live `5b6ef7c` is the same overlay on the deploy branch. `main` matches live except for PR #5 (Clerk `/reviews` routes and the `ClerkProvider` wrapper in `main.jsx`) and the crossref UI.
+- **`main` vs live:** the theme is on `main` as `35f8196`; live `5b6ef7c` is the same overlay on the deploy branch. The card tweak `5fa661a` is cherry-picked onto `main` as `a20e19d`. `main` matches live except for PR #5 (Clerk `/reviews` routes and the `ClerkProvider` wrapper in `main.jsx`) and the crossref UI.
 
 **Follow-ups after the event:**
 - Real-firm rows are readable through public RLS. The dashboard only filters them client-side.
