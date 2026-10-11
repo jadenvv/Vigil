@@ -1,3 +1,4 @@
+import { lazy, Suspense } from "react";
 import { EmptyBlock, Shell } from "@/components/Chrome";
 import { COPY } from "@/lib/copy";
 import { Router } from "@/lib/router";
@@ -17,6 +18,19 @@ const routes = [
   { path: "/page/:id/history", element: <History /> },
   { path: "/setup", element: <Setup /> },
 ];
+
+// Dev-only hero lab. import.meta.env.DEV is false in production builds, so the route and its code are dropped.
+if (import.meta.env.DEV) {
+  const HeroLab = lazy(() => import("@/pages/HeroLab"));
+  routes.push({
+    path: "/hero-lab",
+    element: (
+      <Suspense fallback={null}>
+        <HeroLab />
+      </Suspense>
+    ),
+  });
+}
 
 export default function App() {
   return (
