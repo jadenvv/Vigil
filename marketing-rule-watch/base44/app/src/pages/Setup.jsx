@@ -157,11 +157,11 @@ function SetupForm({ signedIn }) {
   const runDiscovery = async ({ name, site, includeSearch }) => {
     const target = normalizeSite(site);
     if (!target.siteUrl || discovery.status === "loading") return;
-    if (signedIn && !name.trim()) return;
     setDiscovery({ status: "loading" });
     setExisting(null);
     setOutcome(null);
     setLog([]);
+    // The stored name wins, then a guess from the site — the ?site= auto-run passes no name at all.
     const firm = await findExistingFirm(target.matchKey).catch(() => null);
     const firmName = name.trim() || firm?.name || guessFirmName(target);
     setForm((f) => ({ ...f, name: firmName, site: target.display }));

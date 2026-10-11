@@ -1,0 +1,970 @@
+{
+  "detector": "engine.detect:detect",
+  "timestamp": "2026-10-10 16:39:33",
+  "cases_sha": "e5bcf338ba",
+  "n_cases": 37,
+  "subsets": {
+    "all": {
+      "n_cases": 37,
+      "n_clean": 18,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "tp": 21,
+      "fp": 0,
+      "fn": 0,
+      "clean_doc_fp_rate": 0.0,
+      "flags_per_clean_doc": 0.0,
+      "grounding_rate": 1.0,
+      "citation_accuracy": 1.0,
+      "per_category": {
+        "BENEFITS_WITHOUT_RISK": {
+          "tp": 5,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "GROSS_WITHOUT_NET": {
+          "tp": 2,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "HYPOTHETICAL_PERFORMANCE": {
+          "tp": 2,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "RATING_NO_DISCLOSURE": {
+          "tp": 2,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "TESTIMONIAL_NO_DISCLOSURE": {
+          "tp": 3,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "UNBALANCED_SPECIFIC_ADVICE": {
+          "tp": 1,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "UNFAIR_PERFORMANCE_PRESENTATION": {
+          "tp": 2,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "UNSUBSTANTIATED_CLAIM": {
+          "tp": 4,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        }
+      }
+    },
+    "reviewed": {
+      "n_cases": 0,
+      "n_clean": 0,
+      "precision": null,
+      "recall": null,
+      "f1": null,
+      "tp": 0,
+      "fp": 0,
+      "fn": 0,
+      "clean_doc_fp_rate": null,
+      "flags_per_clean_doc": null,
+      "grounding_rate": null,
+      "citation_accuracy": null,
+      "per_category": {}
+    },
+    "pattern_synthetic": {
+      "n_cases": 37,
+      "n_clean": 18,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "tp": 21,
+      "fp": 0,
+      "fn": 0,
+      "clean_doc_fp_rate": 0.0,
+      "flags_per_clean_doc": 0.0,
+      "grounding_rate": 1.0,
+      "citation_accuracy": 1.0,
+      "per_category": {
+        "BENEFITS_WITHOUT_RISK": {
+          "tp": 5,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "GROSS_WITHOUT_NET": {
+          "tp": 2,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "HYPOTHETICAL_PERFORMANCE": {
+          "tp": 2,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "RATING_NO_DISCLOSURE": {
+          "tp": 2,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "TESTIMONIAL_NO_DISCLOSURE": {
+          "tp": 3,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "UNBALANCED_SPECIFIC_ADVICE": {
+          "tp": 1,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "UNFAIR_PERFORMANCE_PRESENTATION": {
+          "tp": 2,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "UNSUBSTANTIATED_CLAIM": {
+          "tp": 4,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        }
+      }
+    }
+  },
+  "providers": {
+    "local": 37
+  },
+  "pairs": {
+    "pairs": 8,
+    "passed": 8,
+    "pass_rate": 1.0,
+    "detail": {
+      "guarantee": {
+        "flags_violating": true,
+        "quiet_on_fixed": true
+      },
+      "testimonial": {
+        "flags_violating": true,
+        "quiet_on_fixed": true
+      },
+      "grossnet": {
+        "flags_violating": true,
+        "quiet_on_fixed": true
+      },
+      "hypothetical": {
+        "flags_violating": true,
+        "quiet_on_fixed": true
+      },
+      "cherrypick": {
+        "flags_violating": true,
+        "quiet_on_fixed": true
+      },
+      "rating": {
+        "flags_violating": true,
+        "quiet_on_fixed": true
+      },
+      "unsub": {
+        "flags_violating": true,
+        "quiet_on_fixed": true
+      },
+      "advice": {
+        "flags_violating": true,
+        "quiet_on_fixed": true
+      }
+    }
+  },
+  "rewrite": {
+    "tried": 19,
+    "passed": 19,
+    "pass_rate": 1.0,
+    "note": "necessary, not sufficient: also have a human rate rewrite quality"
+  },
+  "cases": [
+    {
+      "id": "guarantee_violating",
+      "provenance": "pattern_synthetic",
+      "reviewed": false,
+      "clean": false,
+      "tp": [
+        "BENEFITS_WITHOUT_RISK"
+      ],
+      "fp": [],
+      "fn": [],
+      "ungrounded": 0,
+      "cite_ok": 1,
+      "pred_cats": [
+        "BENEFITS_WITHOUT_RISK"
+      ],
+      "status": "ok",
+      "flags": [
+        {
+          "category": "BENEFITS_WITHOUT_RISK",
+          "span": "Our balanced strategy has guaranteed returns of 8% a year"
+        }
+      ],
+      "provider": null
+    },
+    {
+      "id": "guarantee_fixed",
+      "provenance": "pattern_synthetic",
+      "reviewed": false,
+      "clean": true,
+      "tp": [],
+      "fp": [],
+      "fn": [],
+      "ungrounded": 0,
+      "cite_ok": 0,
+      "pred_cats": [],
+      "status": "ok",
+      "flags": [],
+      "provider": null
+    },
+    {
+      "id": "testimonial_violating",
+      "provenance": "pattern_synthetic",
+      "reviewed": false,
+      "clean": false,
+      "tp": [
+        "TESTIMONIAL_NO_DISCLOSURE"
+      ],
+      "fp": [],
+      "fn": [],
+      "ungrounded": 0,
+      "cite_ok": 1,
+      "pred_cats": [
+        "TESTIMONIAL_NO_DISCLOSURE"
+      ],
+      "status": "ok",
+      "flags": [
+        {
+          "category": "TESTIMONIAL_NO_DISCLOSURE",
+          "span": "\"Jordan turned my retirement plan around and I couldn't be happier,\""
+        }
+      ],
+      "provider": null
+    },
+    {
+      "id": "testimonial_fixed",
+      "provenance": "pattern_synthetic",
+      "reviewed": false,
+      "clean": true,
+      "tp": [],
+      "fp": [],
+      "fn": [],
+      "ungrounded": 0,
+      "cite_ok": 0,
+      "pred_cats": [],
+      "status": "ok",
+      "flags": [],
+      "provider": null
+    },
+    {
+      "id": "grossnet_violating",
+      "provenance": "pattern_synthetic",
+      "reviewed": false,
+      "clean": false,
+      "tp": [
+        "GROSS_WITHOUT_NET"
+      ],
+      "fp": [],
+      "fn": [],
+      "ungrounded": 0,
+      "cite_ok": 1,
+      "pred_cats": [
+        "GROSS_WITHOUT_NET"
+      ],
+      "status": "ok",
+      "flags": [
+        {
+          "category": "GROSS_WITHOUT_NET",
+          "span": "Our growth composite returned 14.2% gross annualized over the past five years"
+        }
+      ],
+      "provider": null
+    },
+    {
+      "id": "grossnet_fixed",
+      "provenance": "pattern_synthetic",
+      "reviewed": false,
+      "clean": true,
+      "tp": [],
+      "fp": [],
+      "fn": [],
+      "ungrounded": 0,
+      "cite_ok": 0,
+      "pred_cats": [],
+      "status": "ok",
+      "flags": [],
+      "provider": null
+    },
+    {
+      "id": "hypothetical_violating",
+      "provenance": "pattern_synthetic",
+      "reviewed": false,
+      "clean": false,
+      "tp": [
+        "HYPOTHETICAL_PERFORMANCE"
+      ],
+      "fp": [],
+      "fn": [],
+      "ungrounded": 0,
+      "cite_ok": 1,
+      "pred_cats": [
+        "HYPOTHETICAL_PERFORMANCE"
+      ],
+      "status": "ok",
+      "flags": [
+        {
+          "category": "HYPOTHETICAL_PERFORMANCE",
+          "span": "would have returned 22% a year if clients had held it since 2015"
+        }
+      ],
+      "provider": null
+    },
+    {
+      "id": "hypothetical_fixed",
+      "provenance": "pattern_synthetic",
+      "reviewed": false,
+      "clean": true,
+      "tp": [],
+      "fp": [],
+      "fn": [],
+      "ungrounded": 0,
+      "cite_ok": 0,
+      "pred_cats": [],
+      "status": "ok",
+      "flags": [],
+      "provider": null
+    },
+    {
+      "id": "cherrypick_violating",
+      "provenance": "pattern_synthetic",
+      "reviewed": false,
+      "clean": false,
+      "tp": [
+        "UNFAIR_PERFORMANCE_PRESENTATION"
+      ],
+      "fp": [],
+      "fn": [],
+      "ungrounded": 0,
+      "cite_ok": 1,
+      "pred_cats": [
+        "UNFAIR_PERFORMANCE_PRESENTATION"
+      ],
+      "status": "ok",
+      "flags": [
+        {
+          "category": "UNFAIR_PERFORMANCE_PRESENTATION",
+          "span": "Since the March 2020 low, our flagship fund is up 140%"
+        }
+      ],
+      "provider": null
+    },
+    {
+      "id": "cherrypick_fixed",
+      "provenance": "pattern_synthetic",
+      "reviewed": false,
+      "clean": true,
+      "tp": [],
+      "fp": [],
+      "fn": [],
+      "ungrounded": 0,
+      "cite_ok": 0,
+      "pred_cats": [],
+      "status": "ok",
+      "flags": [],
+      "provider": null
+    },
+    {
+      "id": "rating_violating",
+      "provenance": "pattern_synthetic",
+      "reviewed": false,
+      "clean": false,
+      "tp": [
+        "RATING_NO_DISCLOSURE"
+      ],
+      "fp": [],
+      "fn": [],
+      "ungrounded": 0,
+      "cite_ok": 1,
+      "pred_cats": [
+        "RATING_NO_DISCLOSURE"
+      ],
+      "status": "ok",
+      "flags": [
+        {
+          "category": "RATING_NO_DISCLOSURE",
+          "span": "Named a top wealth advisor in America by Wealth Digest"
+        }
+      ],
+      "provider": null
+    },
+    {
+      "id": "rating_fixed",
+      "provenance": "pattern_synthetic",
+      "reviewed": false,
+      "clean": true,
+      "tp": [],
+      "fp": [],
+      "fn": [],
+      "ungrounded": 0,
+      "cite_ok": 0,
+      "pred_cats": [],
+      "status": "ok",
+      "flags": [],
+      "provider": null
+    },
+    {
+      "id": "unsub_violating",
+      "provenance": "pattern_synthetic",
+      "reviewed": false,
+      "clean": false,
+      "tp": [
+        "UNSUBSTANTIATED_CLAIM",
+        "UNSUBSTANTIATED_CLAIM"
+      ],
+      "fp": [],
+      "fn": [],
+      "ungrounded": 0,
+      "cite_ok": 2,
+      "pred_cats": [
+        "UNSUBSTANTIATED_CLAIM"
+      ],
+      "status": "ok",
+      "flags": [
+        {
+          "category": "UNSUBSTANTIATED_CLAIM",
+          "span": "We are the #1 retirement planning firm in the Midwest"
+        },
+        {
+          "category": "UNSUBSTANTIATED_CLAIM",
+          "span": "consistently outperform the market"
+        }
+      ],
+      "provider": null
+    },
+    {
+      "id": "unsub_fixed",
+      "provenance": "pattern_synthetic",
+      "reviewed": false,
+      "clean": true,
+      "tp": [],
+      "fp": [],
+      "fn": [],
+      "ungrounded": 0,
+      "cite_ok": 0,
+      "pred_cats": [],
+      "status": "ok",
+      "flags": [],
+      "provider": null
+    },
+    {
+      "id": "advice_violating",
+      "provenance": "pattern_synthetic",
+      "reviewed": false,
+      "clean": false,
+      "tp": [
+        "UNBALANCED_SPECIFIC_ADVICE"
+      ],
+      "fp": [],
+      "fn": [],
+      "ungrounded": 0,
+      "cite_ok": 1,
+      "pred_cats": [
+        "UNBALANCED_SPECIFIC_ADVICE"
+      ],
+      "status": "ok",
+      "flags": [
+        {
+          "category": "UNBALANCED_SPECIFIC_ADVICE",
+          "span": "We put clients in NovaChip in 2019 and it tripled within two years"
+        }
+      ],
+      "provider": null
+    },
+    {
+      "id": "advice_fixed",
+      "provenance": "pattern_synthetic",
+      "reviewed": false,
+      "clean": true,
+      "tp": [],
+      "fp": [],
+      "fn": [],
+      "ungrounded": 0,
+      "cite_ok": 0,
+      "pred_cats": [],
+      "status": "ok",
+      "flags": [],
+      "provider": null
+    },
+    {
+      "id": "linkedin_neverlost",
+      "provenance": "pattern_synthetic",
+      "reviewed": false,
+      "clean": false,
+      "tp": [
+        "BENEFITS_WITHOUT_RISK"
+      ],
+      "fp": [],
+      "fn": [],
+      "ungrounded": 0,
+      "cite_ok": 1,
+      "pred_cats": [
+        "BENEFITS_WITHOUT_RISK"
+      ],
+      "status": "ok",
+      "flags": [
+        {
+          "category": "BENEFITS_WITHOUT_RISK",
+          "span": "Our strategy has never lost money in a down year"
+        }
+      ],
+      "provider": null
+    },
+    {
+      "id": "email_riskfree",
+      "provenance": "pattern_synthetic",
+      "reviewed": false,
+      "clean": false,
+      "tp": [
+        "BENEFITS_WITHOUT_RISK"
+      ],
+      "fp": [],
+      "fn": [],
+      "ungrounded": 0,
+      "cite_ok": 1,
+      "pred_cats": [
+        "BENEFITS_WITHOUT_RISK"
+      ],
+      "status": "ok",
+      "flags": [
+        {
+          "category": "BENEFITS_WITHOUT_RISK",
+          "span": "Risk-free income for life"
+        }
+      ],
+      "provider": null
+    },
+    {
+      "id": "social_review_repost",
+      "provenance": "pattern_synthetic",
+      "reviewed": false,
+      "clean": false,
+      "tp": [
+        "TESTIMONIAL_NO_DISCLOSURE"
+      ],
+      "fp": [],
+      "fn": [],
+      "ungrounded": 0,
+      "cite_ok": 1,
+      "pred_cats": [
+        "TESTIMONIAL_NO_DISCLOSURE"
+      ],
+      "status": "ok",
+      "flags": [
+        {
+          "category": "TESTIMONIAL_NO_DISCLOSURE",
+          "span": "Best advisor ever! Five stars."
+        }
+      ],
+      "provider": null
+    },
+    {
+      "id": "deck_gross_only",
+      "provenance": "pattern_synthetic",
+      "reviewed": false,
+      "clean": false,
+      "tp": [
+        "GROSS_WITHOUT_NET"
+      ],
+      "fp": [],
+      "fn": [],
+      "ungrounded": 0,
+      "cite_ok": 1,
+      "pred_cats": [
+        "GROSS_WITHOUT_NET"
+      ],
+      "status": "ok",
+      "flags": [
+        {
+          "category": "GROSS_WITHOUT_NET",
+          "span": "+18.4% gross in 2023, +11.9% gross in 2024"
+        }
+      ],
+      "provider": null
+    },
+    {
+      "id": "website_backtest",
+      "provenance": "pattern_synthetic",
+      "reviewed": false,
+      "clean": false,
+      "tp": [
+        "HYPOTHETICAL_PERFORMANCE"
+      ],
+      "fp": [],
+      "fn": [],
+      "ungrounded": 0,
+      "cite_ok": 1,
+      "pred_cats": [
+        "HYPOTHETICAL_PERFORMANCE"
+      ],
+      "status": "ok",
+      "flags": [
+        {
+          "category": "HYPOTHETICAL_PERFORMANCE",
+          "span": "back-tested to a 31% annual return from 2010 to 2024"
+        }
+      ],
+      "provider": null
+    },
+    {
+      "id": "ai_washing",
+      "provenance": "pattern_synthetic",
+      "reviewed": false,
+      "clean": false,
+      "tp": [
+        "UNSUBSTANTIATED_CLAIM"
+      ],
+      "fp": [],
+      "fn": [],
+      "ungrounded": 0,
+      "cite_ok": 1,
+      "pred_cats": [
+        "UNSUBSTANTIATED_CLAIM"
+      ],
+      "status": "ok",
+      "flags": [
+        {
+          "category": "UNSUBSTANTIATED_CLAIM",
+          "span": "Our AI engine analyzes 10,000 data points daily to eliminate emotional errors in your portfolio"
+        }
+      ],
+      "provider": null
+    },
+    {
+      "id": "best_year_only",
+      "provenance": "pattern_synthetic",
+      "reviewed": false,
+      "clean": false,
+      "tp": [
+        "UNFAIR_PERFORMANCE_PRESENTATION"
+      ],
+      "fp": [],
+      "fn": [],
+      "ungrounded": 0,
+      "cite_ok": 1,
+      "pred_cats": [
+        "UNFAIR_PERFORMANCE_PRESENTATION"
+      ],
+      "status": "ok",
+      "flags": [
+        {
+          "category": "UNFAIR_PERFORMANCE_PRESENTATION",
+          "span": "best year: +64% in 2021"
+        }
+      ],
+      "provider": null
+    },
+    {
+      "id": "social_rank_nodisclosure",
+      "provenance": "pattern_synthetic",
+      "reviewed": false,
+      "clean": false,
+      "tp": [
+        "RATING_NO_DISCLOSURE"
+      ],
+      "fp": [],
+      "fn": [],
+      "ungrounded": 0,
+      "cite_ok": 1,
+      "pred_cats": [
+        "RATING_NO_DISCLOSURE"
+      ],
+      "status": "ok",
+      "flags": [
+        {
+          "category": "RATING_NO_DISCLOSURE",
+          "span": "Proud to be ranked #3 in the state by RetireRank"
+        }
+      ],
+      "provider": null
+    },
+    {
+      "id": "influencer_endorsement",
+      "provenance": "pattern_synthetic",
+      "reviewed": false,
+      "clean": false,
+      "tp": [
+        "TESTIMONIAL_NO_DISCLOSURE"
+      ],
+      "fp": [],
+      "fn": [],
+      "ungrounded": 0,
+      "cite_ok": 1,
+      "pred_cats": [
+        "TESTIMONIAL_NO_DISCLOSURE"
+      ],
+      "status": "ok",
+      "flags": [
+        {
+          "category": "TESTIMONIAL_NO_DISCLOSURE",
+          "span": "she says Quarrywick Wealth is the only advisor she trusts"
+        }
+      ],
+      "provider": null
+    },
+    {
+      "id": "zero_worries",
+      "provenance": "pattern_synthetic",
+      "reviewed": false,
+      "clean": false,
+      "tp": [
+        "BENEFITS_WITHOUT_RISK"
+      ],
+      "fp": [],
+      "fn": [],
+      "ungrounded": 0,
+      "cite_ok": 1,
+      "pred_cats": [
+        "BENEFITS_WITHOUT_RISK"
+      ],
+      "status": "ok",
+      "flags": [
+        {
+          "category": "BENEFITS_WITHOUT_RISK",
+          "span": "zero worries"
+        }
+      ],
+      "provider": null
+    },
+    {
+      "id": "guarantee_plus_best",
+      "provenance": "pattern_synthetic",
+      "reviewed": false,
+      "clean": false,
+      "tp": [
+        "BENEFITS_WITHOUT_RISK",
+        "UNSUBSTANTIATED_CLAIM"
+      ],
+      "fp": [],
+      "fn": [],
+      "ungrounded": 0,
+      "cite_ok": 2,
+      "pred_cats": [
+        "BENEFITS_WITHOUT_RISK",
+        "UNSUBSTANTIATED_CLAIM"
+      ],
+      "status": "ok",
+      "flags": [
+        {
+          "category": "BENEFITS_WITHOUT_RISK",
+          "span": "We guarantee you will retire early"
+        },
+        {
+          "category": "UNSUBSTANTIATED_CLAIM",
+          "span": "and we're the best in the business"
+        }
+      ],
+      "provider": null
+    },
+    {
+      "id": "clean_boilerplate",
+      "provenance": "pattern_synthetic",
+      "reviewed": false,
+      "clean": true,
+      "tp": [],
+      "fp": [],
+      "fn": [],
+      "ungrounded": 0,
+      "cite_ok": 0,
+      "pred_cats": [],
+      "status": "ok",
+      "flags": [],
+      "provider": null
+    },
+    {
+      "id": "clean_webinar",
+      "provenance": "pattern_synthetic",
+      "reviewed": false,
+      "clean": true,
+      "tp": [],
+      "fp": [],
+      "fn": [],
+      "ungrounded": 0,
+      "cite_ok": 0,
+      "pred_cats": [],
+      "status": "ok",
+      "flags": [],
+      "provider": null
+    },
+    {
+      "id": "clean_fee_only",
+      "provenance": "pattern_synthetic",
+      "reviewed": false,
+      "clean": true,
+      "tp": [],
+      "fp": [],
+      "fn": [],
+      "ungrounded": 0,
+      "cite_ok": 0,
+      "pred_cats": [],
+      "status": "ok",
+      "flags": [],
+      "provider": null
+    },
+    {
+      "id": "clean_diversification_blog",
+      "provenance": "pattern_synthetic",
+      "reviewed": false,
+      "clean": true,
+      "tp": [],
+      "fp": [],
+      "fn": [],
+      "ungrounded": 0,
+      "cite_ok": 0,
+      "pred_cats": [],
+      "status": "ok",
+      "flags": [],
+      "provider": null
+    },
+    {
+      "id": "clean_full_performance",
+      "provenance": "pattern_synthetic",
+      "reviewed": false,
+      "clean": true,
+      "tp": [],
+      "fp": [],
+      "fn": [],
+      "ungrounded": 0,
+      "cite_ok": 0,
+      "pred_cats": [],
+      "status": "ok",
+      "flags": [],
+      "provider": null
+    },
+    {
+      "id": "clean_testimonial_ok",
+      "provenance": "pattern_synthetic",
+      "reviewed": false,
+      "clean": true,
+      "tp": [],
+      "fp": [],
+      "fn": [],
+      "ungrounded": 0,
+      "cite_ok": 0,
+      "pred_cats": [],
+      "status": "ok",
+      "flags": [],
+      "provider": null
+    },
+    {
+      "id": "clean_fee_schedule",
+      "provenance": "pattern_synthetic",
+      "reviewed": false,
+      "clean": true,
+      "tp": [],
+      "fp": [],
+      "fn": [],
+      "ungrounded": 0,
+      "cite_ok": 0,
+      "pred_cats": [],
+      "status": "ok",
+      "flags": [],
+      "provider": null
+    },
+    {
+      "id": "clean_puffery",
+      "provenance": "pattern_synthetic",
+      "reviewed": false,
+      "clean": true,
+      "tp": [],
+      "fp": [],
+      "fn": [],
+      "ungrounded": 0,
+      "cite_ok": 0,
+      "pred_cats": [],
+      "status": "ok",
+      "flags": [],
+      "provider": null
+    },
+    {
+      "id": "clean_rating_disclosed",
+      "provenance": "pattern_synthetic",
+      "reviewed": false,
+      "clean": true,
+      "tp": [],
+      "fp": [],
+      "fn": [],
+      "ungrounded": 0,
+      "cite_ok": 0,
+      "pred_cats": [],
+      "status": "ok",
+      "flags": [],
+      "provider": null
+    },
+    {
+      "id": "clean_hypothetical_on_request",
+      "provenance": "pattern_synthetic",
+      "reviewed": false,
+      "clean": true,
+      "tp": [],
+      "fp": [],
+      "fn": [],
+      "ungrounded": 0,
+      "cite_ok": 0,
+      "pred_cats": [],
+      "status": "ok",
+      "flags": [],
+      "provider": null
+    }
+  ]
+}

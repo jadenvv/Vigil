@@ -13,7 +13,7 @@ engine/
   __init__.py
   detect.py        detect(text, channel="") -> list[Flag]
   rewrite.py       rewrite(text, flags) -> str
-  verify.py        stretch: performance-math checks via Daytona
+  verify.py        stretch: performance-math checks via Daytona (spec'd, not built)
   prompts/
     detect.md      the prompt P2 pastes into Base44
     rewrite.md

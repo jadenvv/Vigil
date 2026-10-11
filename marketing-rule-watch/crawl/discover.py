@@ -241,12 +241,15 @@ def discover(firm: str, domain: str, plain: httpx.Client, bd: httpx.Client | Non
     if base is None:
         raise ValueError(f"not a site or domain: {domain!r}")
     seen: set = set()
-    site = drop_folder_duplicates(_dedupe(site_seed(plain, base), seen))
+    site = _dedupe(site_seed(plain, base), seen)
     off: list[str] = []
     if bd is not None:
         for q in SERP_QUERIES:
             for n in _dedupe(serp(bd, q.format(firm=firm)), seen):
                 (site if in_scope(n, base) else off).append(n)
+    # Folder/index collapse runs AFTER SERP merges in: a SERP hit for .../blog/ plus a sitemap
+    # .../blog/index.html is one page and must not become two Page rows (parity: discover/entry.ts).
+    site = drop_folder_duplicates(site)
     off = off[:max(cap // 3, cap - len(site))]
     site = site[:cap - len(off)]
     return ([{"url": u, "channel": guess_channel(u), "source": "site"} for u in site] +

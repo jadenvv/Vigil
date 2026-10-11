@@ -1,0 +1,317 @@
+{
+  "cmd": "site",
+  "detector": "engine.detect:detect",
+  "timestamp": "2026-10-10 16:39:41",
+  "base": "demo-site/site",
+  "pages": [
+    "/index.html",
+    "/about.html",
+    "/services.html",
+    "/performance.html",
+    "/testimonials.html",
+    "/blog/index.html",
+    "/fees.html",
+    "/blog/2025-market-recap.html",
+    "/blog/our-best-pick.html",
+    "/blog/firm-recognition.html"
+  ],
+  "missed_pages": [],
+  "lost_spans": [],
+  "summary": {
+    "n_cases": 10,
+    "n_clean": 2,
+    "precision": 0.875,
+    "recall": 0.6363636363636364,
+    "f1": 0.7368421052631579,
+    "tp": 7,
+    "fp": 1,
+    "fn": 4,
+    "clean_doc_fp_rate": 0.0,
+    "flags_per_clean_doc": 0.0,
+    "grounding_rate": 1.0,
+    "citation_accuracy": 1.0,
+    "per_category": {
+      "BENEFITS_WITHOUT_RISK": {
+        "tp": 1,
+        "fp": 1,
+        "fn": 1,
+        "precision": 0.5,
+        "recall": 0.5,
+        "f1": 0.5
+      },
+      "GROSS_WITHOUT_NET": {
+        "tp": 1,
+        "fp": 0,
+        "fn": 0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0
+      },
+      "HYPOTHETICAL_PERFORMANCE": {
+        "tp": 1,
+        "fp": 0,
+        "fn": 0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0
+      },
+      "RATING_NO_DISCLOSURE": {
+        "tp": 2,
+        "fp": 0,
+        "fn": 0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0
+      },
+      "TESTIMONIAL_NO_DISCLOSURE": {
+        "tp": 0,
+        "fp": 0,
+        "fn": 1,
+        "precision": null,
+        "recall": 0.0,
+        "f1": null
+      },
+      "UNBALANCED_SPECIFIC_ADVICE": {
+        "tp": 0,
+        "fp": 0,
+        "fn": 1,
+        "precision": null,
+        "recall": 0.0,
+        "f1": null
+      },
+      "UNFAIR_PERFORMANCE_PRESENTATION": {
+        "tp": 1,
+        "fp": 0,
+        "fn": 0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0
+      },
+      "UNSUBSTANTIATED_CLAIM": {
+        "tp": 1,
+        "fp": 0,
+        "fn": 1,
+        "precision": 1.0,
+        "recall": 0.5,
+        "f1": 0.6666666666666666
+      }
+    }
+  },
+  "per_page": [
+    {
+      "id": "site:/index.html",
+      "provenance": null,
+      "reviewed": false,
+      "clean": false,
+      "tp": [
+        "RATING_NO_DISCLOSURE"
+      ],
+      "fp": [],
+      "fn": [
+        "UNSUBSTANTIATED_CLAIM"
+      ],
+      "ungrounded": 0,
+      "cite_ok": 1,
+      "pred_cats": [
+        "RATING_NO_DISCLOSURE"
+      ],
+      "status": "miss",
+      "flags": [
+        {
+          "category": "RATING_NO_DISCLOSURE",
+          "span": "Ranked #2 Wealth Manager by Pemberline Advisor Review"
+        }
+      ]
+    },
+    {
+      "id": "site:/about.html",
+      "provenance": null,
+      "reviewed": false,
+      "clean": false,
+      "tp": [
+        "BENEFITS_WITHOUT_RISK"
+      ],
+      "fp": [],
+      "fn": [],
+      "ungrounded": 0,
+      "cite_ok": 1,
+      "pred_cats": [
+        "BENEFITS_WITHOUT_RISK"
+      ],
+      "status": "ok",
+      "flags": [
+        {
+          "category": "BENEFITS_WITHOUT_RISK",
+          "span": "Our clients have never lost money in a down year"
+        }
+      ]
+    },
+    {
+      "id": "site:/services.html",
+      "provenance": null,
+      "reviewed": false,
+      "clean": false,
+      "tp": [
+        "UNSUBSTANTIATED_CLAIM"
+      ],
+      "fp": [
+        "BENEFITS_WITHOUT_RISK"
+      ],
+      "fn": [
+        "BENEFITS_WITHOUT_RISK"
+      ],
+      "ungrounded": 0,
+      "cite_ok": 1,
+      "pred_cats": [
+        "BENEFITS_WITHOUT_RISK",
+        "UNSUBSTANTIATED_CLAIM"
+      ],
+      "status": "miss+fp",
+      "flags": [
+        {
+          "category": "UNSUBSTANTIATED_CLAIM",
+          "span": "Our proprietary process consistently beats the market"
+        },
+        {
+          "category": "BENEFITS_WITHOUT_RISK",
+          "span": "Our Income Shield program provides guaranteed income for life"
+        }
+      ]
+    },
+    {
+      "id": "site:/performance.html",
+      "provenance": null,
+      "reviewed": false,
+      "clean": false,
+      "tp": [
+        "UNFAIR_PERFORMANCE_PRESENTATION",
+        "HYPOTHETICAL_PERFORMANCE"
+      ],
+      "fp": [],
+      "fn": [],
+      "ungrounded": 0,
+      "cite_ok": 2,
+      "pred_cats": [
+        "HYPOTHETICAL_PERFORMANCE",
+        "UNFAIR_PERFORMANCE_PRESENTATION"
+      ],
+      "status": "ok",
+      "flags": [
+        {
+          "category": "UNFAIR_PERFORMANCE_PRESENTATION",
+          "span": "Since the March 2020 market low, our Core Growth portfolios have gained 151%"
+        },
+        {
+          "category": "HYPOTHETICAL_PERFORMANCE",
+          "span": "would have returned 19% a year from 2004 to 2019"
+        }
+      ]
+    },
+    {
+      "id": "site:/testimonials.html",
+      "provenance": null,
+      "reviewed": false,
+      "clean": false,
+      "tp": [],
+      "fp": [],
+      "fn": [
+        "TESTIMONIAL_NO_DISCLOSURE"
+      ],
+      "ungrounded": 0,
+      "cite_ok": 0,
+      "pred_cats": [],
+      "status": "miss",
+      "flags": []
+    },
+    {
+      "id": "site:/blog/index.html",
+      "provenance": null,
+      "reviewed": false,
+      "clean": true,
+      "tp": [],
+      "fp": [],
+      "fn": [],
+      "ungrounded": 0,
+      "cite_ok": 0,
+      "pred_cats": [],
+      "status": "ok",
+      "flags": []
+    },
+    {
+      "id": "site:/fees.html",
+      "provenance": null,
+      "reviewed": false,
+      "clean": true,
+      "tp": [],
+      "fp": [],
+      "fn": [],
+      "ungrounded": 0,
+      "cite_ok": 0,
+      "pred_cats": [],
+      "status": "ok",
+      "flags": []
+    },
+    {
+      "id": "site:/blog/2025-market-recap.html",
+      "provenance": null,
+      "reviewed": false,
+      "clean": false,
+      "tp": [
+        "GROSS_WITHOUT_NET"
+      ],
+      "fp": [],
+      "fn": [],
+      "ungrounded": 0,
+      "cite_ok": 1,
+      "pred_cats": [
+        "GROSS_WITHOUT_NET"
+      ],
+      "status": "ok",
+      "flags": [
+        {
+          "category": "GROSS_WITHOUT_NET",
+          "span": "Our Core Growth strategy returned 17.9% gross of fees in 2025"
+        }
+      ]
+    },
+    {
+      "id": "site:/blog/our-best-pick.html",
+      "provenance": null,
+      "reviewed": false,
+      "clean": false,
+      "tp": [],
+      "fp": [],
+      "fn": [
+        "UNBALANCED_SPECIFIC_ADVICE"
+      ],
+      "ungrounded": 0,
+      "cite_ok": 0,
+      "pred_cats": [],
+      "status": "miss",
+      "flags": []
+    },
+    {
+      "id": "site:/blog/firm-recognition.html",
+      "provenance": null,
+      "reviewed": false,
+      "clean": false,
+      "tp": [
+        "RATING_NO_DISCLOSURE"
+      ],
+      "fp": [],
+      "fn": [],
+      "ungrounded": 0,
+      "cite_ok": 1,
+      "pred_cats": [
+        "RATING_NO_DISCLOSURE"
+      ],
+      "status": "ok",
+      "flags": [
+        {
+          "category": "RATING_NO_DISCLOSURE",
+          "span": "Quarrywick Wealth was named a Top 40 Advisor by Copperfen Wealth Digest"
+        }
+      ]
+    }
+  ]
+}
