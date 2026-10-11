@@ -167,6 +167,13 @@ export const COPY = {
   crossModel: (model: string) => `Answered by ${model}.`,
   crossDownloadCsv: "Download cross-check (CSV)",
   crossNote: "A model compares the documents; it can miss contradictions or misread them. Every result needs human review.",
+  // /setup: the card shown once pages are found or a scan finishes. Counts come from data already on the page.
+  readyEyebrow: "Results ready",
+  readyPagesFound: (n: number) => (n === 1 ? "page found" : "pages found"),
+  readyPagesStored: (n: number) => (n === 1 ? "page captured" : "pages captured"),
+  readyIssues: (n: number) => `potential ${n === 1 ? "issue" : "issues"} for review`,
+  readyNotFetched: (n: number) => `${n} ${n === 1 ? "page" : "pages"} couldn't be fetched`,
+  openFindings: "Open the findings",
 };
 
 // Phase 5 rewrite drawer stays off until after Sense Check 2.
