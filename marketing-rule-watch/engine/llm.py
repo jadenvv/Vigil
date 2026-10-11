@@ -1,7 +1,8 @@
 """Provider-agnostic LLM call, stdlib only (no SDK installs needed).
 
 Configure in .env (repo root) or the environment:
-  LLM_PROVIDER = groq | anthropic | openai | none   (openai = any OpenAI-compatible chat API)
+  LLM_PROVIDER = groq | anthropic | openai | claude_cli | none   (openai = any OpenAI-compatible chat API)
+                 claude_cli = the local `claude -p` CLI on your Claude plan (eval only; no key, no temperature control)
   LLM_MODEL    = model id for that provider
   LLM_API_KEY  = key (falls back to GROQ_API_KEY / ANTHROPIC_API_KEY / OPENAI_API_KEY)
   LLM_BASE_URL = optional override (defaults: groq https://api.groq.com/openai/v1, openai https://api.openai.com/v1)
@@ -13,6 +14,7 @@ from __future__ import annotations
 import json
 import os
 import ssl
+import subprocess
 import time
 import urllib.error
 import urllib.request
@@ -53,10 +55,10 @@ def config() -> dict:
     if not key:
         key = os.environ.get({"groq": "GROQ_API_KEY", "anthropic": "ANTHROPIC_API_KEY"}.get(provider, "OPENAI_API_KEY"), "")
     default_model = {"groq": "openai/gpt-oss-120b", "anthropic": "claude-sonnet-5-5",
-                     "openai": "gpt-4o-mini"}.get(provider, "")
+                     "openai": "gpt-4o-mini", "claude_cli": "haiku"}.get(provider, "")
     default_base = "https://api.groq.com/openai/v1" if provider == "groq" else "https://api.openai.com/v1"
     return {
-        "provider": provider if key or provider == "none" else "none",
+        "provider": provider if key or provider in ("none", "claude_cli") else "none",
         "model": os.environ.get("LLM_MODEL", default_model),
         "key": key,
         "base_url": os.environ.get("LLM_BASE_URL", default_base).rstrip("/"),
@@ -112,4 +114,17 @@ def complete(system: str, user: str, max_tokens: int = 2000, reasoning_effort: s
             body["reasoning_effort"] = reasoning_effort
         out = _post(f"{cfg['base_url']}/chat/completions", {"Authorization": f"Bearer {cfg['key']}"}, body)
         return out["choices"][0]["message"]["content"] or ""
+    if cfg["provider"] == "claude_cli":
+        # One headless Claude Code call: our system prompt replaces Claude Code's, no tools, no MCP, not saved
+        r = subprocess.run(["claude", "-p", "--model", cfg["model"], "--system-prompt", system, "--tools", "",
+                            "--strict-mcp-config", "--disable-slash-commands", "--no-session-persistence",
+                            "--exclude-dynamic-system-prompt-sections", "--output-format", "json"],
+                           input=user, capture_output=True, text=True, timeout=300)
+        try:
+            out = json.loads(r.stdout)
+        except json.JSONDecodeError:
+            raise RuntimeError(f"claude -p failed (exit {r.returncode}): {(r.stderr or r.stdout)[:300]}")
+        if out.get("is_error"):
+            raise RuntimeError(f"claude -p error: {str(out.get('result'))[:300]}")
+        return out.get("result") or ""
     raise RuntimeError("No LLM configured (set LLM_PROVIDER + key in .env). Use DETECT_MODE=rules.")
