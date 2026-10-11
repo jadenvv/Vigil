@@ -36,6 +36,29 @@ def _normalize_with_map(s: str) -> tuple[str, list[int]]:
     return "".join(out), idx
 
 
+# Last-resort normalization: drop every non-letter/digit, so a span that omits the page's
+# markdown syntax (> ** _ ` #) or adds separators still grounds on the same word sequence.
+def _word_map(s: str) -> tuple[str, list[int]]:
+    out, idx, prev_space = [], [], True  # leading syntax emits no leading space
+    for i, ch in enumerate(s.translate(_TRANS)):
+        if ch.isalnum():
+            out.append(ch.lower())
+            idx.append(i)
+            prev_space = False
+        elif not prev_space:
+            out.append(" ")
+            idx.append(i)  # boundary position; only mid-match use
+            prev_space = True
+    return "".join(out), idx
+
+
+# A word-matched slice may absorb markdown/quotes glued to its edges ("> ", "**", an opening
+# quote) so the raw find covers the decorated region. Sentence punctuation is right-only:
+# expanding left over '.' would eat a previous sentence's full stop. Newlines always bound.
+_EDGE_LEFT = set(" \t>#*_`\"'“”‘’([{")
+_EDGE_RIGHT = set(".!?\"'”’)]}*_`")
+
+
 def ground(text: str, span: str) -> str | None:
     """Return the exact substring of `text` that `span` refers to, or None."""
     if not span or not span.strip():
@@ -49,9 +72,22 @@ def ground(text: str, span: str) -> str | None:
     ns, _ = _normalize_with_map(span)
     ns = ns.strip()
     i = nt.find(ns) if ns else -1
-    if i < 0:
+    if i >= 0:
+        return text[idx[i]: idx[i + len(ns) - 1] + 1]
+    wt, wi = _word_map(text)
+    ws, _ = _word_map(span)
+    ws = ws.strip()
+    k = wt.find(ws) if ws else -1
+    if k < 0:
         return None
-    return text[idx[i]: idx[i + len(ns) - 1] + 1]
+    a, b = wi[k], wi[k + len(ws) - 1] + 1
+    while a > 0 and text[a - 1] in _EDGE_LEFT:
+        a -= 1
+    while a < b and text[a] in " \t":
+        a += 1
+    while b < len(text) and text[b] in _EDGE_RIGHT:
+        b += 1
+    return text[a:b]
 
 
 # ---------------------------------------------------------------- suppression

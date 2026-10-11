@@ -42,4 +42,36 @@ Page paths are relative to the site root above. Pages with no planted issue: `/f
 
 ## Third-party site
 
-(Reserved for the fictional review-directory site described in `DEVIN_THIRD_PARTY.md`. Append its planted sentences here: page, exact text, category.)
+**AdvisorQuill** is a fictional advisor-review directory published as a separate GitHub Pages repo on the same account as the firm site (note: `nathanqiu07.github.io/advisorquill/` is the same origin as `nathanqiu07.github.io/quarrywick-wealth-demo/` — a different origin was not achievable with the accounts available). It lists four invented firms — Quarrywick Wealth, Sorrelwood Wealth Management, Tarnworth Advisory Group and Vellbrook Capital — and every page carries the banner "Fictional website for a hackathon demo. Not a real review site."
+
+- Live site: https://nathanqiu07.github.io/advisorquill/
+- Quarrywick profile: https://nathanqiu07.github.io/advisorquill/firms/quarrywick-wealth.html
+- Sitemap: https://nathanqiu07.github.io/advisorquill/sitemap.xml
+- Source: `demo-site/third-party/` (published copy: https://github.com/nathanqiu07/advisorquill)
+
+Name check (2026-10-10): web searches for "AdvisorQuill" returned no real review site or firm with that name; "Sorrelwood", "Tarnworth" and "Vellbrook" matched no advisory firms. Candidate names dropped for colliding with real companies: "Dunamore Capital", "Corvessa", "Marrowgate".
+
+### Planted issues (4)
+
+Each span is a character-exact substring of the page's raw HTML/visible text, plain ASCII with straight quotes. All four are on the Quarrywick Wealth profile.
+
+| # | Page | Exact planted sentence | Category |
+|---|---|---|---|
+| 1 | `/firms/quarrywick-wealth.html` | `Rated #1 Advisor in the Region by AdvisorQuill.` | RATING_NO_DISCLOSURE |
+| 2 | `/firms/quarrywick-wealth.html` | `The firm consistently outperforms the market.` | UNSUBSTANTIATED_CLAIM |
+| 3 | `/firms/quarrywick-wealth.html` | `Quarrywick Wealth provides guaranteed income with no investment risk.` | BENEFITS_WITHOUT_RISK |
+| 4 | `/firms/quarrywick-wealth.html` | `"Quarrywick doubled our retirement savings in five years."` | TESTIMONIAL_NO_DISCLOSURE |
+
+- #1 sits in an "Awards & recognition" strip with no date, methodology or compensation disclosure anywhere on the page.
+- #2 sits in the "Our assessment" editorial paragraph.
+- #3 is labeled on the page as "Description provided by the firm".
+- #4 is a reviewer quote attributed to "Daniel K." with a star rating and a date only — no client-status or compensation disclosure.
+
+### Clean content (must NOT be flagged)
+
+- Neutral firm description ("About the firm" on the profile): retirement-planning services, fee structure, independent custodian.
+- Disclosed testimonial (Sandra M., January 2026): "Odile and her team explain every recommendation in plain language and always get back to us the same day." — immediately followed, inside the same review element, by the disclosure that she is a current client, was not paid or otherwise compensated, has no material conflicts of interest, and her experience may not be representative of other clients. The disclosure is inside that review's `blockquote` only and does not cover the Daniel K. quote.
+- Facts table on the profile (founded year, firm-reported AUM, account minimum, fee model, adviser names).
+- The three basic listings (`/firms/sorrelwood-wealth.html`, `/firms/tarnworth-advisory.html`, `/firms/vellbrook-capital.html`), the directory home (`/index.html`) and the article (`/articles/quarrywick-retirement-income.html`) contain no planted issues.
+
+These labels are intended test expectations, not a guarantee of what the current detector returns. Note for P4: `eval/cases_demo_site.jsonl` is not extended with these cases — `suite.py site` keys gold by page path, so a third-party `/index.html` case would collide with the firm site's. A separate case file would be needed to eval this origin.
