@@ -3,7 +3,7 @@
 import { lazy, Suspense, useState } from "react";
 import { SeverityBadge } from "@/components/Badges";
 import { Shell } from "@/components/Chrome";
-import HeroContact from "@/components/hero/HeroContact";
+import HeroWorkflow from "@/components/hero/HeroWorkflow";
 import "@/components/hero/schemes.css";
 import { UrlText } from "@/components/UrlText";
 import { loadFlag } from "@/lib/data";
@@ -58,18 +58,23 @@ function heroVariant() {
 export default function Home() {
   const Variant = heroVariant();
   return (
-    <Shell>
-      <div className="space-y-20 sm:space-y-28">
-        <div className="hero-scope" data-scheme="paper">
-        {Variant ? (
-          <Suspense fallback={<CurrentHero />}>
-            <Variant ScanForm={ScanForm} featuredFlagId={FEATURED_FLAG_ID} featuredRewrite={FEATURED_REWRITE} />
-          </Suspense>
-        ) : (
-          <HeroContact ScanForm={ScanForm} featuredFlagId={FEATURED_FLAG_ID} featuredRewrite={FEATURED_REWRITE} />
-        )}
+    <Shell
+      hero={
+        // Full-bleed Dusk night band for the hero; the rest of the page stays on Paper.
+        <div className="hero-scope" data-scheme="dusk-night">
+          <div className="mx-auto w-full max-w-5xl px-4 pb-14 pt-8 sm:pb-20 sm:pt-12">
+            {Variant ? (
+              <Suspense fallback={<CurrentHero />}>
+                <Variant ScanForm={ScanForm} featuredFlagId={FEATURED_FLAG_ID} featuredRewrite={FEATURED_REWRITE} />
+              </Suspense>
+            ) : (
+              <HeroWorkflow ScanForm={ScanForm} featuredFlagId={FEATURED_FLAG_ID} featuredRewrite={FEATURED_REWRITE} loop />
+            )}
+          </div>
         </div>
-
+      }
+    >
+      <div className="space-y-20 pt-8 sm:space-y-28 sm:pt-12">
         <EvalResults />
 
         <section aria-labelledby="loop-title" className="space-y-8">

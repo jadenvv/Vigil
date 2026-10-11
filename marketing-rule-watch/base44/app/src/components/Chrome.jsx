@@ -42,7 +42,8 @@ export function DemoBanner() {
   );
 }
 
-export function Shell({ demo = false, children }) {
+// `hero` renders full width between the header and the page column, e.g. a coloured hero band.
+export function Shell({ demo = false, hero = null, children }) {
   return (
     <div className="flex min-h-screen flex-col bg-paper-50 text-night-950">
       {demo && <DemoBanner />}
@@ -59,6 +60,7 @@ export function Shell({ demo = false, children }) {
           </nav>
         </div>
       </header>
+      {hero}
       <main className="mx-auto w-full max-w-5xl flex-1 px-4 pb-24 pt-6">{children}</main>
       <Footer />
     </div>
