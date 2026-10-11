@@ -144,7 +144,7 @@ export default async function (req: Request): Promise<Response> {
 
   const log: string[] = [];
   const seen = new Set<string>();
-  const ownSite = dropFolderDuplicates(dedupe(await siteSeed(base, log, { left: isAdmin ? Infinity : MAX_GETS_NON_ADMIN }), seen));
+  const ownSite = dedupe(await siteSeed(base, log, { left: isAdmin ? Infinity : MAX_GETS_NON_ADMIN }), seen);
   const off: string[] = [];
   let searchesUsed = 0;
 
@@ -160,7 +160,9 @@ export default async function (req: Request): Promise<Response> {
     }
   }
 
-  const capped = applyCap(ownSite, off, MAX_URLS);
+  // Folder/index collapse runs AFTER SERP merges in: a search hit for .../blog/ plus a sitemap
+  // .../blog/index.html is one page and must not become two Page rows.
+  const capped = applyCap(dropFolderDuplicates(ownSite), off, MAX_URLS);
   const row = (url: string, source: "site" | "search") =>
     ({ url, channel: guessChannel(url), source, same_site: inScope(url, base) });
   return Response.json({

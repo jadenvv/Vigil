@@ -1,0 +1,382 @@
+{
+  "cmd": "consistency",
+  "detector": "engine.detect:detect",
+  "timestamp": "2026-10-10 16:25:20",
+  "repeat": 3,
+  "n": 37,
+  "identical": 37,
+  "mean_jaccard": 1.0,
+  "outcome_flips": 0,
+  "per_case": [
+    {
+      "id": "guarantee_violating",
+      "identical": true,
+      "jaccard": 1.0,
+      "statuses": [
+        "ok",
+        "ok",
+        "ok"
+      ]
+    },
+    {
+      "id": "guarantee_fixed",
+      "identical": true,
+      "jaccard": 1.0,
+      "statuses": [
+        "ok",
+        "ok",
+        "ok"
+      ]
+    },
+    {
+      "id": "testimonial_violating",
+      "identical": true,
+      "jaccard": 1.0,
+      "statuses": [
+        "ok",
+        "ok",
+        "ok"
+      ]
+    },
+    {
+      "id": "testimonial_fixed",
+      "identical": true,
+      "jaccard": 1.0,
+      "statuses": [
+        "ok",
+        "ok",
+        "ok"
+      ]
+    },
+    {
+      "id": "grossnet_violating",
+      "identical": true,
+      "jaccard": 1.0,
+      "statuses": [
+        "ok",
+        "ok",
+        "ok"
+      ]
+    },
+    {
+      "id": "grossnet_fixed",
+      "identical": true,
+      "jaccard": 1.0,
+      "statuses": [
+        "ok",
+        "ok",
+        "ok"
+      ]
+    },
+    {
+      "id": "hypothetical_violating",
+      "identical": true,
+      "jaccard": 1.0,
+      "statuses": [
+        "ok",
+        "ok",
+        "ok"
+      ]
+    },
+    {
+      "id": "hypothetical_fixed",
+      "identical": true,
+      "jaccard": 1.0,
+      "statuses": [
+        "ok",
+        "ok",
+        "ok"
+      ]
+    },
+    {
+      "id": "cherrypick_violating",
+      "identical": true,
+      "jaccard": 1.0,
+      "statuses": [
+        "ok",
+        "ok",
+        "ok"
+      ]
+    },
+    {
+      "id": "cherrypick_fixed",
+      "identical": true,
+      "jaccard": 1.0,
+      "statuses": [
+        "ok",
+        "ok",
+        "ok"
+      ]
+    },
+    {
+      "id": "rating_violating",
+      "identical": true,
+      "jaccard": 1.0,
+      "statuses": [
+        "ok",
+        "ok",
+        "ok"
+      ]
+    },
+    {
+      "id": "rating_fixed",
+      "identical": true,
+      "jaccard": 1.0,
+      "statuses": [
+        "ok",
+        "ok",
+        "ok"
+      ]
+    },
+    {
+      "id": "unsub_violating",
+      "identical": true,
+      "jaccard": 1.0,
+      "statuses": [
+        "ok",
+        "ok",
+        "ok"
+      ]
+    },
+    {
+      "id": "unsub_fixed",
+      "identical": true,
+      "jaccard": 1.0,
+      "statuses": [
+        "ok",
+        "ok",
+        "ok"
+      ]
+    },
+    {
+      "id": "advice_violating",
+      "identical": true,
+      "jaccard": 1.0,
+      "statuses": [
+        "ok",
+        "ok",
+        "ok"
+      ]
+    },
+    {
+      "id": "advice_fixed",
+      "identical": true,
+      "jaccard": 1.0,
+      "statuses": [
+        "ok",
+        "ok",
+        "ok"
+      ]
+    },
+    {
+      "id": "linkedin_neverlost",
+      "identical": true,
+      "jaccard": 1.0,
+      "statuses": [
+        "ok",
+        "ok",
+        "ok"
+      ]
+    },
+    {
+      "id": "email_riskfree",
+      "identical": true,
+      "jaccard": 1.0,
+      "statuses": [
+        "ok",
+        "ok",
+        "ok"
+      ]
+    },
+    {
+      "id": "social_review_repost",
+      "identical": true,
+      "jaccard": 1.0,
+      "statuses": [
+        "ok",
+        "ok",
+        "ok"
+      ]
+    },
+    {
+      "id": "deck_gross_only",
+      "identical": true,
+      "jaccard": 1.0,
+      "statuses": [
+        "ok",
+        "ok",
+        "ok"
+      ]
+    },
+    {
+      "id": "website_backtest",
+      "identical": true,
+      "jaccard": 1.0,
+      "statuses": [
+        "ok",
+        "ok",
+        "ok"
+      ]
+    },
+    {
+      "id": "ai_washing",
+      "identical": true,
+      "jaccard": 1.0,
+      "statuses": [
+        "ok",
+        "ok",
+        "ok"
+      ]
+    },
+    {
+      "id": "best_year_only",
+      "identical": true,
+      "jaccard": 1.0,
+      "statuses": [
+        "ok",
+        "ok",
+        "ok"
+      ]
+    },
+    {
+      "id": "social_rank_nodisclosure",
+      "identical": true,
+      "jaccard": 1.0,
+      "statuses": [
+        "ok",
+        "ok",
+        "ok"
+      ]
+    },
+    {
+      "id": "influencer_endorsement",
+      "identical": true,
+      "jaccard": 1.0,
+      "statuses": [
+        "ok",
+        "ok",
+        "ok"
+      ]
+    },
+    {
+      "id": "zero_worries",
+      "identical": true,
+      "jaccard": 1.0,
+      "statuses": [
+        "ok",
+        "ok",
+        "ok"
+      ]
+    },
+    {
+      "id": "guarantee_plus_best",
+      "identical": true,
+      "jaccard": 1.0,
+      "statuses": [
+        "ok",
+        "ok",
+        "ok"
+      ]
+    },
+    {
+      "id": "clean_boilerplate",
+      "identical": true,
+      "jaccard": 1.0,
+      "statuses": [
+        "ok",
+        "ok",
+        "ok"
+      ]
+    },
+    {
+      "id": "clean_webinar",
+      "identical": true,
+      "jaccard": 1.0,
+      "statuses": [
+        "ok",
+        "ok",
+        "ok"
+      ]
+    },
+    {
+      "id": "clean_fee_only",
+      "identical": true,
+      "jaccard": 1.0,
+      "statuses": [
+        "ok",
+        "ok",
+        "ok"
+      ]
+    },
+    {
+      "id": "clean_diversification_blog",
+      "identical": true,
+      "jaccard": 1.0,
+      "statuses": [
+        "ok",
+        "ok",
+        "ok"
+      ]
+    },
+    {
+      "id": "clean_full_performance",
+      "identical": true,
+      "jaccard": 1.0,
+      "statuses": [
+        "ok",
+        "ok",
+        "ok"
+      ]
+    },
+    {
+      "id": "clean_testimonial_ok",
+      "identical": true,
+      "jaccard": 1.0,
+      "statuses": [
+        "ok",
+        "ok",
+        "ok"
+      ]
+    },
+    {
+      "id": "clean_fee_schedule",
+      "identical": true,
+      "jaccard": 1.0,
+      "statuses": [
+        "ok",
+        "ok",
+        "ok"
+      ]
+    },
+    {
+      "id": "clean_puffery",
+      "identical": true,
+      "jaccard": 1.0,
+      "statuses": [
+        "ok",
+        "ok",
+        "ok"
+      ]
+    },
+    {
+      "id": "clean_rating_disclosed",
+      "identical": true,
+      "jaccard": 1.0,
+      "statuses": [
+        "ok",
+        "ok",
+        "ok"
+      ]
+    },
+    {
+      "id": "clean_hypothetical_on_request",
+      "identical": true,
+      "jaccard": 1.0,
+      "statuses": [
+        "ok",
+        "ok",
+        "ok"
+      ]
+    }
+  ]
+}

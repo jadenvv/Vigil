@@ -1,0 +1,45 @@
+{
+  "detector": "baseline_regex",
+  "timestamp": "2026-10-10 17:14:14",
+  "runs_per_page": 2,
+  "n_pages": 1,
+  "pages_identical": 1,
+  "pages_same_categories": 1,
+  "jaccard_mean": 1.0,
+  "pages": [
+    {
+      "id": "demo_home",
+      "identical": true,
+      "jaccard_mean": 1.0,
+      "categories_identical": true,
+      "runs": [
+        {
+          "provider": null,
+          "flags": [
+            [
+              "BENEFITS_WITHOUT_RISK",
+              "guarantee future results"
+            ],
+            [
+              "RATING_NO_DISCLOSURE",
+              "Ranked #2 Wealth Manager by Pemberline Advisor Review"
+            ]
+          ]
+        },
+        {
+          "provider": null,
+          "flags": [
+            [
+              "BENEFITS_WITHOUT_RISK",
+              "guarantee future results"
+            ],
+            [
+              "RATING_NO_DISCLOSURE",
+              "Ranked #2 Wealth Manager by Pemberline Advisor Review"
+            ]
+          ]
+        }
+      ]
+    }
+  ]
+}

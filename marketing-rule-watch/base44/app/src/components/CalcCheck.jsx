@@ -40,9 +40,11 @@ export default function CalcCheck({ flag }) {
   }, [flag.id]);
 
   // Any edit invalidates the previous result; a done result stays visible but marked stale.
+  // An edit while a check is in flight marks the arriving result stale too: it was computed
+  // on the old inputs and must not read as current.
   const invalidate = () => {
-    if (state.status === "done") setStale(true);
-    else if (state.status !== "loading") setState({ status: "idle" });
+    if (state.status === "done" || state.status === "loading") setStale(true);
+    else setState({ status: "idle" });
   };
   const setField = (name) => (event) => {
     setValues((v) => ({ ...v, [name]: event.target.value }));

@@ -43,6 +43,7 @@ export interface DetectResult {
 
 // deno-lint-ignore no-explicit-any
 export async function detectText(base44: any, text: string, channel = "", mode = MODE): Promise<DetectResult> {
+  if (!text.trim()) return { flags: [], mode, provider: mode === "rules" ? "rules" : "none", model: mode === "rules" ? "rules" : "none" }; // empty page: no LLM call (Python parity)
   const flags: Flag[] = [];
   let failedChunks = 0;
   const providers = new Set<string>();
