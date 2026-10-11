@@ -21,10 +21,11 @@
   html.dusk:not(.dusk-off) .bg-paper-50,
   html.dusk:not(.dusk-off) .bg-paper-100,
   html.dusk:not(.dusk-off) .bg-background { background-color: #0B1120; }
-  html.dusk:not(.dusk-off) .bg-white { background-color: #131B2E; }
-  html.dusk:not(.dusk-off) .bg-paper-200 { background-color: #1A2338; }
+  /* Cards sit one step paler than the page (night-800 on night-950) so they read as panels */
+  html.dusk:not(.dusk-off) .bg-white { background-color: #1A2338; box-shadow: inset 0 1px 0 rgba(250, 248, 244, 0.04); }
+  html.dusk:not(.dusk-off) .bg-paper-200 { background-color: #2A3550; }
   html.dusk:not(.dusk-off) .hover\:bg-paper-50:hover,
-  html.dusk:not(.dusk-off) .hover\:bg-paper-100:hover { background-color: #1A2338; }
+  html.dusk:not(.dusk-off) .hover\:bg-paper-100:hover { background-color: #2A3550; }
   html.dusk:not(.dusk-off) header.bg-white { background-color: #0B1120; }
 
   /* Borders */
