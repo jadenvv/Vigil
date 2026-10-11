@@ -1,6 +1,6 @@
 /* Hero colour schemes: semantic tokens built only from brand/tokens.css values (BRAND.md). Every hero reads these,
-   so a scheme is a token swap on the wrapper: <div class="hero-scope" data-scheme="paper|night|split|dusk">.
-   Amber (Lamp 500) stays the "look here" signal in every scheme. Text pairs pass WCAG AA. */
+   so a scheme is a token swap on the wrapper: <div class="hero-scope" data-scheme="paper|night|split|dusk|sage|ink|dusk-night|lamp|night-sage">.
+   Amber stays the "look here" signal in every scheme (Lamp 500; Lamp 700 on the Lamp ground). Text pairs pass WCAG AA. */
 .hero-scope,
 .hero-scope[data-scheme="paper"] {
   --h-bg: #faf8f4; /* Paper 50 */
@@ -29,7 +29,7 @@
 .hero-scope[data-scheme="split"] {
   --h-bg: #0b1120; /* Night 950 */
   --h-fg: #faf8f4; /* Paper 50 */
-  --h-muted: #8b95ae; /* Night 300: 6.9:1 on Night 950 */
+  --h-muted: #8b95ae; /* Night 300: 6.28:1 on Night 950 */
   --h-surface: #131b2e; /* Night 900 */
   --h-surface-2: #1a2338; /* Night 800 */
   --h-border: #2a3550; /* Night 700 */
@@ -43,7 +43,7 @@
   --h-input-fg: #faf8f4;
   --h-input-border: #2a3550;
   --h-thumb-dim: 0.45;
-  --h-shadow: 0 16px 40px -16px rgba(0, 0, 0, 0.6);
+  --h-shadow: 0 16px 40px -16px rgba(11, 17, 32, 0.6);
 }
 
 /* Cool light: Dusk 100 fields under white cards, Night text. */
@@ -65,4 +65,112 @@
   --h-input-border: #c9cfdc;
   --h-thumb-dim: 0.55;
   --h-shadow: 0 12px 32px -12px rgba(11, 17, 32, 0.18);
+}
+
+/* Sage light: Sage 100 fields under white cards, Night text. Secondary text and fills take the Sage hue,
+   so the rewrite fill reads as "the fix". Tradeoff: Sage is also the "approved" status colour. */
+.hero-scope[data-scheme="sage"] {
+  --h-bg: #ddf0e6; /* Sage 100 */
+  --h-fg: #0b1120; /* Night 950: 15.9:1 on Sage 100 */
+  --h-muted: #22674a; /* Sage 700: 5.7:1 on Sage 100, 6.8:1 on white */
+  --h-surface: #ffffff;
+  --h-surface-2: #ddf0e6; /* Sage 100 */
+  --h-border: #c9cfdc; /* Night 200 */
+  --h-accent: #f5a524;
+  --h-accent-text: #9a5b00;
+  --h-quote-bg: #fff1d6;
+  --h-quote-fg: #0b1120;
+  --h-btn-bg: #0b1120;
+  --h-btn-fg: #faf8f4;
+  --h-input-bg: #ffffff;
+  --h-input-fg: #0b1120;
+  --h-input-border: #c9cfdc;
+  --h-thumb-dim: 0.55;
+  --h-shadow: 0 12px 32px -12px rgba(34, 103, 74, 0.22); /* Sage 700 */
+}
+
+/* Ink: monochrome print. Night 950 on Paper 50, Night 950 rules, no shadow. Amber is the only colour on screen. */
+.hero-scope[data-scheme="ink"] {
+  --h-bg: #faf8f4; /* Paper 50 */
+  --h-fg: #0b1120; /* Night 950: 17.8:1 */
+  --h-muted: #2a3550; /* Night 700: 11.5:1 on Paper 50, 10.6:1 on Paper 100 */
+  --h-surface: #ffffff;
+  --h-surface-2: #f3efe7; /* Paper 100 */
+  --h-border: #0b1120; /* Night 950 hairlines */
+  --h-accent: #f5a524;
+  --h-accent-text: #9a5b00;
+  --h-quote-bg: #fff1d6;
+  --h-quote-fg: #0b1120;
+  --h-btn-bg: #0b1120;
+  --h-btn-fg: #faf8f4;
+  --h-input-bg: #ffffff;
+  --h-input-fg: #0b1120;
+  --h-input-border: #0b1120;
+  --h-thumb-dim: 0.6;
+  --h-shadow: none;
+}
+
+/* Dusk night: Night surfaces, Dusk 100 text, Dusk borders. Dusk 500 fails AA as body text on Night 950 (4.2:1),
+   so secondary text is Night 300 and Dusk 500 is kept for input borders (3.8:1 on Night 900, passes 3:1 for controls). */
+.hero-scope[data-scheme="dusk-night"] {
+  --h-bg: #0b1120; /* Night 950 */
+  --h-fg: #e3eaf5; /* Dusk 100: 15.6:1 */
+  --h-muted: #8b95ae; /* Night 300: 6.3:1 on Night 950, 5.2:1 on Night 800 */
+  --h-surface: #131b2e; /* Night 900 */
+  --h-surface-2: #1a2338; /* Night 800 */
+  --h-border: #34558a; /* Dusk 700 */
+  --h-accent: #f5a524;
+  --h-accent-text: #ffcf6e; /* Lamp 300 */
+  --h-quote-bg: #fff1d6;
+  --h-quote-fg: #0b1120;
+  --h-btn-bg: #e3eaf5; /* Dusk 100 */
+  --h-btn-fg: #0b1120;
+  --h-input-bg: #131b2e;
+  --h-input-fg: #e3eaf5;
+  --h-input-border: #5878ad; /* Dusk 500 */
+  --h-thumb-dim: 0.45;
+  --h-shadow: 0 16px 40px -16px rgba(11, 17, 32, 0.9);
+}
+
+/* Lamp: warm Lamp 100 ground. Lamp 500 vanishes on it (1.8:1), so the signal steps down to Lamp 700
+   (4.9:1 on Lamp 100, 5.4:1 on white) and stays amber. The quote keeps the Lamp 100 signature on white cards. */
+.hero-scope[data-scheme="lamp"] {
+  --h-bg: #fff1d6; /* Lamp 100 */
+  --h-fg: #0b1120; /* Night 950: 16.9:1 */
+  --h-muted: #4a5570; /* Night 600: 6.7:1 on Lamp 100, 7.0:1 on Paper 50 */
+  --h-surface: #ffffff;
+  --h-surface-2: #faf8f4; /* Paper 50 */
+  --h-border: #e6e0d4; /* Paper 200 */
+  --h-accent: #9a5b00; /* Lamp 700 */
+  --h-accent-text: #9a5b00;
+  --h-quote-bg: #fff1d6;
+  --h-quote-fg: #0b1120;
+  --h-btn-bg: #0b1120;
+  --h-btn-fg: #faf8f4;
+  --h-input-bg: #ffffff;
+  --h-input-fg: #0b1120;
+  --h-input-border: #e6e0d4;
+  --h-thumb-dim: 0.55;
+  --h-shadow: 0 12px 32px -12px rgba(154, 91, 0, 0.2); /* Lamp 700 */
+}
+
+/* Night sage: Night ground, Sage 500 rules, Sage 100 primary button. Amber stays the only signal. */
+.hero-scope[data-scheme="night-sage"] {
+  --h-bg: #0b1120; /* Night 950 */
+  --h-fg: #faf8f4; /* Paper 50: 17.8:1 */
+  --h-muted: #8b95ae; /* Night 300: 6.3:1 on Night 950, 5.2:1 on Night 800 */
+  --h-surface: #131b2e; /* Night 900 */
+  --h-surface-2: #1a2338; /* Night 800 */
+  --h-border: #3b9a6f; /* Sage 500 */
+  --h-accent: #f5a524;
+  --h-accent-text: #ffcf6e; /* Lamp 300 */
+  --h-quote-bg: #fff1d6;
+  --h-quote-fg: #0b1120;
+  --h-btn-bg: #ddf0e6; /* Sage 100 */
+  --h-btn-fg: #0b1120;
+  --h-input-bg: #131b2e;
+  --h-input-fg: #faf8f4;
+  --h-input-border: #3b9a6f;
+  --h-thumb-dim: 0.45;
+  --h-shadow: 0 16px 40px -16px rgba(11, 17, 32, 0.9);
 }
