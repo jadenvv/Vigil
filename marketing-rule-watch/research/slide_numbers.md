@@ -121,3 +121,17 @@ Caveat: this is a simulated web (our demo site plus a fake search engine answeri
 - **Caveats:** one page, 4 issues, one run. Devin wrote the page from our own taxonomy brief, so the issues follow our categories. It is a fictional site, not real-world accuracy.
 
 Home card (5th entry in `EVAL_RESULTS`): "Third-party review page: 4 of 4", "0 clean passages flagged; a page the detector was never tuned on", "Fictional review site Devin built; one page, one run".
+
+## 9. Pipeline vs a single-prompt LLM (INCOMPLETE, not for slides)
+
+From Ethan's `eval/reports/versus_groq120b_panel.json` (`bd16a8f`, 18:53). p4-eval re-checked the numbers from the JSON.
+
+- **Setup:** our pipeline (hints + prompt v4 + filters; v4 is **not live**) vs a single prompt with no hints or filters. Both ran on gpt-oss-120b via Groq on a laptop, not the live app's model.
+- **Coverage:** **12 of 36** panel cases, all in the "tester feedback" group. The run stopped when the pipeline got prose instead of JSON.
+
+| | Precision | Recall | F1 | Clean flagged |
+|---|---|---|---|---|
+| Our pipeline | 0.80 (4 of 5) | 0.80 | 0.80 | 0 of 7 |
+| Single prompt | 0.45 (5 of 11) | 1.00 | 0.62 | 1 of 7 |
+
+**Caveats:** incomplete, 12 cases, one run, labels written by us and unreviewed. The direction (fewer false alarms, one more miss) matches sections 1–3, but don't put these numbers on a slide or the home page.

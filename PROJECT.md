@@ -53,7 +53,27 @@ Schedule and cut order: `marketing-rule-watch/TIMELINE.md`. Pitch: `marketing-ru
 
 Update this table when a hand-off lands. Status reflects **what is pushed to git**. Work on someone's laptop doesn't count until it's pushed.
 
-Last updated: **3:20 PM**
+Last updated: **7:05 PM**
+
+### Final state: live and FROZEN (deployed 7:01 PM)
+
+**Live:** https://marketing-rule-watch-a0747dd2.base44.app/ is built from **`a25519f`** on branch `deploy/wave2-live`, deployed at 7:06 (the final deploy). That's `bab4d6d` plus the dusk-night theme (`5b6ef7c`) plus two `dusk.css` fixes: card contrast (`5fa661a`) and the amber chart value for AA contrast (`a25519f`).
+
+- **Live has:**
+  - nav: Home · Live demo · Dashboard · Evals · About
+  - a sitewide dusk-night theme with amber accents
+  - 5 home eval cards plus the EVAL_NEXT row (shown, but not live)
+  - `/evals`, `/about`, and `/dashboard` (demo firms only when signed out)
+  - the Setup ready card, the evidence CSV and the word diff
+  - Page-as-captured as the default tab on flag detail
+  - AdvisorQuill on the demo firm (11 pages, 15 flags)
+- **Not live:** PR #5 Clerk `/reviews`, the crossref function and UI, and detector v4. Backend functions are unchanged; the detector is v3.
+- **`main` vs live:** the theme is on `main` as `35f8196`; live `5b6ef7c` is the same overlay on the deploy branch. The two `dusk.css` fixes are cherry-picked onto `main` (`5fa661a` → `a20e19d`, `a25519f` → `0818c68`). `main` matches live except for PR #5 (Clerk `/reviews` routes and the `ClerkProvider` wrapper in `main.jsx`) and the crossref UI.
+
+**Follow-ups after the event:**
+- Real-firm rows are readable through public RLS. The dashboard only filters them client-side.
+- Rotate the Groq key and the Sense token. The Sense token is still in git history (`.mcp.json` before `edb40b5`).
+- The uncommitted retry-loop edits in `functions/detect/entry.ts`, `shared/llm.ts` and `shared/detect-core.ts` are unowned. Don't commit them as is, because they break the no-retry rule.
 
 | Workstream | Status | Evidence in repo |
 |---|---|---|
@@ -61,11 +81,11 @@ Last updated: **3:20 PM**
 | Eval harness + 37 seeded cases | ✅ done | `eval/compliance_eval.py`, `eval/cases.jsonl` |
 | Keyword baseline measured | ✅ F1 0.70 · clean docs wrongly flagged 28% · pairs 6/8 | `eval/reports/baseline_regex_120954.json` |
 | Sense Check 1 | 🟡 brief written, results not logged yet | `research/sense_checks.md` |
-| Demo site | 🟢 Fictional **Quarrywick Wealth** live at https://nathanqiu07.github.io/quarrywick-wealth-demo/ (10 pages, 11 planted issues, answer key). Built by a Claude agent (Devin was down). Devin gets the third-party review site when back (`demo-site/DEVIN_THIRD_PARTY.md`) | `demo-site/` |
+| Demo site | 🟢 Fictional **Quarrywick Wealth** live at https://nathanqiu07.github.io/quarrywick-wealth-demo/ (10 pages, 11 planted issues, answer key). Who built it is VERIFY: there is no Devin commit or PR for it. **Devin built the third-party review site AdvisorQuill** (https://nathanqiu07.github.io/advisorquill/, PR #4, Devin-authored commits). The live detector caught its 4 planted issues, with 0 clean content flagged (one page, one run) | `demo-site/`, `demo-site/third-party/` |
 | Crawl (`fetch.py`, screenshots) | 🟢 Bright Data runs **inside Base44**: `scan` fetched 2 test pages + screenshots (all HTTP 200, screenshots stored as public PNGs). Web Unlocker zone works (name not recorded here); SERP zone `serp_api1`. ~10–13 s per URL, so batch ≤5 | `crawl/`, `base44/app/base44/functions/scan` |
 | Detector (`engine/`) | 🟢 v3 live (Base44 InvokeLLM). Live eval 4:10 PM, 69 calls, 0 quota errors (cabebb3): 37 synthetic cases F1 0.70→**0.98** (keyword→LLM), clean docs wrongly flagged 28%→**0%**, recall 21/21, pairs 8/8; 10 tester-inspired cases 5/5 caught, 0/5 clean flagged; demo site 11/11, 0/8 clean flagged (dev set, tuned on it); consistency 2/3 pages identical, 3/3 same categories. Caveats travel with every number | `engine/`, `base44/app/base44/shared` |
 | Base44 app | 🟢 **Vigil live** (≈4:20 PM): home page `/` with search → /setup discovery → Open results; /demo = real crawl of Quarrywick, detector v3 deployed: **11/11 planted issues, 0 false alarms, 0 flags on clean content** (detector tuned on this site; say so). Evidence: quote highlight, screenshot, hash, re-check (B2, 10-min cache), exam print view. Groq fallback: key restore script given to user; InvokeLLM quota unknown | `base44/app/`, `base44/PLAN.md` |
-| Rewrite, snapshots, Daytona | ⬜ later / stretch | — |
+| Rewrite, snapshots, Daytona | 🟢 Rewrite live (on request). Page history with dated captures. Daytona "Check calculation" is admin-only and was deployed 5:15 PM (one live call: 50% calculated vs 60% stated). See `research/sponsor_usage.md` | `base44/app/`, `research/sponsor_usage.md` |
 
 ### Demo flow (decided 3:55 PM)
 Home `/` (Vigil, before/after of a real flag) → type the demo firm URL → `/setup?site=` → live Bright Data discovery → **Open results** (existing firm, no re-crawl) → inbox → flag detail (quote highlighted + screenshot) → rewrite → approve → "Before your exam" print view. `/demo` stays as the no-sign-in fallback. Home page: p2-frontend (impeccable, committed by 5:00); discover latency check: p2-backend; checks: p2-debugger-eval.
@@ -86,9 +106,9 @@ Home `/` (Vigil, before/after of a real flag) → type the demo firm URL → `/s
 | **2:45** | **P2 → P1** | **Live link with demo mode** | ✅ ready 1:52: https://marketing-rule-watch-a0747dd2.base44.app/demo |
 | ~5:00 | P4 → P2 | `engine/prompts/rewrite.md` | ✅ rewrite live (verified 200, 3.6 s) |
 | 7:00 | P4 → P1 | Eval before/after report | ✅ `research/slide_numbers.md` (cb05c56); p4-eval re-checking against audit batch ca84d24 |
-| 6:50 | P2 → all | Hero redesign (3 localhost prototypes, user picks) → site deploy | ⏳ p2-frontend |
+| 6:50 | P2 → all | Hero redesign (3 localhost prototypes, user picks) → site deploy | ✅ workflow hero + dusk theme, live 7:01 (`5b6ef7c`) |
 | 7:00 | P2 → P1 | Screenshots for slides + fallback video | ⏳ p2-debugger-eval, after hero deploy |
-| 7:00 | P2 | App freeze; cleanup only after user OKs the dry-run list (p2-backend, 6:30) | ⏳ |
+| 7:00 | P2 | App freeze; cleanup only after user OKs the dry-run list (p2-backend, 6:30) | ✅ frozen at the 7:01 deploy |
 | 7:45 | P1 | **Submit** | ⏳ |
 
 ## 6. Open questions
