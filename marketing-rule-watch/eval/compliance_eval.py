@@ -105,13 +105,48 @@ def naive_rewrite(text: str, flags: list[dict]) -> str:
 # ----------------------------------------------------------------------------
 # Loading and validation
 # ----------------------------------------------------------------------------
+# Span grounding mirrors engine/postprocess.py ground() exactly (same normalization map), so the
+# eval counts a flag grounded only when the app would keep it. Keep them in sync. Vendored rather
+# than imported: engine.taxonomy execs this file to load TAXONOMY, so importing engine here is
+# circular.
+_TRANS = str.maketrans({"“": '"', "”": '"', "‘": "'", "’": "'",
+                        "–": "-", "—": "-", " ": " "})
+
+
+def _normalize_with_map(s: str) -> tuple[str, list[int]]:
+    """Lowercase, straighten quotes, collapse whitespace; keep a map back to original indices."""
+    out, idx, prev_space = [], [], False
+    for i, ch in enumerate(s.translate(_TRANS)):
+        if ch.isspace():
+            if prev_space:
+                continue
+            ch, prev_space = " ", True
+        else:
+            prev_space = False
+        out.append(ch.lower())
+        idx.append(i)
+    return "".join(out), idx
+
+
 def locate(text: str, span: str):
-    if not span:
+    """(start, end) of the substring of text that span refers to, or None. Same repairs as
+    production ground(): exact match, then stripped, then normalized (case/quote/whitespace drift)."""
+    if not span or not span.strip():
         return None
-    i = text.find(span)
+    if span in text:
+        i = text.find(span)
+        return (i, i + len(span))
+    span = span.strip().strip(".")
+    if span and span in text:
+        i = text.find(span)
+        return (i, i + len(span))
+    nt, idx = _normalize_with_map(text)
+    ns, _ = _normalize_with_map(span)
+    ns = ns.strip()
+    i = nt.find(ns) if ns else -1
     if i < 0:
-        i = text.lower().find(span.lower())
-    return (i, i + len(span)) if i >= 0 else None
+        return None
+    return (idx[i], idx[i + len(ns) - 1] + 1)
 
 
 def iou(a, b) -> float:

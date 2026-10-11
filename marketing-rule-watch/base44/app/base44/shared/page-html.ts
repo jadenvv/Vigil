@@ -16,6 +16,7 @@ export async function fetchRawHtml(url: string, token: string, zone: string, log
       method: "POST",
       headers: { "Authorization": `Bearer ${token}`, "Content-Type": "application/json" },
       body: JSON.stringify({ zone, url, format: "raw" }),
+      signal: AbortSignal.timeout(90_000), // a hung request must die; MAX_HTML_BYTES still caps what we keep
     });
     const html = await r.text();
     log.push(`${new Date().toISOString()}\thtml\t${r.status}\t${((Date.now() - t0) / 1000).toFixed(1)}s\t${html.length}B\t${url}`);

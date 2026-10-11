@@ -52,8 +52,10 @@ def chunks(text: str, size: int = CHUNK_CHARS) -> list[str]:
 def build_messages(chunk: str, channel: str) -> tuple[str, str]:
     system, user_t = load_prompt()
     h = hints(chunk)
-    # page text is data: neutralise any attempt to close our delimiter early
-    page = chunk.replace("</page_content>", "</page_content_>")
+    # page text is data: neutralise any attempt to close our delimiter early (exact or variants)
+    page = re.sub(r"<\/?\s*page_content\s*>",
+                  lambda m: re.sub(r"page_content", "page_content_", m.group(0), flags=re.I),
+                  chunk, flags=re.I)
     user = (user_t.replace("{{channel}}", channel or "unknown")
                   .replace("{{hints}}", "\n".join(f"- {x}" for x in h) or "- none")
                   .replace("{{page}}", page))

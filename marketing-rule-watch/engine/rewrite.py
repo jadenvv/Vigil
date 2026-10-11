@@ -88,8 +88,11 @@ def _load_prompt() -> tuple[str, str]:
 def llm_edits(text: str, flags: list[dict]) -> list[dict]:
     system, user_t = _load_prompt()
     listing = "\n".join(f'{k}: {f.get("category")} | "{f.get("span")}" | {f.get("why", "")}' for k, f in enumerate(flags))
+    page = re.sub(r"<\/?\s*page_content\s*>",
+                  lambda m: re.sub(r"page_content", "page_content_", m.group(0), flags=re.I),
+                  text, flags=re.I)  # neutralise delimiter variants too
     user = (user_t.replace("{{flags}}", listing)
-                  .replace("{{page}}", text.replace("</page_content>", "</page_content_>")))
+                  .replace("{{page}}", page))
     raw = re.sub(r"^```(?:json)?\s*|\s*```$", "", llm.complete(system, user).strip())
     try:
         data = json.loads(raw)

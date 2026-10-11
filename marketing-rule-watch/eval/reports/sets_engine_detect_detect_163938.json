@@ -1,0 +1,569 @@
+{
+  "cmd": "sets",
+  "detector": "engine.detect:detect",
+  "timestamp": "2026-10-10 16:39:38",
+  "sets": {
+    "cases.jsonl": {
+      "summary": {
+        "n_cases": 37,
+        "n_clean": 18,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0,
+        "tp": 21,
+        "fp": 0,
+        "fn": 0,
+        "clean_doc_fp_rate": 0.0,
+        "flags_per_clean_doc": 0.0,
+        "grounding_rate": 1.0,
+        "citation_accuracy": 1.0,
+        "per_category": {
+          "BENEFITS_WITHOUT_RISK": {
+            "tp": 5,
+            "fp": 0,
+            "fn": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0
+          },
+          "GROSS_WITHOUT_NET": {
+            "tp": 2,
+            "fp": 0,
+            "fn": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0
+          },
+          "HYPOTHETICAL_PERFORMANCE": {
+            "tp": 2,
+            "fp": 0,
+            "fn": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0
+          },
+          "RATING_NO_DISCLOSURE": {
+            "tp": 2,
+            "fp": 0,
+            "fn": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0
+          },
+          "TESTIMONIAL_NO_DISCLOSURE": {
+            "tp": 3,
+            "fp": 0,
+            "fn": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0
+          },
+          "UNBALANCED_SPECIFIC_ADVICE": {
+            "tp": 1,
+            "fp": 0,
+            "fn": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0
+          },
+          "UNFAIR_PERFORMANCE_PRESENTATION": {
+            "tp": 2,
+            "fp": 0,
+            "fn": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0
+          },
+          "UNSUBSTANTIATED_CLAIM": {
+            "tp": 4,
+            "fp": 0,
+            "fn": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0
+          }
+        }
+      },
+      "misses": []
+    },
+    "cases_holdout.jsonl": {
+      "summary": {
+        "n_cases": 19,
+        "n_clean": 7,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0,
+        "tp": 12,
+        "fp": 0,
+        "fn": 0,
+        "clean_doc_fp_rate": 0.0,
+        "flags_per_clean_doc": 0.0,
+        "grounding_rate": 1.0,
+        "citation_accuracy": 1.0,
+        "per_category": {
+          "BENEFITS_WITHOUT_RISK": {
+            "tp": 2,
+            "fp": 0,
+            "fn": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0
+          },
+          "GROSS_WITHOUT_NET": {
+            "tp": 1,
+            "fp": 0,
+            "fn": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0
+          },
+          "HYPOTHETICAL_PERFORMANCE": {
+            "tp": 1,
+            "fp": 0,
+            "fn": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0
+          },
+          "RATING_NO_DISCLOSURE": {
+            "tp": 1,
+            "fp": 0,
+            "fn": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0
+          },
+          "TESTIMONIAL_NO_DISCLOSURE": {
+            "tp": 2,
+            "fp": 0,
+            "fn": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0
+          },
+          "UNBALANCED_SPECIFIC_ADVICE": {
+            "tp": 1,
+            "fp": 0,
+            "fn": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0
+          },
+          "UNFAIR_PERFORMANCE_PRESENTATION": {
+            "tp": 2,
+            "fp": 0,
+            "fn": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0
+          },
+          "UNSUBSTANTIATED_CLAIM": {
+            "tp": 2,
+            "fp": 0,
+            "fn": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0
+          }
+        }
+      },
+      "misses": []
+    },
+    "cases_pages.jsonl": {
+      "summary": {
+        "n_cases": 9,
+        "n_clean": 2,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0,
+        "tp": 10,
+        "fp": 0,
+        "fn": 0,
+        "clean_doc_fp_rate": 0.0,
+        "flags_per_clean_doc": 0.0,
+        "grounding_rate": 1.0,
+        "citation_accuracy": 0.9,
+        "per_category": {
+          "BENEFITS_WITHOUT_RISK": {
+            "tp": 1,
+            "fp": 0,
+            "fn": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0
+          },
+          "GROSS_WITHOUT_NET": {
+            "tp": 1,
+            "fp": 0,
+            "fn": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0
+          },
+          "HYPOTHETICAL_PERFORMANCE": {
+            "tp": 1,
+            "fp": 0,
+            "fn": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0
+          },
+          "RATING_NO_DISCLOSURE": {
+            "tp": 2,
+            "fp": 0,
+            "fn": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0
+          },
+          "TESTIMONIAL_NO_DISCLOSURE": {
+            "tp": 2,
+            "fp": 0,
+            "fn": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0
+          },
+          "UNBALANCED_SPECIFIC_ADVICE": {
+            "tp": 1,
+            "fp": 0,
+            "fn": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0
+          },
+          "UNFAIR_PERFORMANCE_PRESENTATION": {
+            "tp": 1,
+            "fp": 0,
+            "fn": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0
+          },
+          "UNSUBSTANTIATED_CLAIM": {
+            "tp": 1,
+            "fp": 0,
+            "fn": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0
+          }
+        }
+      },
+      "misses": []
+    },
+    "cases_tester.jsonl": {
+      "summary": {
+        "n_cases": 10,
+        "n_clean": 5,
+        "precision": 1.0,
+        "recall": 0.2,
+        "f1": 0.33333333333333337,
+        "tp": 1,
+        "fp": 0,
+        "fn": 4,
+        "clean_doc_fp_rate": 0.0,
+        "flags_per_clean_doc": 0.0,
+        "grounding_rate": 1.0,
+        "citation_accuracy": 1.0,
+        "per_category": {
+          "BENEFITS_WITHOUT_RISK": {
+            "tp": 1,
+            "fp": 0,
+            "fn": 3,
+            "precision": 1.0,
+            "recall": 0.25,
+            "f1": 0.4
+          },
+          "UNSUBSTANTIATED_CLAIM": {
+            "tp": 0,
+            "fp": 0,
+            "fn": 1,
+            "precision": null,
+            "recall": 0.0,
+            "f1": null
+          }
+        }
+      },
+      "misses": [
+        "tester_a_new_words_bulletproof",
+        "tester_a_new_words_zero_downside",
+        "tester_a_new_words_comes_close",
+        "tester_b_inflated_down_year"
+      ]
+    },
+    "cases_demo_site.jsonl": {
+      "summary": {
+        "n_cases": 16,
+        "n_clean": 8,
+        "precision": 0.875,
+        "recall": 0.6363636363636364,
+        "f1": 0.7368421052631579,
+        "tp": 7,
+        "fp": 1,
+        "fn": 4,
+        "clean_doc_fp_rate": 0.0,
+        "flags_per_clean_doc": 0.0,
+        "grounding_rate": 1.0,
+        "citation_accuracy": 1.0,
+        "per_category": {
+          "BENEFITS_WITHOUT_RISK": {
+            "tp": 1,
+            "fp": 1,
+            "fn": 1,
+            "precision": 0.5,
+            "recall": 0.5,
+            "f1": 0.5
+          },
+          "GROSS_WITHOUT_NET": {
+            "tp": 1,
+            "fp": 0,
+            "fn": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0
+          },
+          "HYPOTHETICAL_PERFORMANCE": {
+            "tp": 1,
+            "fp": 0,
+            "fn": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0
+          },
+          "RATING_NO_DISCLOSURE": {
+            "tp": 2,
+            "fp": 0,
+            "fn": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0
+          },
+          "TESTIMONIAL_NO_DISCLOSURE": {
+            "tp": 0,
+            "fp": 0,
+            "fn": 1,
+            "precision": null,
+            "recall": 0.0,
+            "f1": null
+          },
+          "UNBALANCED_SPECIFIC_ADVICE": {
+            "tp": 0,
+            "fp": 0,
+            "fn": 1,
+            "precision": null,
+            "recall": 0.0,
+            "f1": null
+          },
+          "UNFAIR_PERFORMANCE_PRESENTATION": {
+            "tp": 1,
+            "fp": 0,
+            "fn": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0
+          },
+          "UNSUBSTANTIATED_CLAIM": {
+            "tp": 1,
+            "fp": 0,
+            "fn": 1,
+            "precision": 1.0,
+            "recall": 0.5,
+            "f1": 0.6666666666666666
+          }
+        }
+      },
+      "misses": [
+        "demo_home",
+        "demo_services",
+        "demo_testimonials",
+        "demo_blog_best_pick"
+      ]
+    },
+    "cases_hard.jsonl": {
+      "summary": {
+        "n_cases": 16,
+        "n_clean": 5,
+        "precision": 0.8,
+        "recall": 0.36363636363636365,
+        "f1": 0.5000000000000001,
+        "tp": 4,
+        "fp": 1,
+        "fn": 7,
+        "clean_doc_fp_rate": 0.2,
+        "flags_per_clean_doc": 0.2,
+        "grounding_rate": 1.0,
+        "citation_accuracy": 0.75,
+        "per_category": {
+          "BENEFITS_WITHOUT_RISK": {
+            "tp": 0,
+            "fp": 0,
+            "fn": 2,
+            "precision": null,
+            "recall": 0.0,
+            "f1": null
+          },
+          "GROSS_WITHOUT_NET": {
+            "tp": 0,
+            "fp": 0,
+            "fn": 1,
+            "precision": null,
+            "recall": 0.0,
+            "f1": null
+          },
+          "HYPOTHETICAL_PERFORMANCE": {
+            "tp": 1,
+            "fp": 0,
+            "fn": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0
+          },
+          "RATING_NO_DISCLOSURE": {
+            "tp": 1,
+            "fp": 0,
+            "fn": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0
+          },
+          "TESTIMONIAL_NO_DISCLOSURE": {
+            "tp": 1,
+            "fp": 1,
+            "fn": 1,
+            "precision": 0.5,
+            "recall": 0.5,
+            "f1": 0.5
+          },
+          "UNBALANCED_SPECIFIC_ADVICE": {
+            "tp": 0,
+            "fp": 0,
+            "fn": 2,
+            "precision": null,
+            "recall": 0.0,
+            "f1": null
+          },
+          "UNFAIR_PERFORMANCE_PRESENTATION": {
+            "tp": 1,
+            "fp": 0,
+            "fn": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0
+          },
+          "UNSUBSTANTIATED_CLAIM": {
+            "tp": 0,
+            "fp": 0,
+            "fn": 1,
+            "precision": null,
+            "recall": 0.0,
+            "f1": null
+          }
+        }
+      },
+      "misses": [
+        "hard_implied_no_loss",
+        "hard_superlative_soft",
+        "hard_every_client_on_schedule",
+        "hard_split_testimonial",
+        "hard_rating_disclosed",
+        "hard_gross_label_variant",
+        "hard_unbalanced_list",
+        "hard_unbalanced_case_study"
+      ]
+    },
+    "cases_scope.jsonl": {
+      "summary": {
+        "n_cases": 11,
+        "n_clean": 9,
+        "precision": 0.16666666666666666,
+        "recall": 0.5,
+        "f1": 0.25,
+        "tp": 1,
+        "fp": 5,
+        "fn": 1,
+        "clean_doc_fp_rate": 0.4444444444444444,
+        "flags_per_clean_doc": 0.4444444444444444,
+        "grounding_rate": 1.0,
+        "citation_accuracy": 1.0,
+        "per_category": {
+          "BENEFITS_WITHOUT_RISK": {
+            "tp": 1,
+            "fp": 4,
+            "fn": 0,
+            "precision": 0.2,
+            "recall": 1.0,
+            "f1": 0.33333333333333337
+          },
+          "HYPOTHETICAL_PERFORMANCE": {
+            "tp": 0,
+            "fp": 1,
+            "fn": 0,
+            "precision": 0.0,
+            "recall": null,
+            "f1": null
+          },
+          "UNBALANCED_SPECIFIC_ADVICE": {
+            "tp": 0,
+            "fp": 0,
+            "fn": 1,
+            "precision": null,
+            "recall": 0.0,
+            "f1": null
+          }
+        }
+      },
+      "misses": [
+        "scope_educational_backtest",
+        "scope_example_bad_ad",
+        "scope_client_faq",
+        "scope_news_other_firm",
+        "scope_control_contrast_claim",
+        "scope_control_example_then_pick"
+      ]
+    },
+    "cases_injection.jsonl": {
+      "summary": {
+        "n_cases": 7,
+        "n_clean": 2,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0,
+        "tp": 5,
+        "fp": 0,
+        "fn": 0,
+        "clean_doc_fp_rate": 0.0,
+        "flags_per_clean_doc": 0.0,
+        "grounding_rate": 1.0,
+        "citation_accuracy": 1.0,
+        "per_category": {
+          "BENEFITS_WITHOUT_RISK": {
+            "tp": 2,
+            "fp": 0,
+            "fn": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0
+          },
+          "TESTIMONIAL_NO_DISCLOSURE": {
+            "tp": 2,
+            "fp": 0,
+            "fn": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0
+          },
+          "UNSUBSTANTIATED_CLAIM": {
+            "tp": 1,
+            "fp": 0,
+            "fn": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0
+          }
+        }
+      },
+      "misses": []
+    }
+  }
+}

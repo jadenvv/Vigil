@@ -27,11 +27,14 @@ export const TAXONOMY = {
 // Python's rx.finditer(text, s, e) / rx.search(text, s, e), with absolute offsets.
 function findAll(rx, text, s = 0, e = text.length) {
   const g = new RegExp(rx.source, rx.flags.includes("g") ? rx.flags : rx.flags + "g");
-  const sub = text.slice(s, e);
+  // Search the real text up to e, not a slice: Python's pos bounds where matches START; it does
+  // not hide earlier characters from ^ anchors, \b or lookbehind. Slicing did, and caused drift.
+  const sub = text.slice(0, e);
+  g.lastIndex = s;
   const out = [];
   let m;
   while ((m = g.exec(sub)) !== null) {
-    out.push({ start: s + m.index, end: s + m.index + m[0].length, text: m[0] });
+    out.push({ start: m.index, end: m.index + m[0].length, text: m[0] });
     if (m[0].length === 0) g.lastIndex++;
   }
   return out;
@@ -119,7 +122,7 @@ const OPEN_QUOTE = /(?:^|(?<=[\s\u2605]))"|\u201c/m;
 // The text that belongs to one testimonial: its line up to the span, then on to the next
 // opening quote or paragraph break. A neighbour's disclosure must not clear this one.
 function testimonialUnit(chunk, start, end) {
-  const a = chunk.lastIndexOf("\n", start - 1) + 1;
+  const a = start > 0 ? chunk.lastIndexOf("\n", start - 1) + 1 : 0; // rfind("\n",0,0) is -1 in Python
   const pb = chunk.indexOf("\n\n", end);
   const q = search(OPEN_QUOTE, chunk, end);
   const stops = [pb, q ? q.start : -1].filter((x) => x >= 0);
@@ -345,16 +348,21 @@ export function splitPrompt(promptMd) {
 export function buildMessages(promptMd, chunk, channel) {
   const { system, user } = splitPrompt(promptMd);
   const h = hints(chunk);
-  const page = chunk.split("</page_content>").join("</page_content_>"); // page can't close our delimiter
+  // page can't close our delimiter — exact tag or case/spacing variants (Python parity below)
+  const page = chunk.replace(/<\/?\s*page_content\s*>/gi, (m) => m.replace(/page_content/i, "page_content_"));
   const filled = user
-    .replace("{{channel}}", () => channel || "unknown")
-    .replace("{{hints}}", () => h.map((x) => `- ${x}`).join("\n") || "- none")
-    .replace("{{page}}", () => page);
+    .replaceAll("{{channel}}", () => channel || "unknown")
+    .replaceAll("{{hints}}", () => h.map((x) => `- ${x}`).join("\n") || "- none")
+    .replaceAll("{{page}}", () => page); // replaceAll: a {{page}} inside untrusted hints must not win the slot
   return { system, user: filled };
 }
 
 export function parseFlags(raw) {
-  if (raw && typeof raw === "object") return Array.isArray(raw) ? raw : raw.flags || []; // InvokeLLM returns parsed JSON
+  if (raw && typeof raw === "object") { // InvokeLLM returns parsed JSON; {"flags": <non-array>} is malformed, not []
+    const d = Array.isArray(raw) ? raw : ("flags" in raw ? raw.flags : []);
+    if (Array.isArray(d)) return d.filter((x) => x && typeof x === "object");
+    throw new Error("LLM did not return JSON flags");
+  }
   let s = String(raw || "").trim().replace(/^```(?:json)?\s*|\s*```$/g, "");
   const tries = [s];
   const m = s.search(/[[{]/);
