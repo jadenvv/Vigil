@@ -1,11 +1,43 @@
 // Rewrite drawer: Approve / Edit / Dismiss, each writing a session-scoped Decision.
 // Suggestions are fetched only when the reviewer asks: each rewrite call costs LLM quota,
 // and calling on every flag view used up a monthly quota in one afternoon.
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { base44 } from "@/api/base44Client";
 import { DecisionBadge } from "@/components/Badges";
 import { COPY, FETCH_REWRITE_SUGGESTIONS } from "@/lib/copy";
 import { recordDecision } from "@/lib/data";
+import { wordDiff } from "@/lib/wordDiff";
+
+// Renders one side of a word diff. Changes carry <del>/<ins> semantics plus visually hidden
+// "removed:"/"added:" text, so the change never relies on color or strike-through alone.
+function DiffText({ segments }) {
+  return segments.map((segment, index) => {
+    const spacer = index > 0 ? " " : "";
+    if (segment.type === "del") {
+      return (
+        <span key={index}>
+          {spacer}
+          <del className="text-night-600 line-through decoration-night-600 decoration-1">
+            <span className="sr-only">{COPY.diffRemoved} </span>
+            {segment.text}
+          </del>
+        </span>
+      );
+    }
+    if (segment.type === "add") {
+      return (
+        <span key={index}>
+          {spacer}
+          <ins className="font-medium text-sage-700 underline decoration-sage-700 decoration-2 underline-offset-2">
+            <span className="sr-only">{COPY.diffAdded} </span>
+            {segment.text}
+          </ins>
+        </span>
+      );
+    }
+    return <span key={index}>{spacer + segment.text}</span>;
+  });
+}
 
 // Per flag id, for this page session, so reopening a flag never calls the LLM again.
 const suggestionCache = new Map();
@@ -47,6 +79,7 @@ export default function RewriteDrawer({ flag, decision, onDecided }) {
   const [draft, setDraft] = useState(() => initialState(flag.id).suggested_text ?? flag.span);
   const [saving, setSaving] = useState(false);
   const [saveError, setSaveError] = useState(null);
+  const [showChanges, setShowChanges] = useState(true);
 
   useEffect(() => {
     const state = initialState(flag.id);
@@ -84,6 +117,13 @@ export default function RewriteDrawer({ flag, decision, onDecided }) {
   const unfilledInDraft = placeholders.filter((placeholder) => draft.includes(placeholder));
   const showSecondColumn = editing || status === "loading" || status === "ready" || status === "unavailable";
   const canSuggest = status === "idle" || (status === "unavailable" && suggestion.canRetry);
+  const originalText = suggestion.original_text ?? flag.span;
+  // Display only: the diff never feeds into what Approve / Edit / Dismiss save. Null past the token cap.
+  const diff = useMemo(
+    () => (status === "ready" && suggested ? wordDiff(originalText, suggested) : null),
+    [status, originalText, suggested],
+  );
+  const showDiff = Boolean(diff) && showChanges && !editing;
   const button = "rounded-md px-3 py-1.5 text-sm disabled:opacity-50";
   return (
     <section aria-label={COPY.rewriteTitle} className="rounded-lg border border-paper-200 bg-white p-4 text-sm">
@@ -94,7 +134,9 @@ export default function RewriteDrawer({ flag, decision, onDecided }) {
       <div className={`mt-3 grid gap-3 ${showSecondColumn ? "sm:grid-cols-2" : ""}`}>
         <div>
           <h3 className="text-xs font-semibold uppercase tracking-wide text-night-600">{COPY.originalLabel}</h3>
-          <p className="mt-1 rounded-r-md border-l-[3px] border-lamp-500 bg-lamp-100 px-3 py-2 font-mono">{suggestion.original_text ?? flag.span}</p>
+          <p data-testid="original-text" className="mt-1 rounded-r-md border-l-[3px] border-lamp-500 bg-lamp-100 px-3 py-2 font-mono">
+            {showDiff ? <DiffText segments={diff.original} /> : originalText}
+          </p>
         </div>
         {showSecondColumn && (
           <div>
@@ -109,7 +151,7 @@ export default function RewriteDrawer({ flag, decision, onDecided }) {
             )}
             {status === "ready" && !editing && (
               <p data-testid="suggested-text" className="mt-1 rounded bg-sage-100 p-2">
-                {suggested}
+                {showDiff ? <DiffText segments={diff.suggested} /> : suggested}
               </p>
             )}
             {editing && (
@@ -123,6 +165,20 @@ export default function RewriteDrawer({ flag, decision, onDecided }) {
           </div>
         )}
       </div>
+      {diff && !editing && (
+        <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-night-600">
+          <label className="inline-flex cursor-pointer items-center gap-1.5">
+            <input
+              type="checkbox"
+              checked={showChanges}
+              onChange={(event) => setShowChanges(event.target.checked)}
+              className="h-3.5 w-3.5 accent-night-950"
+            />
+            {COPY.showChanges}
+          </label>
+          {showChanges && <span>{COPY.diffLegend}</span>}
+        </div>
+      )}
       {status === "ready" && typeof suggestion.flags_total === "number" && (
         <p className="mt-2 text-xs text-night-600">
           {COPY.flagsCleared(suggestion.flags_cleared ?? 0, suggestion.flags_total)}

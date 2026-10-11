@@ -82,6 +82,10 @@ export const COPY = {
   placeholdersNote: (placeholders: string[]) =>
     `Fill in ${placeholders.join(", ")} with real facts before approving. Use Edit.`,
   flagsCleared: (cleared: number, total: number) => `Flags cleared: ${cleared} of ${total}`,
+  showChanges: "Show changes",
+  diffRemoved: "removed:",
+  diffAdded: "added:",
+  diffLegend: "Struck-through words are removed. Underlined words are added. You decide what gets saved.",
   approve: "Approve",
   edit: "Edit",
   reject: "Dismiss",
