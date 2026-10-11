@@ -8,6 +8,7 @@ const HeroContact = lazy(() => import("@/components/hero/HeroContact"));
 const HeroRedline = lazy(() => import("@/components/hero/HeroRedline"));
 const HeroHeadline = lazy(() => import("@/components/hero/HeroHeadline"));
 const HeroScroll = lazy(() => import("@/components/hero/HeroScroll"));
+const HeroWorkflow = lazy(() => import("@/components/hero/HeroWorkflow"));
 
 export const ANIMATIONS = [
   { id: "contact", label: "Contact sheet", Comp: HeroContact, kind: "once" },
@@ -17,6 +18,7 @@ export const ANIMATIONS = [
   { id: "redline-loop", label: "Redline · loop", Comp: HeroRedline, kind: "loop" },
   { id: "headline-loop", label: "Scanned headline · loop", Comp: HeroHeadline, kind: "loop" },
   { id: "scroll", label: "Scroll-driven", Comp: HeroScroll, kind: "scroll" },
+  { id: "workflow", label: "Workflow · loop", Comp: HeroWorkflow, kind: "loop" },
 ];
 
 export const SCHEMES = [
