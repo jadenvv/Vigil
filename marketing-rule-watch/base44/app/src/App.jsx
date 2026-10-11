@@ -2,6 +2,9 @@ import { lazy, Suspense } from "react";
 import { EmptyBlock, Shell } from "@/components/Chrome";
 import { COPY } from "@/lib/copy";
 import { Router } from "@/lib/router";
+import About from "@/pages/About";
+import Dashboard from "@/pages/Dashboard";
+import Evals from "@/pages/Evals";
 import Exam from "@/pages/Exam";
 import FlagDetail from "@/pages/FlagDetail";
 import History from "@/pages/History";
@@ -21,6 +24,9 @@ const routes = [
   { path: "/reviews", element: <Reviews /> },
   { path: "/reviews/flag/:id", element: <ReviewFlag /> },
   { path: "/setup", element: <Setup /> },
+  { path: "/dashboard", element: <Dashboard /> },
+  { path: "/evals", element: <Evals /> },
+  { path: "/about", element: <About /> },
 ];
 
 // Dev-only hero lab. import.meta.env.DEV is false in production builds, so the route and its code are dropped.

@@ -30,7 +30,7 @@ const PRINCIPLES = [
     body: "The exact quote from the page, the capture, and when it was captured. If we can't show the quote, we don't show the flag.",
   },
   {
-    title: "“Potential issue for review”, never “violation”",
+    title: "A “potential issue for review”, not a verdict",
     body: "Vigil points at language worth a second look. Whether it is a problem is a judgement for the compliance officer.",
   },
   {
@@ -234,7 +234,6 @@ export default function About() {
         </Section>
 
         <aside className="space-y-1 border-t border-paper-200 pt-6 text-sm text-night-600">
-          <p className="font-medium text-night-700">Not legal advice. All flags require human review.</p>
           <p>Quarrywick Wealth is a fictional firm we built for the demo.</p>
         </aside>
       </article>

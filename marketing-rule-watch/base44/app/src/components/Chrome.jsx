@@ -1,28 +1,84 @@
 // Shared page chrome: footer on every screen, demo banner, and the loading / error / empty states.
-import { Show, SignInButton, UserButton } from "@clerk/react";
-import { clerkEnabled } from "@/lib/clerk";
+import { useLayoutEffect, useRef } from "react";
+import "@/components/hero/schemes.css";
 import { COPY } from "@/lib/copy";
 import { Link } from "@/lib/router";
 
-// Clerk controls render only when the workspace is configured (a publishable key exists);
-// the "My reviews" link is always there — signed out, the route explains instead of erroring.
-function ReviewerControls() {
+// Site navigation. Dashboard, Evals and About join the bar once their pages are routed in App.jsx.
+const NAV_ITEMS = [
+  { to: "/", label: "Home", match: (path) => path === "/" },
+  {
+    to: "/demo",
+    label: "Live demo",
+    match: (path) => path === "/demo" || /^\/(flag|firm|page)\//.test(path),
+  },
+  { to: "/dashboard", label: "Dashboard", match: (path) => path.startsWith("/dashboard") },
+  { to: "/evals", label: "Evals", match: (path) => path.startsWith("/evals") },
+  { to: "/about", label: "About", match: (path) => path.startsWith("/about") },
+].filter((item) => item.routed !== false);
+
+// Each page renders its own Shell, so the bar remounts on navigation. Remembering where the indicator was
+// lets it glide from the previous item to the new one instead of jumping.
+let lastIndicator = null;
+
+function SiteNav() {
+  const listRef = useRef(null);
+  const indicatorRef = useRef(null);
+  const path = window.location.pathname;
+  const active = NAV_ITEMS.findIndex((item) => item.match(path));
+
+  useLayoutEffect(() => {
+    const indicator = indicatorRef.current;
+    const link = listRef.current?.querySelectorAll("a")[active];
+    if (!indicator) return;
+    if (!link) {
+      indicator.style.opacity = "0";
+      lastIndicator = null;
+      return;
+    }
+    // A 1px bar scaled to the link's width: only transform changes, so the glide stays on the compositor.
+    // On narrow screens the bar scrolls sideways; keep the current item in view (the nav only, never the page).
+    const nav = listRef.current.parentElement;
+    if (nav.scrollWidth > nav.clientWidth) {
+      nav.scrollLeft = Math.max(0, link.offsetLeft - (nav.clientWidth - link.offsetWidth) / 2);
+    }
+    const next = { x: link.offsetLeft, w: link.offsetWidth };
+    const toTransform = ({ x, w }) => `translateX(${x}px) scaleX(${w})`;
+    indicator.style.opacity = "1";
+    indicator.style.transform = toTransform(next);
+    const reduceMotion = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+    if (lastIndicator && !reduceMotion && (lastIndicator.x !== next.x || lastIndicator.w !== next.w)) {
+      indicator.animate([{ transform: toTransform(lastIndicator) }, { transform: toTransform(next) }], {
+        duration: 360,
+        easing: "cubic-bezier(0.16, 1, 0.3, 1)",
+      });
+    }
+    lastIndicator = next;
+  }, [active]);
+
   return (
-    <>
-      <Show when="signed-out">
-        <SignInButton mode="modal">
-          <button
-            type="button"
-            className="rounded-md border border-night-200 px-3 py-1.5 text-night-700 hover:bg-paper-100"
-          >
-            {COPY.signIn}
-          </button>
-        </SignInButton>
-      </Show>
-      <Show when="signed-in">
-        <UserButton />
-      </Show>
-    </>
+    <nav aria-label="Main" className="-mr-2 min-w-0 overflow-x-auto">
+      <ul ref={listRef} className="relative flex items-center text-sm">
+        {NAV_ITEMS.map((item, i) => (
+          <li key={item.to}>
+            <Link
+              to={item.to}
+              aria-current={i === active ? "page" : undefined}
+              className={`block whitespace-nowrap rounded-md px-2.5 py-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-lamp-500 sm:px-3 ${
+                i === active ? "text-[color:var(--h-fg)]" : "text-[color:var(--h-muted)] hover:text-[color:var(--h-fg)]"
+              }`}
+            >
+              {item.label}
+            </Link>
+          </li>
+        ))}
+        <span
+          ref={indicatorRef}
+          aria-hidden="true"
+          className="pointer-events-none absolute bottom-0 left-0 h-0.5 w-px origin-left bg-[color:var(--h-fg)] opacity-0"
+        />
+      </ul>
+    </nav>
   );
 }
 
@@ -36,7 +92,7 @@ export function Footer() {
 
 export function DemoBanner() {
   return (
-    <div role="note" className="bg-night-950 px-4 py-2 text-center text-sm font-medium text-paper-50">
+    <div role="note" className="border-b border-night-700 bg-night-950 px-4 py-2 text-center text-sm font-medium text-paper-50">
       {COPY.demoBanner}
     </div>
   );
@@ -47,17 +103,13 @@ export function Shell({ demo = false, hero = null, children }) {
   return (
     <div className="flex min-h-screen flex-col bg-paper-50 text-night-950">
       {demo && <DemoBanner />}
-      <header className="border-b border-paper-200 bg-white">
-        <div className="mx-auto flex max-w-5xl items-center gap-4 px-4 py-3">
-          <Link to="/" className="inline-block rounded focus:outline-none focus-visible:ring-2 focus-visible:ring-lamp-500">
-            <img src="/vigil-lockup.svg" alt={`${COPY.appName} home`} className="h-6 w-auto" />
+      {/* Dark on every page, so the bar and the Dusk night bands on Home and the demo read as one surface. */}
+      <header className={`hero-scope ${hero ? "" : "border-b border-[color:var(--h-border)]"}`} data-scheme="dusk-night">
+        <div className="mx-auto flex max-w-5xl items-center justify-between gap-4 px-4 py-2">
+          <Link to="/" className="inline-block shrink-0 rounded focus:outline-none focus-visible:ring-2 focus-visible:ring-lamp-500">
+            <img src="/vigil-lockup-reversed.svg" alt={`${COPY.appName} home`} className="h-6 w-auto" />
           </Link>
-          <nav className="ml-auto flex items-center gap-4 text-sm">
-            <Link to="/reviews" className="rounded text-night-600 hover:text-night-950 focus:outline-none focus-visible:ring-2 focus-visible:ring-lamp-500">
-              {COPY.navReviews}
-            </Link>
-            {clerkEnabled && <ReviewerControls />}
-          </nav>
+          <SiteNav />
         </div>
       </header>
       {hero}

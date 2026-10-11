@@ -9,7 +9,7 @@ import { UrlText } from "@/components/UrlText";
 import { loadFlag } from "@/lib/data";
 import { quoted } from "@/lib/highlight";
 import { Link, navigate } from "@/lib/router";
-import { EVAL_CAVEAT, EVAL_RESULTS, EVAL_TITLE } from "@/lib/evalResults";
+import { EVAL_CAVEAT, EVAL_NEXT, EVAL_RESULTS, EVAL_TITLE } from "@/lib/evalResults";
 import { categoryLabel } from "@/lib/severity";
 import { useAsync } from "@/lib/useAsync";
 
@@ -104,7 +104,7 @@ function EvalResults() {
       <h2 id="eval-title" className="text-2xl font-semibold tracking-tight">
         {EVAL_TITLE}
       </h2>
-      <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+      <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
         {EVAL_RESULTS.map((result) => (
           <li key={result.label} className="flex flex-col rounded-[10px] border border-paper-200 bg-white p-5">
             <span className="text-sm font-medium text-night-950">{result.label}</span>
@@ -117,6 +117,25 @@ function EvalResults() {
         ))}
       </ul>
       <p className="max-w-3xl text-sm text-night-600">{EVAL_CAVEAT}</p>
+      {EVAL_NEXT && (
+        // Not the live app: kept apart from the live cards and their caveat, with its own.
+        <div data-testid="eval-next" className="max-w-3xl rounded-[10px] border border-dashed border-paper-200 p-4">
+          <p className="text-xs font-medium text-night-600">Next detector version · not yet live</p>
+          <p className="mt-2 flex flex-wrap items-baseline gap-x-3 gap-y-1">
+            <span className="text-sm text-night-950">{EVAL_NEXT.label}</span>
+            <span className="whitespace-nowrap font-mono text-lg tabular-nums text-night-950">{EVAL_NEXT.value}</span>
+          </p>
+          <p className="mt-1 text-sm text-night-600">{EVAL_NEXT.detail}</p>
+          <p className="mt-1 text-xs text-night-600">{EVAL_NEXT.set}</p>
+          <p className="mt-2 text-xs text-night-600">{EVAL_NEXT.caveat}</p>
+        </div>
+      )}
+      <Link
+        to="/evals"
+        className="inline-block text-sm font-medium text-night-950 underline decoration-night-300 underline-offset-4 hover:decoration-night-950"
+      >
+        See full results →
+      </Link>
     </section>
   );
 }
