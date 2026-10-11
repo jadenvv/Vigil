@@ -3,6 +3,7 @@ import { EmptyBlock, Shell } from "@/components/Chrome";
 import { COPY } from "@/lib/copy";
 import { Router } from "@/lib/router";
 import About from "@/pages/About";
+import Dashboard from "@/pages/Dashboard";
 import Evals from "@/pages/Evals";
 import Exam from "@/pages/Exam";
 import FlagDetail from "@/pages/FlagDetail";
@@ -19,6 +20,7 @@ const routes = [
   { path: "/flag/:id", element: <FlagDetail /> },
   { path: "/page/:id/history", element: <History /> },
   { path: "/setup", element: <Setup /> },
+  { path: "/dashboard", element: <Dashboard /> },
   { path: "/evals", element: <Evals /> },
   { path: "/about", element: <About /> },
 ];
