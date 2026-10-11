@@ -249,3 +249,11 @@ class TestRateLimitBackoff(unittest.TestCase):
             with self.assertRaises(Exception):
                 llm._post("https://x", {}, {})
         self.assertEqual(up.call_count, 5)
+
+    def test_daily_cap_raises_without_waiting(self):
+        with mock.patch("urllib.request.urlopen", side_effect=[self._err("779")]) as up, \
+             mock.patch("time.sleep") as sl:
+            with self.assertRaises(Exception):
+                llm._post("https://x", {}, {})
+        self.assertEqual(up.call_count, 1)
+        sl.assert_not_called()

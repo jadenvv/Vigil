@@ -81,15 +81,18 @@ def _post(url: str, headers: dict, body: dict, timeout: int = 90) -> dict:
                                  headers={"Content-Type": "application/json",
                                           "User-Agent": "marketing-rule-watch/1.0", **headers})
     # Groq's free tier is 8k tokens/min: on 429 wait out retry-after (at least 15s, since a short retry-after
-    # often isn't enough for a ~5k-token request; at most 60s), at most 5 tries, then raise
+    # often isn't enough for a ~5k-token request), at most 5 tries, then raise. A retry-after over 60s or
+    # x-should-retry: false is the daily token cap (200k/model): raise at once instead of waiting it out
     for attempt in range(5):
         try:
             with urllib.request.urlopen(req, timeout=timeout, context=_ssl_context()) as r:
                 return json.loads(r.read())
         except urllib.error.HTTPError as e:
-            if e.code != 429 or attempt == 4:
+            wait = float(e.headers.get("retry-after") or 20)
+            if (e.code != 429 or attempt == 4 or wait > 60
+                    or str(e.headers.get("x-should-retry", "")).lower() == "false"):
                 raise
-            time.sleep(min(max(float(e.headers.get("retry-after") or 20), 15), 60) + 1)
+            time.sleep(max(wait, 15) + 1)
 
 
 def complete(system: str, user: str, max_tokens: int = 2000, reasoning_effort: str | None = None) -> str:
