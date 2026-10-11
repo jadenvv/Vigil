@@ -428,9 +428,11 @@ def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--detector")
     ap.add_argument("--cases", default=str(HERE / "cases.jsonl"))
-    ap.add_argument("--out", default=str(HERE / "reports"))
+    ap.add_argument("--out", default=str(HERE / "reports"), help="report directory, or a path ending in .json")
     ap.add_argument("--no-save", action="store_true")
     ap.add_argument("-v", "--verbose", action="store_true")
+    ap.add_argument("--stop-on-error", action="store_true",
+                    help="any detector exception (e.g. a 429) ends the run with no report, instead of scoring a miss")
     ap.add_argument("--compare", nargs=2, metavar=("A.json", "B.json"))
     ap.add_argument("--expect-provider", metavar="NAME",
                     help="stop (no report) as soon as a case is answered by another provider, e.g. base44")
@@ -451,6 +453,9 @@ def main() -> None:
         except DetectorUnavailable as e:
             sys.exit(f"Stopped at case {len(recs) + 1}/{len(cases)} ({c['id']}): {e}. No report saved.")
         except Exception as e:  # a crashing detector should show up as misses, not abort the run
+            if a.stop_on_error:
+                sys.exit(f"Stopped at case {len(recs) + 1}/{len(cases)} ({c['id']}): {type(e).__name__}: {e}. "
+                         "No report saved.")
             print(f"  detector error on {c['id']}: {e}", file=sys.stderr)
             preds, provider = [], "error"
         # A fallback model mid-run would blend two models' numbers into one score.
@@ -482,9 +487,12 @@ def main() -> None:
     print_report(rep, a.verbose)
     if not a.no_save:
         out = Path(a.out)
-        out.mkdir(parents=True, exist_ok=True)
-        name = re.sub(r"[^A-Za-z0-9_.-]+", "_", a.detector)
-        path = out / f"{name}_{time.strftime('%H%M%S')}.json"
+        if out.suffix == ".json":
+            path = out
+        else:
+            name = re.sub(r"[^A-Za-z0-9_.-]+", "_", a.detector)
+            path = out / f"{name}_{time.strftime('%H%M%S')}.json"
+        path.parent.mkdir(parents=True, exist_ok=True)
         path.write_text(json.dumps(rep, indent=2))
         print(f"\nSaved {path}")
 

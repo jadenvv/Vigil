@@ -42,6 +42,21 @@ Offline rules-mode numbers (`reports/suite_rules_offline_*.json`): demo_site F1 
 - On the Groq 20b/120b daily caps, the scope, hard, injection and private SEC sets were not run.
 - Rules mode on generalize: P 1.00, R 0.17.
 
+## Run every LLM eval (`run_all.py`)
+One runner for detect.md **v3 vs v4** on every case set, the **two-pass crossref** (claims vs Form ADV and other docs, `cases_crossref.jsonl`) and, with `--private`, the private SEC-order set. v3 and v4 are frozen copies (`engine/prompts/detect_v{3,4}.md`) run through `engine.detect_versions:detect_v3|detect_v4`, the same pipeline with only the prompt pinned.
+```
+python3 eval/run_all.py --model openai/gpt-oss-20b              # DRY RUN (default): jobs, report names, ~tokens. No calls.
+python3 eval/run_all.py --go --model openai/gpt-oss-20b         # run within --budget (default ~150k est. tokens)
+python3 eval/run_all.py --go --only crossref --budget 300000
+python3 eval/run_all.py --go --private                          # + SEC set; reports -> private-eval-data/reports/, never commit
+python3 eval/run_all.py --smoke --private                       # offline plumbing check (rules mode + crossref stub, temp dir)
+```
+- Reports: `reports/llm_<tag>_<v3|v4>_<set>.json`, `reports/llm_<tag>_crossref.json` (tag from the model, e.g. `groq20b`). Existing reports are skipped (`--force` to redo), so a run cut off by a daily cap resumes on re-run. v3/v4 alternate per set; finished pairs get a `--compare` at the end.
+- Any detector error (Groq 429, 401) stops the job with **no report** (`compliance_eval.py --stop-on-error`) and stops the runner, so quota never scores as misses. Verified with an invalid key: no report written.
+- Harness rewrite check is off for these (it would triple cost); rewrites are `suite.py rewrite`.
+- Rough cost on gpt-oss-20b: all detect sets v3+v4 ~0.74M tokens, crossref ~234k, SEC v3+v4 ~189k; ~1.16M in all. At Groq's ~200k/day/model that is ~6 days on one model, so pick sets (`--sets`) or split across models.
+- **Not run yet** (only dry run + smoke). `compliance_eval.py --out` now also accepts an exact `.json` path.
+
 ## Discovery eval (`discovery_eval.py`)
 Does `crawl/discover.py` find the firm's own pages and the **third-party pages about it** (hypothesis 1)? It runs the real `discover()` against a simulated web, `discovery_world.json`: the demo site served from `demo-site/site/`, plus a fake Google answering each SERP query from 13 labelled docs. Those include LinkedIn company and advisor posts, Yelp, smartasset, a press release, a podcast, a UK namesake firm, a personal `/in/` profile, a tracking-param duplicate and the planned AdvisorQuill profile. It's offline with no credits and needs `httpx`. It tests query design and filters, **not** real Google indexing.
 ```
