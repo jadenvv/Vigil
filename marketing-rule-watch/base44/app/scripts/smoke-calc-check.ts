@@ -1,6 +1,7 @@
 // Live smoke test for check-calculation: one real Daytona sandbox round-trip.
-// Reads DAYTONA_API_KEY from the environment (or ../.env). Never prints the key.
-// Run from base44/app:  deno run --allow-env --allow-net --allow-sys scripts/smoke-calc-check.ts
+// Reads DAYTONA_API_KEY from the environment (or ../../.env when run from base44/app). Never prints the key.
+// Run from anywhere (DENO_NO_PACKAGE_JSON=1 makes npm:@daytona/sdk resolve despite package.json):
+//   DENO_NO_PACKAGE_JSON=1 deno run --allow-env --allow-net --allow-sys --allow-read scripts/smoke-calc-check.ts
 // Expect: ok:true, match:false, calculated_pct:50. One sandbox created and deleted; ~1 credit unit.
 import { runCheck } from "../base44/shared/calc-check.ts";
 
