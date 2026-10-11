@@ -12,7 +12,7 @@ const NAV_ITEMS = [
     label: "Live demo",
     match: (path) => path === "/demo" || /^\/(flag|firm|page)\//.test(path),
   },
-  { to: "/dashboard", label: "Dashboard", match: (path) => path.startsWith("/dashboard"), routed: false },
+  { to: "/dashboard", label: "Dashboard", match: (path) => path.startsWith("/dashboard") },
   { to: "/evals", label: "Evals", match: (path) => path.startsWith("/evals") },
   { to: "/about", label: "About", match: (path) => path.startsWith("/about") },
 ].filter((item) => item.routed !== false);
@@ -37,6 +37,11 @@ function SiteNav() {
       return;
     }
     // A 1px bar scaled to the link's width: only transform changes, so the glide stays on the compositor.
+    // On narrow screens the bar scrolls sideways; keep the current item in view (the nav only, never the page).
+    const nav = listRef.current.parentElement;
+    if (nav.scrollWidth > nav.clientWidth) {
+      nav.scrollLeft = Math.max(0, link.offsetLeft - (nav.clientWidth - link.offsetWidth) / 2);
+    }
     const next = { x: link.offsetLeft, w: link.offsetWidth };
     const toTransform = ({ x, w }) => `translateX(${x}px) scaleX(${w})`;
     indicator.style.opacity = "1";
