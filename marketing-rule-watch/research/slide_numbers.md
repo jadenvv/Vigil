@@ -10,7 +10,7 @@ Every number we may put on a slide, with the caveat that must go with it. The so
 
 ## What the final deck says
 
-The pitch deck ("Vigil Pitch", 3 slides) is the ground truth for what we present. Every number on it, and where it comes from:
+The pitch deck ("Vigil Pitch", 3 slides) is the ground truth for what we present. Every number on it, and where it comes from (the deck has no speaker notes):
 
 | Deck number | Section here | Source |
 |---|---|---|
@@ -24,7 +24,6 @@ The pitch deck ("Vigil Pitch", 3 slides) is the ground truth for what we present
 | Examples wrongly flagged 2/2 → 0/2; the firm's own claim still caught | 12 | `what_we_changed.md` row 8 |
 | Wrong flags 4 vs 111; 76 vs 75 of 77; clean 3/56 vs 19/56; F1 0.97 vs 0.57 | 10 | `versus_haiku55_allsets.json` |
 | Panel: 21/21 both; wrong flags 1 vs 28; clean 0/15 vs 4/15; right rule 95% vs 52%; tester-feedback cases 0 vs 10 | 10 | `versus_haiku55_panel.json` |
-| gpt-oss-120b panel F1 0.98 vs 0.65 | 9 | `versus_groq120b_panel_full2.json` |
 
 Deck footer: "13% of our 180 eval cases come from 12 real SEC orders that fined advisers; we wrote the rest. One run each. Not legal advice." The cards are keyword rules vs the live app; the dark band is offline on Claude Haiku with the next detector version, not yet live.
 
@@ -161,7 +160,7 @@ From Ethan's two complete runs: `eval/reports/versus_groq120b_panel_full.json` (
 - The pipeline uses v4, which is not live.
 - The labels are written by us and unreviewed.
 - The best pipeline number is from the run with the new scoring rule.
-- The direction matches sections 1–3 and 10: far fewer false alarms at about the same recall. The deck leads with the Claude Haiku run (section 10); this one appears only in its speaker notes, as "gpt-oss-120b panel: F1 0.98 vs 0.65". Keep it off the home page.
+- The direction matches sections 1–3 and 10: far fewer false alarms at about the same recall. The deck uses the Claude Haiku run (section 10); this one is a second-model check, F1 0.98 vs 0.65, for Q&A. Keep it off the home page.
 
 ## 10. Pipeline vs a single-prompt LLM on Claude Haiku (the deck's dark band)
 
