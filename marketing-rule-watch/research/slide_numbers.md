@@ -21,7 +21,7 @@ The pitch deck ("Vigil Pitch", 3 slides) is the ground truth for what we present
 | Third-party pages found 7 of 7, 0 personal (simulated web) | 6 | `discovery_v2.json` |
 | 24 eval cases from 12 SEC orders; 13% of 180 distinct cases | 11 | private set + `eval/cases*.jsonl` |
 | Clean docs wrongly flagged 28% → 0% (5 of 18 → 0 of 18) | 1 | keyword rules vs live v3 |
-| Examples wrongly flagged 6/6 → 0/6 (card); 2/2 → 0/2 (speaker notes) | 2, 12 | see 12 |
+| Examples wrongly flagged 2/2 → 0/2; the firm's own claim still caught | 12 | `what_we_changed.md` row 8 |
 | Wrong flags 4 vs 111; 76 vs 75 of 77; clean 3/56 vs 19/56; F1 0.97 vs 0.57 | 10 | `versus_haiku55_allsets.json` |
 | Panel: 21/21 both; wrong flags 1 vs 28; clean 0/15 vs 4/15; right rule 95% vs 52%; tester-feedback cases 0 vs 10 | 10 | `versus_haiku55_panel.json` |
 | gpt-oss-120b panel F1 0.98 vs 0.65 | 9 | `versus_groq120b_panel_full2.json` |
@@ -196,4 +196,4 @@ On the panel's 16 tester-feedback cases (`panel_group: feedback`): 0 vs 10 wrong
 
 ## 12. Example text (Tester B: "not a sample … to illustrate a misleading advertisement")
 
-The deck's card reads **6/6 → 0/6** examples wrongly flagged, with the firm's own claim still caught. Its speaker notes give the narrower measured number: keyword rules flagged example and rule-education text **2 of 2**, Vigil **0 of 2** offline and live; the firm's own claim on the same kind of page still caught **1 of 1** (`what_we_changed.md` row 8). No report in `eval/reports/` breaks out a 6-case example count, so if asked, quote the 2 of 2 → 0 of 2.
+The deck's card reads **2/2 → 0/2** examples wrongly flagged, with the firm's own claim still caught. Keyword rules flagged example and rule-education text **2 of 2**; Vigil **0 of 2** offline and live; the firm's own claim on the same kind of page still caught **1 of 1** (`what_we_changed.md` row 8). 3 cases written by us together with the fix, so not an independent test. (An earlier version of the card said 6/6 → 0/6, which no report supports; corrected on 10-13.)

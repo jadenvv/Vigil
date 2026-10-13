@@ -44,7 +44,7 @@ Demo firm: **11 of 11** planted issues on its own site, 0 false alarms (9 of 11 
 |---|---|---|
 | "AI is … making it harder to identify truth from fiction" | Scraped their actual pages to test on | **24** eval cases from real fined ads and the firms' archived pages |
 | "I would be doubting the flag … repeatedly having false positives" | Made sure to perfect precision | Clean docs wrongly flagged **28% → 0%** (5 of 18 → 0 of 18) |
-| "not a sample … to illustrate a misleading advertisement" | Skip examples and quoted rules | Examples wrongly flagged **6/6 → 0/6**; the firm's own claim still caught |
+| "not a sample … to illustrate a misleading advertisement" | Skip examples and quoted rules | Examples wrongly flagged **2/2 → 0/2**; the firm's own claim still caught |
 
 **Wrong flags vs a plain one-prompt LLM: 4 vs 111.** Same model, all 125 cases in 8 sets: Vigil caught 76 of 77 issues, the plain prompt 75. But the plain prompt flagged 19 of 56 clean cases; Vigil flagged 3. F1 0.97 vs 0.57 (Claude Haiku). On cases inspired by tester feedback and worries: 0 vs 10 wrong flags.
 
