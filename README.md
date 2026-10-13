@@ -71,7 +71,7 @@ Full detail, with file paths and live counts: `marketing-rule-watch/research/spo
 
 ## Measured results
 
-Every number comes from **one run** of detector v3 on Base44 InvokeLLM (10 Oct, 16:03–16:05). The LLM isn't fully deterministic. Source: `marketing-rule-watch/research/slide_numbers.md`; reports are in `marketing-rule-watch/eval/reports/`.
+Every number below comes from **one run**; the LLM isn't fully deterministic. Unless a section names another model, it is detector v3 on Base44 InvokeLLM (10 Oct, 16:03–16:05), the live app. These are the numbers in the pitch deck. Source: `marketing-rule-watch/research/slide_numbers.md`; reports are in `marketing-rule-watch/eval/reports/`.
 
 **Synthetic test set** (37 cases we wrote from SEC deficiency categories: 19 with planted issues, 18 clean):
 
@@ -92,6 +92,19 @@ Every number comes from **one run** of detector v3 on Base44 InvokeLLM (10 Oct, 
 **Third-party review site (AdvisorQuill, built by Devin)**: the demo firm's AdvisorQuill profile is in the app as a review-site page. The live detector flagged all 4 planted issues under the answer key's categories, and none of the page's clean content. `/demo` shows these 4 flags without sign-in, bringing the demo firm to 11 pages and 15 flags. *One page, one run (about 6:45 PM). The site was written from a brief based on our own issue categories, so this is not an independent test.*
 
 **Consistency**: 3 pages, 2 runs each. 2 of 3 pages gave identical flags; 3 of 3 flagged the same categories. *Too few calls for a rate.*
+
+**Vigil vs a plain one-prompt LLM** (same model, Claude Haiku, run offline): we built the "just ChatGPT with a prompt" version too (one call per page, a bare category list, no examples, grounding or suppression) and ran both over every eval set we have: 125 cases in 8 sets, none dropped.
+
+| | Vigil pipeline | Plain prompt |
+|---|---|---|
+| Issues caught | 76 of 77 | 75 of 77 |
+| Wrong flags | **4** | 111 |
+| Clean cases flagged | 3 of 56 | 19 of 56 |
+| F1 | **0.97** | 0.57 |
+
+On the 35-case panel: both caught 21 of 21; wrong flags 1 vs 28; clean pages flagged 0 of 15 vs 4 of 15; right rule cited 95% vs 52%. On its 16 tester-feedback cases: 0 vs 10 wrong flags. The same panel on gpt-oss-120b: F1 0.98 vs 0.65. *Run on Claude Haiku, not the live app's InvokeLLM, and the pipeline uses the next detector version (v4), not yet live. Reports: `versus_haiku55_allsets.json`, `versus_haiku55_panel.json`.*
+
+**Cases from real SEC orders**: 24 of our 180 distinct eval cases (13%) are built from 12 SEC settled orders that fined advisers: 13 use the ad wording the SEC quoted, 6 the firm's page as archived by the Wayback Machine, and 5 are our corrected rewrites as clean controls. The other 156 we wrote ourselves. On Claude Haiku, Vigil caught 22 of 30 issues vs the plain prompt's 25, with 19 wrong flags vs 59 and 1 of 5 clean cases flagged vs 3 of 5. *The SEC-order cases are kept out of this repo (`private-eval-data/`) and are not in the 125 above.*
 
 No tester labeled any eval case, so none of these numbers are "tester-validated".
 

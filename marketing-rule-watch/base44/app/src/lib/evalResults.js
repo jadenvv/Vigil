@@ -574,9 +574,27 @@ export const details = {
       ]
     },
     {
+      id: "versus_haiku_allsets",
+      title: "Our pipeline vs a single-prompt LLM, every set (125 cases)",
+      caveat: "All 8 eval sets of our own cases, 125 in all (77 issues, 56 clean), none dropped; the SEC-order set is not in it. Unreviewed. One run on Claude Haiku via claude -p on a laptop, not the live app's model; the pipeline uses the next detector version (v4), not yet live. Wrong flags: Vigil 4, single prompt 111. By set (Vigil vs single prompt): main 1 vs 29, held-out 1 vs 14, whole pages 0 vs 14, tester-style 0 vs 8, demo site 1 vs 19, hard 1 vs 17, scope 0 vs 5, injection 0 vs 5. Hard, scope and injection were never tuned on; Vigil's one miss is in hard.",
+      runs: [
+        { label: "Vigil pipeline (prompt v4, not yet live)", model: "Claude Haiku via claude -p", live: false, report: "versus_haiku55_allsets.json", cases: 125, precision: 0.95, recall: 0.99, f1: 0.97, tp: 76, fp: 4, fn: 1, cleanFlagged: "3 of 56", cleanFlaggedRate: 0.05, grounding: 1, minimalPairs: null },
+        { label: "Single prompt, no hints or filters (naive)", model: "Claude Haiku via claude -p", live: false, report: "versus_haiku55_allsets.json", cases: 125, precision: 0.4, recall: 0.97, f1: 0.57, tp: 75, fp: 111, fn: 2, cleanFlagged: "19 of 56", cleanFlaggedRate: 0.34, grounding: 1, minimalPairs: null },
+      ],
+    },
+    {
+      id: "versus_haiku_panel",
+      title: "Our pipeline vs a single-prompt LLM, panel (35 cases)",
+      caveat: "35 cases written by us (16 traced to tester feedback, 19 others; 15 are clean), unreviewed; the single prompt failed to answer on 1 more case, which is left out. One run on Claude Haiku via claude -p on a laptop, not the live app's model; the pipeline uses v4, not yet live. Right rule cited: 95% vs 52%. On the 16 tester-feedback cases: 0 vs 10 wrong flags.",
+      runs: [
+        { label: "Vigil pipeline (prompt v4, not yet live)", model: "Claude Haiku via claude -p", live: false, report: "versus_haiku55_panel.json", cases: 35, precision: 0.95, recall: 1, f1: 0.98, tp: 21, fp: 1, fn: 0, cleanFlagged: "0 of 15", cleanFlaggedRate: 0, grounding: 1, minimalPairs: null },
+        { label: "Single prompt, no hints or filters (naive)", model: "Claude Haiku via claude -p", live: false, report: "versus_haiku55_panel.json", cases: 35, precision: 0.43, recall: 1, f1: 0.6, tp: 21, fp: 28, fn: 0, cleanFlagged: "4 of 15", cleanFlaggedRate: 0.27, grounding: 1, minimalPairs: null },
+      ],
+    },
+    {
       id: "versus_full",
-      title: "Our pipeline vs a single-prompt LLM (35 cases)",
-      caveat: "35 cases written by us (16 traced to tester feedback, 19 others; 15 are clean), unreviewed. Two runs on gpt-oss-120b via Groq on a laptop, not the live app's model. Run 2 (19:16) uses a scoring change: a flag that quotes part of the expected passage counts as a hit. The single prompt failed to answer on 1 case. Not for slides.",
+      title: "Our pipeline vs a single-prompt LLM, second model (35 cases)",
+      caveat: "The same 35-case panel on a second model, to check the Claude Haiku result holds. Two runs on gpt-oss-120b via Groq on a laptop, not the live app's model. Run 2 (19:16) uses a scoring change: a flag that quotes part of the expected passage counts as a hit. The single prompt failed to answer on 1 case.",
       runs: [
         { label: "Vigil pipeline (prompt v4, not yet live), run 2, current scoring", model: "gpt-oss-120b via Groq", live: false, report: "versus_groq120b_panel_full2.json", cases: 35, precision: 1, recall: 0.95, f1: 0.98, tp: 20, fp: 0, fn: 1, cleanFlagged: "0 of 15", cleanFlaggedRate: 0, grounding: 1, minimalPairs: null },
         { label: "Vigil pipeline (prompt v4, not yet live), run 1, earlier scoring", model: "gpt-oss-120b via Groq", live: false, report: "versus_groq120b_panel_full.json", cases: 35, precision: 0.95, recall: 0.9, f1: 0.93, tp: 19, fp: 1, fn: 2, cleanFlagged: "0 of 15", cleanFlaggedRate: 0, grounding: 1, minimalPairs: null },

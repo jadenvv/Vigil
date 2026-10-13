@@ -32,8 +32,9 @@ Vigil looks outside the firm's own review workflow: it discovers what is publish
 Name is Vigil. Brand guide, tokens and logos in ../../brand/ (BRAND.md is binding): Night/Paper/Lamp palette, amber only means "look here", Geist and Geist Mono, the flagged-quote component (Lamp 100 ground, 3px Lamp 500 left border, mono text). Voice: calm, specific, plain; no hype, no exclamation marks.
 
 ## Evidence on Hand
-- Measured on the live crawl of the fictional demo site: 9 of 11 planted issues found, 0 false alarms, 0 flags on clean content (3:18 PM, Oct 10).
-- Eval on 37 synthetic, unreviewed cases: F1 0.95. These are synthetic; say so wherever shown.
+- Measured on the live crawl of the fictional demo site: 9 of 11 planted issues found at first (3:18 PM, Oct 10); after fixing both misses on this site, 11 of 11, 0 false alarms, 0 flags on clean content.
+- Eval on 37 synthetic, unreviewed cases: F1 0.70 (keyword rules) → 0.98 (live detector); clean cases wrongly flagged 28% → 0% (5 of 18 → 0 of 18). These are synthetic; say so wherever shown.
+- All numbers and caveats: `../../research/slide_numbers.md`.
 - Real flags, quotes and screenshots for Quarrywick in the app.
 - No customers, testimonials, pricing or press. Do not invent any.
 

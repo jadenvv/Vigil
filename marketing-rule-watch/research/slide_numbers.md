@@ -8,6 +8,26 @@ Every number we may put on a slide, with the caveat that must go with it. The so
 - Name the model: **Base44 InvokeLLM**. Every one of the 69 live calls was answered by `base44:base44-invokellm`, with no Groq fallback. Base44 doesn't tell us which underlying model InvokeLLM uses, so we don't name one.
 - Each live number comes from **one run**. The LLM isn't fully deterministic (see section 5).
 
+## What the final deck says
+
+The pitch deck ("Vigil Pitch", 3 slides) is the ground truth for what we present. Every number on it, and where it comes from:
+
+| Deck number | Section here | Source |
+|---|---|---|
+| $75,000 fine for "no conflicts of interest" (Sept 2025); 9 advisers, $1.24M (Sept 2024); 8 employees at the median adviser | — | `evidence_bank.md` |
+| 15 potential issues on 9 of 11 pages, 4 of them on the review site | 4, 8 | live app, demo firm |
+| Demo firm: 11 of 11 planted issues, 0 false alarms (9 of 11 at first) | 3, 4 | live app |
+| AdvisorQuill: 4 of 4 planted issues, 0 clean passages flagged | 8 | live app |
+| Third-party pages found 7 of 7, 0 personal (simulated web) | 6 | `discovery_v2.json` |
+| 24 eval cases from 12 SEC orders; 13% of 180 distinct cases | 11 | private set + `eval/cases*.jsonl` |
+| Clean docs wrongly flagged 28% → 0% (5 of 18 → 0 of 18) | 1 | keyword rules vs live v3 |
+| Examples wrongly flagged 6/6 → 0/6 (card); 2/2 → 0/2 (speaker notes) | 2, 12 | see 12 |
+| Wrong flags 4 vs 111; 76 vs 75 of 77; clean 3/56 vs 19/56; F1 0.97 vs 0.57 | 10 | `versus_haiku55_allsets.json` |
+| Panel: 21/21 both; wrong flags 1 vs 28; clean 0/15 vs 4/15; right rule 95% vs 52%; tester-feedback cases 0 vs 10 | 10 | `versus_haiku55_panel.json` |
+| gpt-oss-120b panel F1 0.98 vs 0.65 | 9 | `versus_groq120b_panel_full2.json` |
+
+Deck footer: "13% of our 180 eval cases come from 12 real SEC orders that fined advisers; we wrote the rest. One run each. Not legal advice." The cards are keyword rules vs the live app; the dark band is offline on Claude Haiku with the next detector version, not yet live.
+
 ## Lead number
 
 **Clean docs wrongly flagged: 28% with keyword rules → 0% with the live LLM detector**, *on our 37-case synthetic, unreviewed test set* (5 of 18 → 0 of 18). This answers Tester B: "I would be doubting the flag if I found that the tool was repeatedly identifying false... having... repeatedly having false positives." Same direction on the other two sets: 2 of 5 → 0 of 5 (tester-style) and 5 of 8 → 0 of 8 (demo site, a dev set). Each of these is one run.
@@ -122,7 +142,7 @@ Caveat: this is a simulated web (our demo site plus a fake search engine answeri
 
 Home card (5th entry in `EVAL_RESULTS`): "Third-party review page: 4 of 4", "0 clean passages flagged; a page the detector was never tuned on", "Fictional review site Devin built; one page, one run".
 
-## 9. Pipeline vs a single-prompt LLM (not for slides)
+## 9. Pipeline vs a single-prompt LLM on gpt-oss-120b (second model)
 
 From Ethan's two complete runs: `eval/reports/versus_groq120b_panel_full.json` (run 1, 19:06) and `versus_groq120b_panel_full2.json` (run 2, 19:16). git-manager re-checked the numbers from the JSON. They replace the earlier partial run (12 of 36 cases, `versus_groq120b_panel.json`).
 
@@ -141,4 +161,39 @@ From Ethan's two complete runs: `eval/reports/versus_groq120b_panel_full.json` (
 - The pipeline uses v4, which is not live.
 - The labels are written by us and unreviewed.
 - The best pipeline number is from the run with the new scoring rule.
-- The direction matches sections 1–3: far fewer false alarms at about the same recall. Don't put these numbers on a slide or the home page.
+- The direction matches sections 1–3 and 10: far fewer false alarms at about the same recall. The deck leads with the Claude Haiku run (section 10); this one appears only in its speaker notes, as "gpt-oss-120b panel: F1 0.98 vs 0.65". Keep it off the home page.
+
+## 10. Pipeline vs a single-prompt LLM on Claude Haiku (the deck's dark band)
+
+From `eval/reports/versus_haiku55_allsets.json` (19:36) and `versus_haiku55_panel.json` (19:24), both complete. Model `claude_cli:claude-haiku-5-5` via local `claude -p`, the same model for both sides. The pipeline is hints + prompt v4 + filters (**v4 is not live**); the single prompt is `engine/naive.py`: one call per page, a bare category list, no examples, grounding or suppression.
+
+**Every set:** 125 cases in 8 sets (77 issues, 56 clean), none dropped. The SEC-order set is not in it.
+
+| | Issues caught | Wrong flags | Clean cases flagged | Precision | F1 |
+|---|---|---|---|---|---|
+| Vigil pipeline | 76 of 77 | **4** | 3 of 56 | 0.95 | **0.97** |
+| Single prompt | 75 of 77 | 111 | 19 of 56 | 0.40 | 0.57 |
+
+Wrong flags by set (Vigil vs single prompt): main 1 vs 29, held-out 1 vs 14, whole pages 0 vs 14, tester-style 0 vs 8, demo site 1 vs 19, hard 1 vs 17, scope 0 vs 5, injection 0 vs 5. Hard, scope and injection are test sets we never tuned on; Vigil's one miss is in hard.
+
+**Panel** (`cases_versus.jsonl`): 36 cases; the single prompt returned prose instead of JSON on `scope_educational_backtest`, so 35 are scored (21 issues, 15 clean).
+
+| | Issues caught | Wrong flags | Clean cases flagged | Right rule cited | F1 |
+|---|---|---|---|---|---|
+| Vigil pipeline | 21 of 21 | **1** | 0 of 15 | 95% | **0.98** |
+| Single prompt | 21 of 21 | 28 | 4 of 15 | 52% | 0.60 |
+
+On the panel's 16 tester-feedback cases (`panel_group: feedback`): 0 vs 10 wrong flags.
+
+**Caveats:** one run each; Claude Haiku on a laptop, not the live app's InvokeLLM; the pipeline uses v4, not yet live; our own unreviewed cases. "Wrong flags" counts every flag that matched no labelled issue, including extra flags on cases that also had a real one.
+
+## 11. Where the eval cases come from
+
+- **180 distinct eval cases.** 156 are in `eval/cases*.jsonl` (distinct ids across all files; the panel and some sets reuse cases). 24 are in the private SEC-order set (`private-eval-data/cases_sec_orders.jsonl`, outside this repo; `eval/run_all.py` reads it).
+- **The 24 SEC-order cases (13%)** come from 12 SEC settled orders that each imposed a civil penalty: 13 use the ad wording the SEC quoted, 6 use the firm's own page as archived by the Internet Archive's Wayback Machine (not Bright Data), and 5 are our corrected rewrites as clean controls.
+- **On Claude Haiku:** Vigil caught 22 of 30 issues vs the single prompt's 25, with 19 wrong flags vs 59, and flagged 1 of 5 clean cases vs 3 of 5. Harder than our own cases. The report stays with the private set.
+- The other 156 we wrote from SEC deficiency categories, tester comments and our demo site. None were reviewed by a compliance professional.
+
+## 12. Example text (Tester B: "not a sample … to illustrate a misleading advertisement")
+
+The deck's card reads **6/6 → 0/6** examples wrongly flagged, with the firm's own claim still caught. Its speaker notes give the narrower measured number: keyword rules flagged example and rule-education text **2 of 2**, Vigil **0 of 2** offline and live; the firm's own claim on the same kind of page still caught **1 of 1** (`what_we_changed.md` row 8). No report in `eval/reports/` breaks out a 6-case example count, so if asked, quote the 2 of 2 → 0 of 2.

@@ -35,6 +35,10 @@ python3 eval/suite.py versus      --detector engine.detect:detect --against engi
 ```
 LLM_PROVIDER=openai LLM_MODEL=<model> python3 eval/suite.py versus --detector engine.detect:detect --against engine.naive:detect --cases eval/cases_versus.jsonl --name versus_<tag>_panel -v
 ```
+**Claude Haiku, complete** (`reports/versus_haiku55_allsets.json`, `versus_haiku55_panel.json`; `LLM_PROVIDER=claude_cli`; these are the deck's numbers, see `research/slide_numbers.md` §10): every set, 125 cases, pipeline caught 76/77, 4 wrong flags, clean flagged 3/56, F1 0.97 · naive 75/77, 111 wrong flags, 19/56, F1 0.57. Panel (35 scored; naive gave prose on `scope_educational_backtest`): 21/21 both, wrong flags 1 vs 28, clean 0/15 vs 4/15, right rule 95% vs 52%, F1 0.98 vs 0.60; feedback group (16) 0 vs 10 wrong flags.
+
+**gpt-oss-120b, complete** (`versus_groq120b_panel_full2.json`): pipeline F1 0.98, clean 0/15 · naive F1 0.65, clean 3/15.
+
 Partial only (`reports/versus_groq120b_panel.json`, gpt-oss-120b, **12/36 cases, incomplete**, all feedback group): pipeline P 0.80 R 0.80 F1 0.80, clean flagged 0% · naive P 0.45 R 1.00 F1 0.62, clean flagged 14%. Stopped when the pipeline got prose instead of JSON on `scope_educational_backtest` (now a `no_answer`). Weak evidence: 12 cases, one run, unreviewed labels.
 
 HTTPS calls (LLM, live endpoint, demo site) use certifi's CA bundle when it's installed; python.org Python on macOS has none and fails with `CERTIFICATE_VERIFY_FAILED`.

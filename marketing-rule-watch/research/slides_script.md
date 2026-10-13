@@ -1,6 +1,6 @@
 # Vigil pitch: 3-slide script
 
-Paste the three cards below the line into Gamma → Paste in text → **Preserve this exact text**. Numbers and their caveats come from `slide_numbers.md`; quotes are verbatim from `what_we_changed.md` / `sense_checks.md`.
+The text of the final deck ("Vigil Pitch"), which is the ground truth for what we present. Every number is mapped to its source in `slide_numbers.md` → "What the final deck says"; quotes are verbatim from `what_we_changed.md` / `sense_checks.md`. The Gamma and theme notes below are from the first draft.
 
 **Gamma instructions:** Keep it simple above everything else. Use the text exactly as given and add nothing: no icons, stock photos, AI images, gradients or emoji. Lots of empty space, left-aligned. Plain tables with hairline rows. Quotes in a light amber box with a thin amber left border, in a monospace font.
 
@@ -8,47 +8,47 @@ Paste the three cards below the line into Gamma → Paste in text → **Preserve
 
 ---
 
-# Small advisory firms get fined for one sentence on a public page
+# One sentence on a website can cost a small firm $75,000
 
-- **$75,000:** one adviser, Sept 2025. Its website said "no conflicts of interest".
-- **9 advisers, $1.24M:** one day in Sept 2024. Claims on websites, third-party sites and social media.
-- The median SEC-registered adviser has **8 employees**. Nobody's job is watching every page.
-- **AI-written content is growing that pile.** Posts drafted in seconds get published faster than anyone can review them, and each one can carry the same one-sentence risk.
-- **What we replace: a person and a search box.** Compliance tools mostly review what staff submit before it goes out, or archive the firm's own site. Finding what's already public, including pages about the firm, and reading every sentence of it is still done by hand.
+- **01 · It goes up:** "no conflicts of interest". One adviser's website said this, word for word.
+- **02 · Nobody reads it:** **8** employees at the median SEC-registered adviser. No one's job is reading every page.
+- **03 · The SEC reads it:** **$75,000**, the SEC's fine for that one sentence, Sept 2025.
+- Today the only check is **a person with a search box**, and AI-written marketing teams keep adding inconsistent pages for them to read.
+
+If asked whether it's a one-off: on one day in Sept 2024, the SEC fined nine advisers $1.24M in total for claims on websites, third-party sites and social media.
 
 > "I put the name of the firm into a search, um, and said the name of the firm news today."
-> — Sense interviewee, on the search they run by hand **every week** to find what skipped review
+> — Sense interviewee, on the search they run by hand **every week**
 
-> "you're gonna have to have a person or people go through and review them and make judgment calls." … "you're probably missing such a a global view"
-> — a second Sense interviewee, asked how marketing issues slip through
-
----
-
-# Vigil finds what the firm has published and flags what needs review
-
-**Discover → Capture → Detect → Review**, inside one Base44 app
-
-- **Discover + capture:** Bright Data search and Web Unlocker find the firm's pages and pages about it, and save each with a screenshot, capture time and hash.
-- **Snapshots:** when a page changes, Vigil keeps a new dated copy and the exact diff, so a firm can show an examiner what any page said on any past date.
-- **Detect:** an LLM reads for meaning across 8 Marketing Rule categories. No quote found word for word on the page, no flag.
-- **Review:** the AI suggests a rewrite. The compliance officer approves, edits or dismisses, and every decision is logged.
-
-On our fictional demo firm: found 9 of 11 planted issues, we fixed the 2 misses, now **11 of 11, 0 false alarms**.
+> "you're gonna have to have a person or people go through and review them and make judgment calls." … "you're probably missing such a a global view."
+> — a second Sense interviewee
 
 ---
 
-# What testers told us, and what we changed
+# So Vigil reads every page before an examiner does
 
-| They said | We changed | Measured |
+Built for firms extremely slow to adopt AI: a Sense interviewee in the field assumed AI tools just match keywords.
+
+- **01 Finds the pages:** its own site and sites about it. Live: **15 potential issues on 9 of 11 pages**, 4 of them on a third-party review site.
+- **02 Saves · 03 Reads:** the exact quote, highlighted on the page as captured, and why.
+- **04 A person decides:** approve, edit or dismiss proposed changes. All logged.
+- **Base44** runs all of it: screens, data, 9 functions, its built-in LLM, sign-in. **Bright Data** fetches every page and screenshot; SERP finds pages about the firm. **Daytona**: a sandbox recomputes a stated return to check the math. **Devin** built AdvisorQuill, the fictional review site we scan.
+
+Demo firm: **11 of 11** planted issues on its own site, 0 false alarms (9 of 11 at first; we fixed both misses on that site). AdvisorQuill: **4 of 4** planted issues, 0 clean passages flagged; one page, one run.
+
+---
+
+# Then we showed testers, and their worries shaped it
+
+| They said | So we | Measured |
 |---|---|---|
-| "I would be doubting the flag if I found that the tool was repeatedly … having false positives." | Precision first, one-click dismiss | Clean docs wrongly flagged **28% → 0%** (5/18 → 0/18); flags that were right **15/22 → 21/22** |
-| "people continue to use new words that that aren't part of the the typical lexicon" | An LLM that reads for meaning, not a word list | F1 **0.70 → 0.98**; issues caught **15/21 → 21/21**; tester-style issues **0/5 → 5/5**; vs a plain one-prompt LLM: *pending* |
-| "verify that it was … not a sample of something that somebody was using to illustrate a misleading advertisement" | Don't flag examples or quoted rule text | Example text wrongly flagged **2/2 → 0/2** (live: 0/2); the firm's own claim still caught **1/1** |
-| "actually captured the ad and surfaced it so I could review the ad, but I would still want to independently verify that I could locate the ad" | Every flag shows the exact quote, a full-size screenshot, the capture time, the page fingerprint and a live link; **Re-check now** fetches the page again; page history shows what it said on any date | Not a metric: shown in the demo |
-| "when the advertising department would identify misleading ads, they would request follow-up information." | Vigil searches the same public pages, including pages about the firm, so the firm sees them first | Pages found: firm's own **10/10**, third-party **7/7**, personal **0** |
-| "it must be overseen. It must be audited, um, and there there must be, um, disclaimer on AI results." | Human decides every flag, audit log, disclaimer on every screen; we measured how consistent the AI is | Same page, run twice: identical flags on **2 of 3** pages, same categories **3 of 3** |
+| "AI is … making it harder to identify truth from fiction" | Scraped their actual pages to test on | **24** eval cases from real fined ads and the firms' archived pages |
+| "I would be doubting the flag … repeatedly having false positives" | Made sure to perfect precision | Clean docs wrongly flagged **28% → 0%** (5 of 18 → 0 of 18) |
+| "not a sample … to illustrate a misleading advertisement" | Skip examples and quoted rules | Examples wrongly flagged **6/6 → 0/6**; the firm's own claim still caught |
 
-Rows 2–3 changed after the calls; rows 1 and 4–6 were already built, and the calls told us to keep them. Keyword baseline → Vigil. One run each, on synthetic test cases we wrote; not reviewed by a compliance professional. Row 5 is a simulated search over 13 pages we labeled. Row 6 is 3 pages × 2 runs, too few for a rate. *Pending* = built, result not in yet.
+**Wrong flags vs a plain one-prompt LLM: 4 vs 111.** Same model, all 125 cases in 8 sets: Vigil caught 76 of 77 issues, the plain prompt 75. But the plain prompt flagged 19 of 56 clean cases; Vigil flagged 3. F1 0.97 vs 0.57 (Claude Haiku). On cases inspired by tester feedback and worries: 0 vs 10 wrong flags.
+
+Footer: 13% of our 180 eval cases come from 12 real SEC orders that fined advisers; we wrote the rest. One run each. Not legal advice.
 
 ---
 
@@ -69,4 +69,4 @@ Order: **Slide 1 → Slide 2 → live demo → Slide 3.** Slide 2 sets up the de
 
 Fallback: a recorded video of the same five steps. Never demo on a real firm.
 
-**Slide 3 (45 s).** Each row is a worry we heard on a call. The biggest was false positives. We'd already built for precision, and the call told us to keep it that way: on 18 test documents with nothing wrong in them, keyword rules raised a false alarm on 5; Vigil on none. A former regulator wanted proof a flag was a real ad, not an example in an article, so we stopped flagging examples, and every flag carries the screenshot and a live link to re-find it. They also told us regulators search public ads and follow up. Vigil searches those same pages first. These are our own synthetic cases, one run each.
+**Slide 3 (45 s).** Each row is a worry we heard on a call. The biggest was false positives. We'd already built for precision, and the call told us to keep it that way: on 18 test documents with nothing wrong in them, keyword rules raised a false alarm on 5; Vigil on none. A former regulator wanted proof a flag was a real ad, not an example in an article, so we stopped flagging examples, and every flag carries the screenshot and a live link to re-find it. They also told us regulators search public ads and follow up. Vigil searches those same pages first. Bottom band: is this just ChatGPT with a prompt? We built that too and ran both on the same model over all 125 cases: wrong flags 4 vs 111, F1 0.97 vs 0.57 (Claude Haiku, next detector version, not yet live). These are our own cases, one run each.

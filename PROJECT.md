@@ -62,7 +62,7 @@ Last updated: **7:05 PM**
   - two `dusk.css` fixes: card contrast (`5fa661a`) and the amber chart value for AA contrast (`a25519f`)
   - `/evals` additions (`a394224`): the AdvisorQuill third-party result (4 of 4, 0 clean flagged, live v3) and Ethan's incomplete versus run, labelled "Incomplete run, not live"
   - background experiments: dots (`dc8002f`), then a gradient (`13e2187`). Both were reverted in `7ed9ce6`, so `dusk.css` is back to the flat ground from `a394224`.
-  - `/evals` versus sets (`7ed9ce6`): Ethan's complete 35-case runs replace the partial 12-case one (see `research/slide_numbers.md` §9; not for slides).
+  - `/evals` versus sets (`7ed9ce6`): Ethan's complete 35-case runs replace the partial 12-case one (see `research/slide_numbers.md` §9). The pitch deck uses the Claude Haiku runs instead (§10); on main, `/evals` lists those first.
 
 - **Live has:**
   - nav: Home · Live demo · Dashboard · Evals · About
